@@ -46,7 +46,8 @@ task CiInit {
 
 task Init {
     delete_file $package_file
-    delete_directory $build_dir
+    rd $build_dir -recurse -force  -ErrorAction Stop
+   
     create_directory $test_dir
     create_directory $build_dir
 
