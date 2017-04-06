@@ -50,9 +50,9 @@ task Init {
     create_directory $test_dir
     create_directory $build_dir
 
-    #Write-Host $projectConfig
-    #Write-Host $version
-    #Write-Host $runOctoPack
+    Write-Host $projectConfig
+    Write-Host $version
+    Write-Host $runOctoPack
 }
 
 task ConnectionString {
