@@ -11,8 +11,6 @@ properties {
 	$projectConfig = $env:Configuration
     $version = $env:Version
     $nunitPath = Resolve-Path("$source_dir\packages\NUnit.Console*\Tools")
-    $specflowPath = Resolve-Path("$source_dir\packages\SpecFlow*\tools")
-	$teamcityoutput = ""
 
 	$build_dir = "$base_dir\build"
 	$test_dir = "$build_dir\test"
@@ -38,15 +36,11 @@ properties {
 }
 
 task default -depends Init, Compile, RebuildDatabase, Test, LoadData
-task ci -depends CiInit, Init, CommonAssemblyInfo, ConnectionString, Compile, RebuildDatabase, Test
-
-task CiInit {
-	$script:teamcityoutput = "--teamcity"
-}
+task ci -depends Init, CommonAssemblyInfo, ConnectionString, Compile, RebuildDatabase, Test
 
 task Init {
     delete_file $package_file
-    rd $build_dir -recurse -force  -ErrorAction Stop
+    rd $build_dir -recurse -force  -ErrorAction Ignore
    
     create_directory $test_dir
     create_directory $build_dir
@@ -75,14 +69,14 @@ task Compile -depends Init {
 task Test -depends Compile, RebuildDatabase {
     copy_all_assemblies_for_test $test_dir
     exec {
-        & $nunitPath\nunit3-console.exe $test_dir\$unitTestAssembly $test_dir\$integrationTestAssembly $script:teamcityoutput --workers=1 --noheader --result="$build_dir\TestResult.xml"`;format=nunit2
+        & $nunitPath\nunit3-console.exe $test_dir\$unitTestAssembly $test_dir\$integrationTestAssembly --workers=1 --noheader --result="$build_dir\TestResult.xml"`;format=nunit2
     }
 }
 
 task AcceptanceTest -depends Test {
     copy_all_assemblies_for_test $test_dir
 	exec {
-        & $nunitPath\nunit3-console.exe $test_dir\$acceptanceTestAssembly $script:teamcityoutput --workers=1 --noheader --result="$build_dir\AcceptanceTestResult.xml"`;format=nunit2 --out="$build_dir\AcceptanceTestResult.txt"
+        & $nunitPath\nunit3-console.exe $test_dir\$acceptanceTestAssembly --workers=1 --noheader --result="$build_dir\AcceptanceTestResult.xml"`;format=nunit2 --out="$build_dir\AcceptanceTestResult.txt"
         & $specflowPath\specflow.exe nunitexecutionreport $acceptanceTestProject /xmlTestResult:"$build_dir\AcceptanceTestResult.xml" /testOutput:"$build_dir\AcceptanceTestResult.txt" /out:"$build_dir\AcceptanceTestResult.html"
 	}
 }
