@@ -211,7 +211,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisibleAttribute(false)]
 [assembly: AssemblyVersionAttribute(""$version"")]
 [assembly: AssemblyFileVersionAttribute(""$version"")]
-[assembly: AssemblyCopyrightAttribute(""Copyright 2015"")]
+[assembly: AssemblyCopyrightAttribute(""Copyright 2017"")]
 [assembly: AssemblyProductAttribute(""$applicationName"")]
 [assembly: AssemblyCompanyAttribute(""Clear Measure, Inc."")]
 [assembly: AssemblyConfigurationAttribute(""$projectConfig"")]
