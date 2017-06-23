@@ -1,4 +1,6 @@
 # Clear Measure Bootcamp 
+Inline-style: 
+![Build Status Indicator](https://clearmeasure.visualstudio.com/_apis/public/build/definitions/b659c03b-f027-4224-bcad-b9fca7aecf11/20/badge "Build Status")
 
 **This project is the starting point for folks taking part in the Clear Measure 
 Bootcamp.** 
