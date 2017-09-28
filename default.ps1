@@ -19,8 +19,12 @@ properties {
 	$package_file = "$build_dir\latestVersion\" + $projectName +"_Package.zip"
     $runOctoPack = $env:RunOctoPack
 
-    $databaseName = $projectName
-    $databaseServer = "localhost\SQLEXPRESS2014"
+    $databaseName = $env.DatabaseName
+	if([string]::IsNullOrEmpty($databaseName)) { $databaseName = $projectName}
+    $databaseServer = $env.DatabaseServer
+	if([string]::IsNullOrEmpty($databaseServer)) { $databaseServer = "localhost\SQLEXPRESS2014"}
+	$databaseUser = $env.DatabaseUser
+	$databasePassword = $env.DatabasePassword
     $databaseScripts = "$source_dir\Database\scripts"
     $hibernateConfig = "$source_dir\hibernate.cfg.xml"
     $schemaDatabaseName = $databaseName + "_schema"
@@ -33,13 +37,11 @@ properties {
     if([string]::IsNullOrEmpty($version)) { $version = "1.0.0"}
     if([string]::IsNullOrEmpty($projectConfig)) {$projectConfig = "Release"}
     if([string]::IsNullOrEmpty($runOctoPack)) {$runOctoPack = "true"}
-
-	$injectedConnectionString = ""
 }
 
 task default -depends Init, Compile, RebuildDatabase, Test, LoadData
 task ci -depends Init, CommonAssemblyInfo, ConnectionString, Compile, RebuildDatabase, Test
-task ci-assume-db -depends Init, CommonAssemblyInfo, Compile, InjectConnectionString, Test
+task ci-assume-db -depends Init, CommonAssemblyInfo, InjectConnectionString, Compile, UpdateDatabaseAzure, Test
 
 task Init {
     delete_file $package_file
@@ -51,6 +53,9 @@ task Init {
     Write-Host $projectConfig
     Write-Host $version
     Write-Host $runOctoPack
+
+	Write-Host $databaseServer
+	Write-Host $databaseName
 }
 
 task ConnectionString {
@@ -62,6 +67,7 @@ task ConnectionString {
 }
 
 task InjectConnectionString {
+	$injectedConnectionString = "Server=tcp:$databaseServer,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
     $connection_string = $injectedConnectionString
     write-host "Using connection string: $connection_string"
     if ( Test-Path "$hibernateConfig" ) {
@@ -80,7 +86,7 @@ task Compile -depends Init {
 task Test -depends Compile {
     copy_all_assemblies_for_test $test_dir
     exec {
-        & $nunitPath\nunit3-console.exe $test_dir\$unitTestAssembly --workers=1 --noheader --result="$build_dir\TestResult.xml"`;format=nunit2
+        & $nunitPath\nunit3-console.exe $test_dir\$unitTestAssembly $test_dir\$integrationTestAssembly --workers=1 --noheader --result="$build_dir\TestResult.xml"`;format=nunit2
     }
 }
 
@@ -98,6 +104,20 @@ task RebuildDatabase -depends ConnectionString {
     }
 }
 
+task UpdateDatabaseAzure -depends InjectConnectionString {
+	Write-Host "the server is $databaseServer"
+	exec {
+        & $AliaSql Update $databaseServer $databaseName $databaseScripts $databaseUser $databasePassword
+    }
+}
+
+task DropDatabaseAzure -depends InjectConnectionString {
+	Write-Host "the server is $databaseServer"
+	exec {
+        & $AliaSql Drop $databaseServer $databaseName $databaseScripts $databaseUser $databasePassword
+    }
+}
+
 task LoadData -depends ConnectionString, Compile, RebuildDatabase {
 	exec { 
 		& $nunitPath\nunit3-console.exe $test_dir\$integrationTestAssembly --where "cat == DataLoader" --noheader --result="$build_dir\DataLoadResult.xml"`;format=nunit3
@@ -109,6 +129,8 @@ task CreateCompareSchema -depends SchemaConnectionString {
         & $AliaSql Rebuild $databaseServer $schemaDatabaseName $databaseScripts
     }
 }
+
+
 
 task SchemaConnectionString {
     $connection_string = "server=$databaseserver;database=$schemaDatabaseName;@integratedSecurity;"
