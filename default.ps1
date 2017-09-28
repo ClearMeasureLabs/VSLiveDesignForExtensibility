@@ -60,7 +60,7 @@ task ConnectionString {
 
 task Compile -depends Init {
     exec {
-        & msbuild /t:Clean`;Rebuild /v:q /nologo /p:Configuration=$projectConfig /p:OctoPackPackageVersion=$version /p:RunOctoPack=$runOctoPack /p:OctoPackEnforceAddingFiles=true $source_dir\$projectName.sln
+        & msbuild /t:Clean`;Rebuild /v:m /maxcpucount:1 /nologo /p:Configuration=$projectConfig /p:OctoPackPackageVersion=$version /p:RunOctoPack=$runOctoPack /p:OctoPackEnforceAddingFiles=true $source_dir\$projectName.sln
     }
 
 	Copy_and_flatten $source_dir *.nupkg $build_dir
