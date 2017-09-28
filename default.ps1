@@ -112,6 +112,7 @@ task UpdateDatabaseAzure -depends InjectConnectionString {
 
 task DropDatabaseAzure -depends InjectConnectionString {
 	Write-Host "the server is $databaseServer"
+	Write-Host "$AliaSql Drop $databaseServer $databaseName $databaseScripts $databaseUser $databasePassword"
 	exec {
         & $AliaSql Drop $databaseServer $databaseName $databaseScripts $databaseUser $databasePassword
     }
