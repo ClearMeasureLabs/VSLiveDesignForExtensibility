@@ -19,12 +19,12 @@ properties {
 	$package_file = "$build_dir\latestVersion\" + $projectName +"_Package.zip"
     $runOctoPack = $env:RunOctoPack
 
-    $databaseName = $env.DatabaseName
+    $databaseName = $env:DatabaseName
 	if([string]::IsNullOrEmpty($databaseName)) { $databaseName = $projectName}
-    $databaseServer = $env.DatabaseServer
+    $databaseServer = $env:DatabaseServer
 	if([string]::IsNullOrEmpty($databaseServer)) { $databaseServer = "localhost\SQLEXPRESS2014"}
-	$databaseUser = $env.DatabaseUser
-	$databasePassword = $env.DatabasePassword
+	$databaseUser = $env:DatabaseUser
+	$databasePassword = $env:DatabasePassword
     $databaseScripts = "$source_dir\Database\scripts"
     $hibernateConfig = "$source_dir\hibernate.cfg.xml"
     $schemaDatabaseName = $databaseName + "_schema"
