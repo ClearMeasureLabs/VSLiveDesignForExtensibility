@@ -33,10 +33,13 @@ properties {
     if([string]::IsNullOrEmpty($version)) { $version = "1.0.0"}
     if([string]::IsNullOrEmpty($projectConfig)) {$projectConfig = "Release"}
     if([string]::IsNullOrEmpty($runOctoPack)) {$runOctoPack = "true"}
+
+	$injectedConnectionString = ""
 }
 
 task default -depends Init, Compile, RebuildDatabase, Test, LoadData
 task ci -depends Init, CommonAssemblyInfo, ConnectionString, Compile, RebuildDatabase, Test
+task ci-assume-db -depends Init, CommonAssemblyInfo, Compile, InjectConnectionString, Test
 
 task Init {
     delete_file $package_file
@@ -52,6 +55,14 @@ task Init {
 
 task ConnectionString {
     $connection_string = "server=$databaseserver;database=$databasename;$integratedSecurity;"
+    write-host "Using connection string: $connection_string"
+    if ( Test-Path "$hibernateConfig" ) {
+        poke-xml $hibernateConfig "//e:property[@name = 'connection.connection_string']" $connection_string @{"e" = "urn:nhibernate-configuration-2.2"}
+    }
+}
+
+task InjectConnectionString {
+    $connection_string = $injectedConnectionString
     write-host "Using connection string: $connection_string"
     if ( Test-Path "$hibernateConfig" ) {
         poke-xml $hibernateConfig "//e:property[@name = 'connection.connection_string']" $connection_string @{"e" = "urn:nhibernate-configuration-2.2"}
