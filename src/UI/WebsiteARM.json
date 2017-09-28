@@ -8,9 +8,6 @@
     "hostingPlanName": {
       "type": "String"
     },
-    "hostingEnvironment": {
-      "type": "String"
-    },
     "location": {
       "type": "String"
     },
@@ -46,8 +43,7 @@
           ]
         },
         "name": "[parameters('name')]",
-        "serverFarmId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', parameters('serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
-        "hostingEnvironment": "[parameters('hostingEnvironment')]"
+        "serverFarmId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', parameters('serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
       },
       "dependsOn": [
         "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
@@ -67,8 +63,7 @@
         "name": "[parameters('hostingPlanName')]",
         "workerSizeId": "[parameters('workerSize')]",
         "reserved": false,
-        "numberOfWorkers": "1",
-        "hostingEnvironment": "[parameters('hostingEnvironment')]"
+        "numberOfWorkers": "1"
       }
     },
     {
