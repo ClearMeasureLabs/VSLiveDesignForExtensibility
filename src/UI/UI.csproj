@@ -230,6 +230,9 @@
     <Content Include="Deploy.ps1" />
     <Content Include="PostDeploy.ps1" />
     <Content Include="newrelic.config" />
+    <Content Include="AzureConnection.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
