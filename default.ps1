@@ -68,7 +68,7 @@ task ConnectionString {
 task InjectConnectionString {
 	$injectedConnectionString = "Server=tcp:$databaseServer,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
     $connection_string = $injectedConnectionString
-    write-host "Using connection string: $connection_string"
+    write-host "Using connection string to : $databaseServer"
     if ( Test-Path "$hibernateConfig" ) {
         poke-xml $hibernateConfig "//e:property[@name = 'connection.connection_string']" $connection_string @{"e" = "urn:nhibernate-configuration-2.2"}
     }
