@@ -24,6 +24,7 @@
     <RestorePackages>true</RestorePackages>
     <TargetFrameworkProfile />
     <UseGlobalApplicationHostFile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -229,6 +230,9 @@
     <Content Include="Deploy.ps1" />
     <Content Include="PostDeploy.ps1" />
     <Content Include="newrelic.config" />
+    <Content Include="AzureConnection.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -274,6 +278,9 @@
     <Content Include="Views\Shared\Menu.cshtml" />
     <Content Include="UI.nuspec" />
     <Content Include="newrelic.config" />
+    <Content Include="WebsiteARM.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
