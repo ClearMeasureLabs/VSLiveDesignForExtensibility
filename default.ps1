@@ -77,10 +77,10 @@ task Compile -depends Init {
 	Copy_and_flatten $source_dir *.nupkg $build_dir
 }
 
-task Test -depends Compile, RebuildDatabase {
+task Test -depends Compile {
     copy_all_assemblies_for_test $test_dir
     exec {
-        & $nunitPath\nunit3-console.exe $test_dir\$unitTestAssembly $test_dir\$integrationTestAssembly --workers=1 --noheader --result="$build_dir\TestResult.xml"`;format=nunit2
+        & $nunitPath\nunit3-console.exe $test_dir\$unitTestAssembly --workers=1 --noheader --result="$build_dir\TestResult.xml"`;format=nunit2
     }
 }
 
