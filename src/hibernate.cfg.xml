@@ -3,7 +3,7 @@
     <property name="connection.driver_class">
 			NHibernate.Driver.SqlClientDriver
 		</property>
-    <property name="connection.connection_string">Server=tcp:#{DatabaseServer}#,1433;Initial Catalog=#{DatabaseName}#;Persist Security Info=False;User ID=#{DatabaseUser}#;Password=#{DatabasePassword}#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;</property>
+    <property name="connection.connection_string">server=localhost\SQLEXPRESS2014;database=ClearMeasure.Bootcamp;Integrated Security=true;</property>
     <property name="show_sql">false</property>
     <property name="dialect">
 			NHibernate.Dialect.MsSql2005Dialect
