@@ -43,6 +43,7 @@ task ci -depends Init, CommonAssemblyInfo, ConnectionString, Compile, RebuildDat
 task ci-assume-db -depends Init, CommonAssemblyInfo, InjectConnectionString, Compile, UpdateDatabaseAzure, Test
 
 task Init {
+	Write-Host("##[section]Starting: Build task 'Init'")
     delete_file $package_file
     rd $build_dir -recurse -force  -ErrorAction Ignore
    
@@ -55,67 +56,84 @@ task Init {
 
 	Write-Host $databaseServer
 	Write-Host $databaseName
+	Write-Host("##[section]Finishing: Build task 'Init'")
 }
 
 task ConnectionString {
+	Write-Host("##[section]Starting: Build task 'ConnectionString'")
     $connection_string = "server=$databaseserver;database=$databasename;$integratedSecurity;"
     write-host "Using connection string: $connection_string"
     if ( Test-Path "$hibernateConfig" ) {
         poke-xml $hibernateConfig "//e:property[@name = 'connection.connection_string']" $connection_string @{"e" = "urn:nhibernate-configuration-2.2"}
     }
+	Write-Host("##[section]Finishing: Build task 'ConnectionString'")
 }
 
 task InjectConnectionString {
+	Write-Host("##[section]Starting: Build task 'InjectConnectionString'")
 	$injectedConnectionString = "Server=tcp:$databaseServer,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
     $connection_string = $injectedConnectionString
     write-host "Using connection string to : $databaseServer"
     if ( Test-Path "$hibernateConfig" ) {
         poke-xml $hibernateConfig "//e:property[@name = 'connection.connection_string']" $connection_string @{"e" = "urn:nhibernate-configuration-2.2"}
     }
+	Write-Host("##[section]Finishing: Build task 'InjectConnectionString'")
 }
 
 task Compile -depends Init {
+	Write-Host("##[section]Starting: Build task 'Compile'")
     exec {
         & msbuild /t:Clean`;Rebuild /v:m /maxcpucount:1 /nologo /p:Configuration=$projectConfig /p:OctoPackPackageVersion=$version /p:RunOctoPack=$runOctoPack /p:OctoPackEnforceAddingFiles=true $source_dir\$projectName.sln
     }
 
 	Copy_and_flatten $source_dir *.nupkg $build_dir
+	Write-Host("##[section]Finishing: Build task 'Compile'")
 }
 
 task Test -depends Compile {
+	Write-Host("##[section]Starting: Build task 'Test'")
     copy_all_assemblies_for_test $test_dir
     exec {
         & $nunitPath\nunit3-console.exe $test_dir\$unitTestAssembly $test_dir\$integrationTestAssembly --workers=1 --noheader --result="$build_dir\TestResult.xml"`;format=nunit2
     }
+	Write-Host("##[section]Finishing: Build task 'Test'")
 }
 
 task AcceptanceTest -depends Test {
+	Write-Host("##[section]Starting: Build task 'AcceptanceTest'")
     copy_all_assemblies_for_test $test_dir
 	exec {
         & $nunitPath\nunit3-console.exe $test_dir\$acceptanceTestAssembly --workers=1 --noheader --result="$build_dir\AcceptanceTestResult.xml"`;format=nunit2 --out="$build_dir\AcceptanceTestResult.txt"
         & $specflowPath\specflow.exe nunitexecutionreport $acceptanceTestProject /xmlTestResult:"$build_dir\AcceptanceTestResult.xml" /testOutput:"$build_dir\AcceptanceTestResult.txt" /out:"$build_dir\AcceptanceTestResult.html"
 	}
+	Write-Host("##[section]Finishing: Build task 'AcceptanceTest'")
 }
 
 task RebuildDatabase -depends ConnectionString {
+	Write-Host("##[section]Starting: Build task 'RebuildDatabase'")
     exec {
         & $AliaSql Rebuild $databaseServer $databaseName $databaseScripts
     }
+	Write-Host("##[section]Finishing: Build task 'RebuildDatabase'")
 }
 
 task UpdateDatabaseAzure -depends InjectConnectionString {
+	Write-Host("##[section]Starting: Build task 'UpdateDatabaseAzure'")
 	Write-Host "the server is $databaseServer"
 	exec {
         & $AliaSql Update $databaseServer $databaseName $databaseScripts $databaseUser $databasePassword
     }
+	Write-Host("##[section]Finishing: Build task 'UpdateDatabaseAzure'")
 }
 
 task DropDatabaseAzure -depends InjectConnectionString {
+	Write-Host("##[section]Starting: Build task 'DropDatabaseAzure'")
 	Write-Host "the server is $databaseServer"
 	Write-Host "$AliaSql Drop $databaseServer $databaseName $databaseScripts $databaseUser $databasePassword"
 	exec {
         & $AliaSql Drop $databaseServer $databaseName $databaseScripts $databaseUser $databasePassword
     }
+	Write-Host("##[section]Finishing: Build task 'DropDatabaseAzure'")
 }
 
 task LoadData -depends ConnectionString, Compile, RebuildDatabase {
@@ -141,7 +159,9 @@ task SchemaConnectionString {
 }
 
 task CommonAssemblyInfo {   
+	Write-Host("##[section]Starting: Build task 'CommonAssemblyInfo'")
     create-commonAssemblyInfo "$version" $projectName "$source_dir\CommonAssemblyInfo.cs"
+	Write-Host("##[section]Finishing: Build task 'CommonAssemblyInfo'")
 }
  
 
