@@ -33,5 +33,29 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             rehydratedEmployee.LastName.ShouldEqual(one.LastName);
             rehydratedEmployee.EmailAddress.ShouldEqual(one.EmailAddress);
         }
+
+        [Test]
+        public void EfCoreMappingShouldPersist()
+        {
+            new DatabaseTester().Clean();
+
+            var one = new Employee("1", "first1", "last1", "email1");
+            using (Bootcamp.DataAccess.Mappings.EntityFramework.DataContext context = new Bootcamp.DataAccess.Mappings.EntityFramework.DataContext())
+            {
+                context.Add(one);
+                context.SaveChanges();
+            }
+
+            Employee rehydratedEmployee;
+            using (Bootcamp.DataAccess.Mappings.EntityFramework.DataContext context = new Bootcamp.DataAccess.Mappings.EntityFramework.DataContext())
+            {
+                rehydratedEmployee = context.Find<Employee>(one.Id);
+            }
+
+            rehydratedEmployee.UserName.ShouldEqual(one.UserName);
+            rehydratedEmployee.FirstName.ShouldEqual(one.FirstName);
+            rehydratedEmployee.LastName.ShouldEqual(one.LastName);
+            rehydratedEmployee.EmailAddress.ShouldEqual(one.EmailAddress);
+        }
     }
 }
