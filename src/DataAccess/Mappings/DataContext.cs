@@ -15,7 +15,7 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
         public static ISession GetTransactedSession()
         {
             EnsureStartup();
-            ISession session = _sessionFactory.OpenSession();
+            ISession session = new SessionWrapper(_sessionFactory.OpenSession());
             session.BeginTransaction();
             return session;
         }

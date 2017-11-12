@@ -1,7 +1,6 @@
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.DataAccess;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
-using NHibernate;
 using NUnit.Framework;
 using Should;
 

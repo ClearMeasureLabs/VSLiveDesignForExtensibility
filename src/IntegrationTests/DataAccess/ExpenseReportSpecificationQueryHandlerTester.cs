@@ -5,7 +5,6 @@ using ClearMeasure.Bootcamp.Core.Plugins.DataAccess;
 using ClearMeasure.Bootcamp.DataAccess;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
 using ClearMeasure.Bootcamp.UI.DependencyResolution;
-using NHibernate;
 using NUnit.Framework;
 using StructureMap;
 
