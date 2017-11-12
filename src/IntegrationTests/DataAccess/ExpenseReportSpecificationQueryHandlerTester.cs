@@ -29,13 +29,13 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             order2.Approver = employee2;
             order2.Number = "456";
 
-            using (ISession session = DataContext.GetTransactedSession())
+            using (IDbContext dbContext = DataContextFactory.GetContext())
             {
-                session.SaveOrUpdate(employee1);
-                session.SaveOrUpdate(employee2);
-                session.SaveOrUpdate(order1);
-                session.SaveOrUpdate(order2);
-                session.Transaction.Commit();
+                dbContext.SaveOrUpdate(employee1);
+                dbContext.SaveOrUpdate(employee2);
+                dbContext.SaveOrUpdate(order1);
+                dbContext.SaveOrUpdate(order2);
+                dbContext.Transaction.Commit();
             }
 
             var specification = new ExpenseReportSpecificationQuery {Approver = employee1};
@@ -63,13 +63,13 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             order2.Submitter = creator2;
             order2.Number = "456";
 
-            using (ISession session = DataContext.GetTransactedSession())
+            using (IDbContext dbContext = DataContextFactory.GetContext())
             {
-                session.SaveOrUpdate(creator1);
-                session.SaveOrUpdate(creator2);
-                session.SaveOrUpdate(order1);
-                session.SaveOrUpdate(order2);
-                session.Transaction.Commit();
+                dbContext.SaveOrUpdate(creator1);
+                dbContext.SaveOrUpdate(creator2);
+                dbContext.SaveOrUpdate(order1);
+                dbContext.SaveOrUpdate(order2);
+                dbContext.Transaction.Commit();
             }
 
             var specification = new ExpenseReportSpecificationQuery{Submitter = creator1};
@@ -101,14 +101,14 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             order2.Number = "456";
             order2.Status = ExpenseReportStatus.Draft;
 
-            using(ISession session = DataContext.GetTransactedSession())
+            using(IDbContext dbContext = DataContextFactory.GetContext())
             {
 
-                session.SaveOrUpdate(employee1);
-                session.SaveOrUpdate(employee2);
-                session.SaveOrUpdate(order1);
-                session.SaveOrUpdate(order2);
-                session.Transaction.Commit();
+                dbContext.SaveOrUpdate(employee1);
+                dbContext.SaveOrUpdate(employee2);
+                dbContext.SaveOrUpdate(order1);
+                dbContext.SaveOrUpdate(order2);
+                dbContext.Transaction.Commit();
             }
 
             var specification = new ExpenseReportSpecificationQuery()
@@ -145,14 +145,14 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             order2.Number = "456";
             order2.Status = ExpenseReportStatus.Draft;
 
-            using (ISession session = DataContext.GetTransactedSession())
+            using (IDbContext dbContext = DataContextFactory.GetContext())
             {
 
-                session.SaveOrUpdate(employee1);
-                session.SaveOrUpdate(employee2);
-                session.SaveOrUpdate(order1);
-                session.SaveOrUpdate(order2);
-                session.Transaction.Commit();
+                dbContext.SaveOrUpdate(employee1);
+                dbContext.SaveOrUpdate(employee2);
+                dbContext.SaveOrUpdate(order1);
+                dbContext.SaveOrUpdate(order2);
+                dbContext.Transaction.Commit();
             }
 
             var specification = new ExpenseReportSpecificationQuery()

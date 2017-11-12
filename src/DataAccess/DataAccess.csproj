@@ -160,8 +160,8 @@
     <Compile Include="AddExpenseCommandHandler.cs" />
     <Compile Include="AddExpenseReportFactHandler.cs" />
     <Compile Include="ExpenseReportByNumberQueryHandler.cs" />
-    <Compile Include="ISession.cs" />
-    <Compile Include="Mappings\DataContext.cs" />
+    <Compile Include="DbContext.cs" />
+    <Compile Include="Mappings\DataContextFactory.cs" />
     <Compile Include="EmployeeByUserNameQueryHandler.cs" />
     <Compile Include="EmployeeSpecificationQueryHandler.cs" />
     <Compile Include="ExpenseReportSaveCommandHandler.cs" />
@@ -172,7 +172,7 @@
     <Compile Include="Mappings\EmployeeMap.cs" />
     <Compile Include="Mappings\ManagerMap.cs" />
     <Compile Include="Mappings\ExpenseReportStatusType.cs" />
-    <Compile Include="Mappings\SessionWrapper.cs" />
+    <Compile Include="Mappings\DbContextWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">

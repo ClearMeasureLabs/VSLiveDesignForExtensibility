@@ -10,9 +10,9 @@ namespace ClearMeasure.Bootcamp.DataAccess
     {
         public SingleResult<Employee> Handle(EmployeeByUserNameQuery specification)
         {
-            using (ISession session = DataContext.GetTransactedSession())
+            using (IDbContext dbContext = DataContextFactory.GetContext())
             {
-                IQuery query = session.CreateQuery("from Employee emp where emp.UserName = :username");
+                IQuery query = dbContext.CreateQuery("from Employee emp where emp.UserName = :username");
                 query.SetParameter("username", specification.UserName);
                 var match = query.UniqueResult<Employee>();
                 return new SingleResult<Employee>(match);

@@ -40,12 +40,12 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
                 CurrentDate = new DateTime(2000, 1,1 )
             };
 
-            using (ISession session = DataContext.GetTransactedSession())
+            using (IDbContext dbContext = DataContextFactory.GetContext())
             {
-                session.SaveOrUpdate(assignee);
-                session.SaveOrUpdate(creator);
-                session.SaveOrUpdate(report);
-                session.Transaction.Commit();
+                dbContext.SaveOrUpdate(assignee);
+                dbContext.SaveOrUpdate(creator);
+                dbContext.SaveOrUpdate(report);
+                dbContext.Transaction.Commit();
             }
 
             IContainer container = DependencyRegistrarModule.EnsureDependenciesRegistered();
@@ -53,9 +53,9 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             bus.Send(request);
 
             ExpenseReport loadedReport;
-            using (ISession session = DataContext.GetTransactedSession())
+            using (IDbContext dbContext = DataContextFactory.GetContext())
             {
-                loadedReport = session.Load<ExpenseReport>(report.Id);
+                loadedReport = dbContext.Load<ExpenseReport>(report.Id);
             }
             loadedReport.GetExpenses().Count().ShouldEqual(1);
             loadedReport.GetExpenses()[0].Amount.ShouldEqual(100);

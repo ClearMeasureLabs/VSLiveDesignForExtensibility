@@ -15,7 +15,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
         public void PopulateDatabase()
         {
             new DatabaseTester().Clean();
-            ISession session = DataContext.GetTransactedSession();
+            ISession session = DataContextFactory.GetContext();
 
 
             //Trainer1

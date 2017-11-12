@@ -30,7 +30,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
             report.Submitter = employee;
             report.Approver = employee;
 
-            using (ISession session = DataContext.GetTransactedSession())
+            using (ISession session = DataContextFactory.GetContext())
             {
                 session.SaveOrUpdate(employee);
                 session.SaveOrUpdate(report);
@@ -70,7 +70,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
 
             bus.Send(command);
 
-            using (ISession session = DataContext.GetTransactedSession())
+            using (ISession session = DataContextFactory.GetContext())
             {
                 session.Save(expenseReportFact);
                 session.Transaction.Commit();
@@ -78,7 +78,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
 
             ExpenseReportFact reHydratedExpenseReportFact;
 
-            using (ISession session = DataContext.GetTransactedSession())
+            using (ISession session = DataContextFactory.GetContext())
             {
                 reHydratedExpenseReportFact = session.Load<ExpenseReportFact>(expenseReportFact.Id);
             }

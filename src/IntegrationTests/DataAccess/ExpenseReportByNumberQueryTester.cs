@@ -25,7 +25,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             report.Submitter = creator;
             report.Number = "456";
 
-            using (ISession session = DataContext.GetTransactedSession())
+            using (ISession session = DataContextFactory.GetContext())
             {
                 session.SaveOrUpdate(creator);
                 session.SaveOrUpdate(order1);

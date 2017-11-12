@@ -27,7 +27,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             report.AddAuditEntry(new AuditEntry(creator, DateTime.Now, ExpenseReportStatus.Submitted,
                                                   ExpenseReportStatus.Approved));
 
-            using (ISession session = DataContext.GetTransactedSession())
+            using (ISession session = DataContextFactory.GetContext())
             {
                 session.SaveOrUpdate(creator);
                 session.SaveOrUpdate(assignee);
@@ -36,7 +36,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             }
 
             ExpenseReport rehydratedExpenseReport;
-            using (ISession session2 = DataContext.GetTransactedSession())
+            using (ISession session2 = DataContextFactory.GetContext())
             {
                 rehydratedExpenseReport = session2.Load<ExpenseReport>(report.Id);
             }
@@ -62,7 +62,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             report.Number = "123";
             report.AddExpense("howdy", 123.45m);
 
-            using (ISession session = DataContext.GetTransactedSession())
+            using (ISession session = DataContextFactory.GetContext())
             {
                 session.SaveOrUpdate(creator);
                 session.SaveOrUpdate(assignee);
@@ -71,7 +71,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             }
 
             ExpenseReport rehydratedExpenseReport;
-            using (ISession session2 = DataContext.GetTransactedSession())
+            using (ISession session2 = DataContextFactory.GetContext())
             {
                 rehydratedExpenseReport = session2.Load<ExpenseReport>(report.Id);
             }
@@ -114,7 +114,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             report.AddAuditEntry(new AuditEntry(creator, DateTime.Now, ExpenseReportStatus.Submitted,
                                                   ExpenseReportStatus.Approved));
             
-            using (ISession session = DataContext.GetTransactedSession())
+            using (ISession session = DataContextFactory.GetContext())
             {
                 session.SaveOrUpdate(creator);
                 session.SaveOrUpdate(assignee);
@@ -123,7 +123,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             }
 
             ExpenseReport pulledExpenseReport;
-            using (ISession session = DataContext.GetTransactedSession())
+            using (ISession session = DataContextFactory.GetContext())
             {
                 pulledExpenseReport = session.Load<ExpenseReport>(report.Id);
             }

@@ -10,10 +10,10 @@ namespace ClearMeasure.Bootcamp.DataAccess
     {
         public SingleResult<ExpenseReport> Handle(ExpenseReportSaveCommand request)
         {
-            using (ISession session = DataContext.GetTransactedSession())
+            using (IDbContext dbContext = DataContextFactory.GetContext())
             {
-                ITransaction transaction = session.BeginTransaction();
-                session.SaveOrUpdate(request.ExpenseReport);
+                ITransaction transaction = dbContext.BeginTransaction();
+                dbContext.SaveOrUpdate(request.ExpenseReport);
                 transaction.Commit();
             }
 

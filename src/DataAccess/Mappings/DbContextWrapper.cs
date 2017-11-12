@@ -8,11 +8,11 @@ using NHibernate.Type;
 
 namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 {
-    public class SessionWrapper : ISession
+    public class DbContextWrapper : IDbContext
     {
         private NHibernate.ISession _sessionImplementation;
 
-        public SessionWrapper(NHibernate.ISession sessionImplementation)
+        public DbContextWrapper(NHibernate.ISession sessionImplementation)
         {
             _sessionImplementation = sessionImplementation;
         }

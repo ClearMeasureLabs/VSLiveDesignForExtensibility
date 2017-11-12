@@ -17,7 +17,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             var one = new Manager("username", "Endurance", "Idehen", "Email");
             Employee adminAssistant = new Employee("Assistant", "Someone", "Else", "Email2");
             one.AdminAssistant = adminAssistant;
-            using (ISession session = DataContext.GetTransactedSession())
+            using (ISession session = DataContextFactory.GetContext())
             {
                 session.Save(one);
                 session.Save(adminAssistant);
@@ -25,7 +25,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             }
 
             Manager rehydratedEmployee;
-            using (ISession session = DataContext.GetTransactedSession())
+            using (ISession session = DataContextFactory.GetContext())
             {
                 rehydratedEmployee = session.Load<Manager>(one.Id);
             }

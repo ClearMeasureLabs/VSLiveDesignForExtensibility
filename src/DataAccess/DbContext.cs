@@ -2,7 +2,7 @@
 
 namespace ClearMeasure.Bootcamp.DataAccess
 {
-    public interface ISession : NHibernate.ISession, IDisposable
+    public interface IDbContext : NHibernate.ISession, IDisposable
     {
         
     }

@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore.ValueGeneration;
 
 namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 {
-    public class EfDataContext : DbContext
+    public class EfDataContext : Microsoft.EntityFrameworkCore.DbContext
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder
-                .UseSqlServer(DataContext.GetTransactedSession().Connection.ConnectionString);
+                .UseSqlServer(DataContextFactory.GetContext().Connection.ConnectionString);
 
             base.OnConfiguring(optionsBuilder);
         }

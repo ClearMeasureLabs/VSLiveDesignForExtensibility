@@ -12,9 +12,9 @@ namespace ClearMeasure.Bootcamp.DataAccess
     {
         public MultipleResult<Employee> Handle(EmployeeSpecificationQuery request)
         {
-            using (ISession session = DataContext.GetTransactedSession())
+            using (IDbContext dbContext = DataContextFactory.GetContext())
             {
-                ICriteria criteria = session.CreateCriteria(typeof(Employee));
+                ICriteria criteria = dbContext.CreateCriteria(typeof(Employee));
                 criteria.SetCacheable(true);
                 
                 IList<Employee> list = criteria.List<Employee>();

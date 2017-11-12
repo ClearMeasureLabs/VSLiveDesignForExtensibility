@@ -4,7 +4,7 @@ using NHibernate.Cfg;
 
 namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 {
-    public class DataContext
+    public class DataContextFactory
     {
         private static ISessionFactory _sessionFactory;
         private static bool _startupComplete;
@@ -12,12 +12,12 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
         private static readonly object _locker =
             new object();
 
-        public static ISession GetTransactedSession()
+        public static IDbContext GetContext()
         {
             EnsureStartup();
-            ISession session = new SessionWrapper(_sessionFactory.OpenSession());
-            session.BeginTransaction();
-            return session;
+            IDbContext dbContext = new DbContextWrapper(_sessionFactory.OpenSession());
+            dbContext.BeginTransaction();
+            return dbContext;
         }
 
         public static void EnsureStartup()
@@ -56,7 +56,7 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
                     .Mappings(cfg =>
                         cfg.FluentMappings
                             .AddFromAssembly(
-                                typeof (DataContext)
+                                typeof (DataContextFactory)
                                     .Assembly))
                     .BuildConfiguration();
         }

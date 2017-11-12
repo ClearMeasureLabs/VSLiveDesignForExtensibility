@@ -30,14 +30,14 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             ExpenseReportFact expenseReportFact = new ExpenseReportFact(expenseReport,new DateTime(2012,1,1));
 
 
-            using (ISession session = DataContext.GetTransactedSession())
+            using (ISession session = DataContextFactory.GetContext())
             {
                 //session.SaveOrUpdate(expenseReport);
                 session.SaveOrUpdate(expenseReportFact);
                 session.Transaction.Commit();
             }
 
-            using (ISession session = DataContext.GetTransactedSession())
+            using (ISession session = DataContextFactory.GetContext())
             {
                 var reportFact = session.Load<ExpenseReportFact>(expenseReportFact.Id);
                 reportFact.Total.ShouldEqual(expenseReportFact.Total);
