@@ -20,6 +20,12 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
             return dbContext;
         }
 
+        public static EfDataContext GetEfContext()
+        {
+            EnsureStartup();
+            return new EfDataContext();
+        }
+
         public static void EnsureStartup()
         {
             if (!_startupComplete)

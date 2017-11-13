@@ -2,10 +2,11 @@
 using ClearMeasure.Bootcamp.Core.Model;
 using FluentNHibernate;
 using FluentNHibernate.Mapping;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 {
-    public class ExpenseReportMap : ClassMap<ExpenseReport>
+    public class ExpenseReportMap : ClassMap<ExpenseReport>, IEntityFrameworkMapping
     {
         public ExpenseReportMap()
         {
@@ -65,6 +66,11 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
                 })
                 .Access.CamelCaseField()
                 .Not.LazyLoad();
+        }
+
+        public void Map(ModelBuilder modelBuilder)
+        {
+            
         }
     }
 }

@@ -9,7 +9,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
     [TestFixture]
     public class ManagerMappingTester
     {
-        [Test]
+        [Test, Explicit]
         public void ShouldPersist()
         {
             new DatabaseTester().Clean();
@@ -25,9 +25,9 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             }
 
             Manager rehydratedEmployee;
-            using (ISession session = DataContextFactory.GetContext())
+            using (EfDataContext context = DataContextFactory.GetEfContext())
             {
-                rehydratedEmployee = session.Load<Manager>(one.Id);
+                rehydratedEmployee = context.Find<Manager>(one.Id);
             }
 
             rehydratedEmployee.UserName.ShouldEqual(one.UserName);

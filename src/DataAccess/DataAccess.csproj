@@ -170,6 +170,7 @@
     <Compile Include="Mappings\ExpenseReportFactMap.cs" />
     <Compile Include="Mappings\ExpenseReportMap.cs" />
     <Compile Include="Mappings\EmployeeMap.cs" />
+    <Compile Include="Mappings\IEntityFrameworkMapping.cs" />
     <Compile Include="Mappings\ManagerMap.cs" />
     <Compile Include="Mappings\ExpenseReportStatusType.cs" />
     <Compile Include="Mappings\DbContextWrapper.cs" />

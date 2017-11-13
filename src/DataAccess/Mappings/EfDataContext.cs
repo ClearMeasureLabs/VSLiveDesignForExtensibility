@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.ValueGeneration;
 
 namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 {
-    public class EfDataContext : Microsoft.EntityFrameworkCore.DbContext
+    public class EfDataContext : DbContext
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -15,15 +15,10 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            var employeeMap = modelBuilder.Entity<Employee>();
-            employeeMap.UsePropertyAccessMode(PropertyAccessMode.Field);
-            employeeMap.HasKey(x => x.Id);
-            employeeMap.Property(x => x.Id).HasValueGenerator<SequentialGuidValueGenerator>().ValueGeneratedOnAdd();
-            employeeMap.Property(x => x.UserName).IsRequired().HasMaxLength(50);
-            employeeMap.Property(x => x.FirstName).IsRequired().HasMaxLength(25);
-            employeeMap.Property(x => x.LastName).IsRequired().HasMaxLength(25);
-            employeeMap.Property(x => x.EmailAddress).IsRequired().HasMaxLength(100);
-            employeeMap.HasDiscriminator<string>("Type").HasValue(typeof(Employee).FullName);
+            new EmployeeMap().Map(modelBuilder);
+            new ExpenseReportFactMap().Map(modelBuilder);
+            new ExpenseReportMap().Map(modelBuilder);
+            new ManagerMap().Map(modelBuilder);
         }
     }
 }
