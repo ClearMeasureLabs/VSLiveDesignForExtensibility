@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Plugins.DataAccess;
@@ -90,8 +91,8 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
                 rehydratedReport = session2.Load<ExpenseReport>(report.Id);
             }
 
-            var x = report.GetAuditEntries()[0];
-            var y = rehydratedReport.GetAuditEntries()[0];
+            var x = report.AuditEntries.ToArray()[0];
+            var y = rehydratedReport.AuditEntries.ToArray()[0];
             y.EndStatus.ShouldEqual(x.EndStatus);
             y.BeginStatus.ShouldEqual(x.BeginStatus);
             y.EmployeeName.ShouldEqual(x.EmployeeName);

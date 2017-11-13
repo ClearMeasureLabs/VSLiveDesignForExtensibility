@@ -92,26 +92,30 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             report.Description = "bar";
             report.ChangeStatus(ExpenseReportStatus.Approved);
             report.Number = "123";
-            report.AddAuditEntry(new AuditEntry(creator, DateTime.Now, ExpenseReportStatus.Submitted,
-                ExpenseReportStatus.Approved));
+            var auditEntry = new AuditEntry(creator, DateTime.Now, ExpenseReportStatus.Submitted,
+                ExpenseReportStatus.Approved);
+            report.AddAuditEntry(auditEntry);
 
-            using (ISession session = DataContextFactory.GetContext())
+            using (EfDataContext context = DataContextFactory.GetEfContext())
             {
-                session.SaveOrUpdate(creator);
-                session.SaveOrUpdate(assignee);
-                session.SaveOrUpdate(report);
-                session.Transaction.Commit();
+                context.Add(creator);
+                context.Add(assignee);
+                context.Add(auditEntry);
+                context.Add(report);
+                context.SaveChanges();
             }
 
             ExpenseReport rehydratedExpenseReport;
-            using (ISession session2 = DataContextFactory.GetContext())
+            using (EfDataContext context = DataContextFactory.GetEfContext())
             {
-                rehydratedExpenseReport = session2.Load<ExpenseReport>(report.Id);
+                rehydratedExpenseReport = context.Set<ExpenseReport>()
+                    .Single(s => s.Id == report.Id);
+                context.Entry<ExpenseReport>(rehydratedExpenseReport).Collection(x=>x.AuditEntries).Load();
             }
 
-            var x = report.GetAuditEntries()[0];
-            var y = rehydratedExpenseReport.GetAuditEntries()[0];
-            Assert.That(x.EndStatus, Is.EqualTo(y.EndStatus));
+            var x1 = report.AuditEntries.ToArray()[0];
+            var y1 = rehydratedExpenseReport.AuditEntries.ToArray()[0];
+            Assert.That(y1.EndStatus, Is.EqualTo(x1.EndStatus));
         }
     }
 }

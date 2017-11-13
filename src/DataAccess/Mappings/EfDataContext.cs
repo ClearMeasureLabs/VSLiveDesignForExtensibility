@@ -19,6 +19,7 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
             new ExpenseReportFactMap().Map(modelBuilder);
             new ExpenseReportMap().Map(modelBuilder);
             new ManagerMap().Map(modelBuilder);
+            new AuditEntryMap().Map(modelBuilder);
         }
     }
 }

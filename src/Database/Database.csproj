@@ -89,6 +89,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Database.nuspec" />
+    <Content Include="scripts\Update\0014-Ceate-EFAuditEntry-Table.sql" />
     <Content Include="UpdateAzureSQL.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

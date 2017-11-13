@@ -19,7 +19,7 @@ namespace ClearMeasure.Bootcamp.UnitTests.Core.Model
             Assert.That(report.Number, Is.EqualTo(null));
             Assert.That(report.Submitter, Is.EqualTo(null));
             Assert.That(report.Approver, Is.EqualTo(null));
-            Assert.That(report.GetAuditEntries().Length, Is.EqualTo(0));
+            Assert.That(report.AuditEntries.ToArray().Length, Is.EqualTo(0));
             Assert.That(report.Total, Is.EqualTo(0.0));
         }
 
@@ -57,8 +57,8 @@ namespace ClearMeasure.Bootcamp.UnitTests.Core.Model
             Assert.That(report.Number, Is.EqualTo("Number"));
             Assert.That(report.Submitter, Is.EqualTo(creator));
             Assert.That(report.Approver, Is.EqualTo(assignee));
-            Assert.That(report.GetAuditEntries()[0].EndStatus, Is.EqualTo(ExpenseReportStatus.Approved));
-            Assert.That(report.GetAuditEntries()[0].Date, Is.EqualTo(auditDate));
+            Assert.That(report.AuditEntries.ToArray()[0].EndStatus, Is.EqualTo(ExpenseReportStatus.Approved));
+            Assert.That(report.AuditEntries.ToArray()[0].Date, Is.EqualTo(auditDate));
         }
 
         [Test]

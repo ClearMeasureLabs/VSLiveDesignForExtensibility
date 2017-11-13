@@ -185,6 +185,7 @@
     <Compile Include="DataAccess\ExpenseReportSaveCommandHandlerTester.cs" />
     <Compile Include="DataAccess\ExpenseReportSpecificationQueryHandlerTester.cs" />
     <Compile Include="DataAccess\Mappings\ExpenseReportFactMappingTester.cs" />
+    <Compile Include="DataAccess\Mappings\AuditEntryTester.cs" />
     <Compile Include="DataAccess\Mappings\ManagerMappingTester.cs" />
     <Compile Include="DatabaseEmptier.cs" />
     <Compile Include="DataAccess\Mappings\EmployeeMappingTester.cs" />

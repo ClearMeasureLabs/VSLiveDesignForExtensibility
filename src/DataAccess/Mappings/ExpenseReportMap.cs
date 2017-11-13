@@ -81,7 +81,8 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
             mapping.HasOne(x => x.Submitter);
             mapping.HasOne(x => x.Approver);
 
-
+            mapping.HasMany(x => x.AuditEntries).WithOne(x=>x.ExpenseReport);
+            
             return mapping;
         }
     }
