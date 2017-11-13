@@ -7,7 +7,6 @@ namespace ClearMeasure.Bootcamp.Core.Model
     public class ExpenseReport
     {
         public IList<AuditEntry> _auditEntries = new List<AuditEntry>();
-        public IList<Expense> _expenses = new List<Expense>();
         public Guid Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
@@ -68,17 +67,6 @@ namespace ClearMeasure.Bootcamp.Core.Model
         public void AddAuditEntry(AuditEntry auditEntry)
         {
             _auditEntries.Add(auditEntry);
-        }
-
-        public void AddExpense(string description, decimal total)
-        {
-            var expense = new Expense(total, description);
-            _expenses.Add(expense);
-        }
-
-        public Expense[] GetExpenses()
-        {
-            return _expenses.ToArray();
         }
     }
 }

@@ -78,19 +78,5 @@ namespace ClearMeasure.Bootcamp.UnitTests.Core.Model
             report.ChangeStatus(ExpenseReportStatus.Submitted);
             Assert.That(report.Status, Is.EqualTo(ExpenseReportStatus.Submitted));
         }
-
-        [Test]
-        public void ShouldAddNewExpense()
-        {
-            var report = new ExpenseReport();
-            report.Description = "TestReportDescription";
-            report.Total = new decimal(97.34);
-
-            report.AddExpense(report.Description, report.Total);
-
-            Assert.That(report._expenses.Count, Is.EqualTo(1));
-
-            Assert.That(report._expenses.First().Description, Is.EqualTo(report.Description));
-        }
     }
 }

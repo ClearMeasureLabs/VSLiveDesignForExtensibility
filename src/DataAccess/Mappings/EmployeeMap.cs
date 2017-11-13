@@ -3,6 +3,7 @@ using ClearMeasure.Bootcamp.Core.Model;
 using FluentNHibernate.Conventions.Inspections;
 using FluentNHibernate.Mapping;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
 
 namespace ClearMeasure.Bootcamp.DataAccess.Mappings
@@ -21,7 +22,7 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
             DiscriminateSubClassesOnColumn("Type");
         }
 
-        public void Map(ModelBuilder modelBuilder)
+        public EntityTypeBuilder Map(ModelBuilder modelBuilder)
         {
             var employeeMap = modelBuilder.Entity<Employee>();
             employeeMap.UsePropertyAccessMode(PropertyAccessMode.Field);
@@ -32,6 +33,8 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
             employeeMap.Property(x => x.LastName).IsRequired().HasMaxLength(25);
             employeeMap.Property(x => x.EmailAddress).IsRequired().HasMaxLength(100);
             employeeMap.HasDiscriminator<string>("Type").HasValue(typeof(Employee).FullName);
+
+            return employeeMap;
         }
     }
 }

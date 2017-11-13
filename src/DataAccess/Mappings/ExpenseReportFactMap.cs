@@ -1,6 +1,7 @@
 ﻿using ClearMeasure.Bootcamp.Core.Model.ExpenseReportAnalytics;
 using FluentNHibernate.Mapping;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 {
@@ -20,9 +21,9 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
             
         }
 
-        public void Map(ModelBuilder modelBuilder)
+        public EntityTypeBuilder Map(ModelBuilder modelBuilder)
         {
-            
+            return null;
         }
     }
 }

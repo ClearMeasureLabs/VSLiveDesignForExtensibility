@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ClearMeasure.Bootcamp.IntegrationTests</RootNamespace>
     <AssemblyName>ClearMeasure.Bootcamp.IntegrationTests</AssemblyName>
-	<TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
@@ -176,7 +176,6 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Core\Features\Workflow\MostRecentExpenseReportFactViewIntegratedTester.cs" />
-    <Compile Include="DataAccess\AddExpenseCommandHandlerTester.cs" />
     <Compile Include="DataAccess\AddExpenseReportFactHandlerTester.cs" />
     <Compile Include="Core\Features\Workflow\ExecuteTransitionCommandHandlerIntegratedTester.cs" />
     <Compile Include="DataAccess\DatabaseTester.cs" />

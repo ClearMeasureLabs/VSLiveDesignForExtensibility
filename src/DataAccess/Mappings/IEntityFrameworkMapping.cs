@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 {
     public interface IEntityFrameworkMapping
     {
-        void Map(ModelBuilder modelBuilder);
+        EntityTypeBuilder Map(ModelBuilder modelBuilder);
     }
 }
