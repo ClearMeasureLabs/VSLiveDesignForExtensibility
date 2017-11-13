@@ -1,5 +1,7 @@
+using System.Linq;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
+using Microsoft.EntityFrameworkCore;
 using NHibernate;
 using NUnit.Framework;
 using Should;
@@ -9,7 +11,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
     [TestFixture]
     public class ManagerMappingTester
     {
-        [Test, Explicit]
+        [Test]
         public void ShouldPersist()
         {
             new DatabaseTester().Clean();
@@ -27,7 +29,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             Manager rehydratedEmployee;
             using (EfDataContext context = DataContextFactory.GetEfContext())
             {
-                rehydratedEmployee = context.Find<Manager>(one.Id);
+                rehydratedEmployee = context.Set<Manager>().Include(x => x.AdminAssistant).Single(x => x.Id == one.Id);
             }
 
             rehydratedEmployee.UserName.ShouldEqual(one.UserName);
