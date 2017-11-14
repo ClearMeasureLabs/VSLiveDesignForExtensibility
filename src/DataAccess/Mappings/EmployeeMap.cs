@@ -24,17 +24,17 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 
         public EntityTypeBuilder Map(ModelBuilder modelBuilder)
         {
-            var employeeMap = modelBuilder.Entity<Employee>();
-            employeeMap.UsePropertyAccessMode(PropertyAccessMode.Field);
-            employeeMap.HasKey(x => x.Id);
-            employeeMap.Property(x => x.Id).HasValueGenerator<SequentialGuidValueGenerator>().ValueGeneratedOnAdd();
-            employeeMap.Property(x => x.UserName).IsRequired().HasMaxLength(50);
-            employeeMap.Property(x => x.FirstName).IsRequired().HasMaxLength(25);
-            employeeMap.Property(x => x.LastName).IsRequired().HasMaxLength(25);
-            employeeMap.Property(x => x.EmailAddress).IsRequired().HasMaxLength(100);
-            employeeMap.HasDiscriminator<string>("Type").HasValue(typeof(Employee).FullName);
+            var mapping = modelBuilder.Entity<Employee>();
+            mapping.UsePropertyAccessMode(PropertyAccessMode.Field);
+            mapping.HasKey(x => x.Id);
+            mapping.Property(x => x.Id).HasValueGenerator<SequentialGuidValueGenerator>().ValueGeneratedOnAdd();
+            mapping.Property(x => x.UserName).IsRequired().HasMaxLength(50);
+            mapping.Property(x => x.FirstName).IsRequired().HasMaxLength(25);
+            mapping.Property(x => x.LastName).IsRequired().HasMaxLength(25);
+            mapping.Property(x => x.EmailAddress).IsRequired().HasMaxLength(100);
+            mapping.HasDiscriminator<string>("Type").HasValue(typeof(Employee).FullName);
 
-            return employeeMap;
+            return mapping;
         }
     }
 }

@@ -36,6 +36,7 @@ properties {
     if([string]::IsNullOrEmpty($version)) { $version = "1.0.0"}
     if([string]::IsNullOrEmpty($projectConfig)) {$projectConfig = "Release"}
     if([string]::IsNullOrEmpty($runOctoPack)) {$runOctoPack = "true"}
+	Write-Host("db password is $databasePassword")
 }
 
 task default -depends Init, Compile, RebuildDatabase, Test, LoadData

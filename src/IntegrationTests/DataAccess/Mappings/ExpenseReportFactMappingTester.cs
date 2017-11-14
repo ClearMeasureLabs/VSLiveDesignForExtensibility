@@ -37,9 +37,10 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
                 session.Transaction.Commit();
             }
 
-            using (ISession session = DataContextFactory.GetContext())
+            using (EfDataContext context = DataContextFactory.GetEfContext())
             {
-                var reportFact = session.Load<ExpenseReportFact>(expenseReportFact.Id);
+                var reportFact = context.Find<ExpenseReportFact>(expenseReportFact.Id);
+
                 reportFact.Total.ShouldEqual(expenseReportFact.Total);
                 reportFact.TimeStamp.ShouldEqual(expenseReportFact.TimeStamp);
                 reportFact.Number.ShouldEqual(expenseReportFact.Number);

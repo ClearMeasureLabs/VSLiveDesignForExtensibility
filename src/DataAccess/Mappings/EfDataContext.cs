@@ -1,6 +1,10 @@
-﻿using ClearMeasure.Bootcamp.Core.Model;
+﻿using System;
+using System.Diagnostics;
+using ClearMeasure.Bootcamp.Core.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
+using Microsoft.Extensions.Logging;
 
 namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 {
@@ -8,8 +12,11 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            var connectionConnectionString = DataContextFactory.GetContext().Connection.ConnectionString;
+            Console.WriteLine($"%%%Connection string is: {connectionConnectionString}");
             optionsBuilder
-                .UseSqlServer(DataContextFactory.GetContext().Connection.ConnectionString);
+                .UseSqlServer(connectionConnectionString)
+                .ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.QueryClientEvaluationWarning));
 
             base.OnConfiguring(optionsBuilder);
         }
@@ -20,6 +27,7 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
             new ExpenseReportMap().Map(modelBuilder);
             new ManagerMap().Map(modelBuilder);
             new AuditEntryMap().Map(modelBuilder);
+            new ExpenseReportFactMap().Map(modelBuilder);
         }
     }
 }
