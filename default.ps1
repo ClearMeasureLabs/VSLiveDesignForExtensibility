@@ -86,6 +86,8 @@ task Compile -depends Init {
         & 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe' /t:Clean`;Rebuild /v:m /maxcpucount:1 /nologo /p:Configuration=$projectConfig /p:OctoPackPackageVersion=$version /p:RunOctoPack=$runOctoPack /p:OctoPackEnforceAddingFiles=true $source_dir\$projectName.sln
     }
 
+	#
+
 	Copy_and_flatten $source_dir *.nupkg $build_dir
 	Write-Host("##[section]Finishing: Build task 'Compile'")
 }

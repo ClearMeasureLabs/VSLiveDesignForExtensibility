@@ -43,9 +43,16 @@ namespace ClearMeasure.Bootcamp.Core.Model
 
 		public string Code
 		{
-			get => _innerStatus._code;
-		    set => _innerStatus = FromCode(value);
-		}
+            get
+            {
+                return _innerStatus._code;
+            }
+
+            set
+            {
+                _innerStatus = FromCode(value);
+            }
+        }
 
 		public string Key
 		{
@@ -59,8 +66,11 @@ namespace ClearMeasure.Bootcamp.Core.Model
 
 	    public byte SortBy
 	    {
-	        get => _innerStatus._sortBy;
-	    }
+            get
+            {
+                return _innerStatus._sortBy;
+            }
+        }
 
 	    public override bool Equals(object obj)
 		{
