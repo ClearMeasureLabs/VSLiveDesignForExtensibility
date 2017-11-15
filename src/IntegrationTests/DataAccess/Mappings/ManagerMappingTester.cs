@@ -1,5 +1,7 @@
+using System.Linq;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
+using Microsoft.EntityFrameworkCore;
 using NHibernate;
 using NUnit.Framework;
 using Should;
@@ -17,7 +19,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             var one = new Manager("username", "Endurance", "Idehen", "Email");
             Employee adminAssistant = new Employee("Assistant", "Someone", "Else", "Email2");
             one.AdminAssistant = adminAssistant;
-            using (ISession session = DataContext.GetTransactedSession())
+            using (ISession session = DataContextFactory.GetContext())
             {
                 session.Save(one);
                 session.Save(adminAssistant);
@@ -25,9 +27,9 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             }
 
             Manager rehydratedEmployee;
-            using (ISession session = DataContext.GetTransactedSession())
+            using (EfDataContext context = DataContextFactory.GetEfContext())
             {
-                rehydratedEmployee = session.Load<Manager>(one.Id);
+                rehydratedEmployee = context.Set<Manager>().Include(x => x.AdminAssistant).Single(x => x.Id == one.Id);
             }
 
             rehydratedEmployee.UserName.ShouldEqual(one.UserName);

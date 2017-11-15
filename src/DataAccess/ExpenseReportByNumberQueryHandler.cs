@@ -11,9 +11,9 @@ namespace ClearMeasure.Bootcamp.DataAccess
     {
         public SingleResult<ExpenseReport> Handle(ExpenseReportByNumberQuery request)
         {
-            using (ISession session = DataContext.GetTransactedSession())
+            using (IDbContext dbContext = DataContextFactory.GetContext())
             {
-                ICriteria criteria = session.CreateCriteria(typeof (ExpenseReport));
+                ICriteria criteria = dbContext.CreateCriteria(typeof (ExpenseReport));
                 criteria.Add(Restrictions.Eq("Number", request.ExpenseReportNumber));
                 criteria.SetFetchMode("AuditEntries", FetchMode.Eager);
                 var result = criteria.UniqueResult<ExpenseReport>();

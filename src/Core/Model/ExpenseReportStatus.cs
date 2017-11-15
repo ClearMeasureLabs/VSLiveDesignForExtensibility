@@ -1,8 +1,9 @@
 using System;
+using System.ComponentModel;
 
 namespace ClearMeasure.Bootcamp.Core.Model
 {
-	public class ExpenseReportStatus
+    public class ExpenseReportStatus
 	{
 		public static readonly ExpenseReportStatus None = new ExpenseReportStatus("", "", " ", 0);
 		public static readonly ExpenseReportStatus Draft = new ExpenseReportStatus("DFT", "Draft", "Drafting", 1);
@@ -10,8 +11,11 @@ namespace ClearMeasure.Bootcamp.Core.Model
 		public static readonly ExpenseReportStatus Approved = new ExpenseReportStatus("APV", "Approved", "Approved", 3);
 		public static readonly ExpenseReportStatus Cancelled = new ExpenseReportStatus("CAN", "Cancelled", "Cancelled", 4);
 		
-	    private string _code;
-		private string _key;
+	    private readonly string _code;
+		private readonly string _key;
+	    private readonly string _friendlyName;
+	    private readonly byte _sortBy;
+	    private ExpenseReportStatus _innerStatus = None;
 
 	    protected ExpenseReportStatus()
 		{
@@ -21,8 +25,9 @@ namespace ClearMeasure.Bootcamp.Core.Model
 		{
 			_code = code;
 			_key = key;
-			FriendlyName = friendlyName;
-			SortBy = sortBy;
+		    _friendlyName = friendlyName;
+		    _sortBy = sortBy;
+		    _innerStatus = this;
 		}
 
 		public static ExpenseReportStatus[] GetAllItems()
@@ -38,17 +43,34 @@ namespace ClearMeasure.Bootcamp.Core.Model
 
 		public string Code
 		{
-			get { return _code; }
-		}
+            get
+            {
+                return _innerStatus._code;
+            }
+
+            set
+            {
+                _innerStatus = FromCode(value);
+            }
+        }
 
 		public string Key
 		{
-			get { return _key; }
+			get { return _innerStatus._key; }
 		}
 
-	    public string FriendlyName { get; set; }
+	    public string FriendlyName
+	    {
+	        get { return _innerStatus._friendlyName; }
+	    }
 
-	    public byte SortBy { get; set; }
+	    public byte SortBy
+	    {
+            get
+            {
+                return _innerStatus._sortBy;
+            }
+        }
 
 	    public override bool Equals(object obj)
 		{
@@ -111,5 +133,10 @@ namespace ClearMeasure.Bootcamp.Core.Model
 		{
 			return FromKey(name);
 		}
-	}
+
+        public static implicit operator ExpenseReportStatus(string code)
+        {
+            return FromCode(code);
+        }
+    }
 }

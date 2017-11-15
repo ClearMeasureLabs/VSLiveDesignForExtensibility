@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Linq;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
-using FluentNHibernate.Utils;
-using NHibernate;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using Should;
 
 namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
 {
@@ -11,91 +12,19 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
     public class ExpenseReportMappingTester
     {
         [Test]
-        public void ShouldSaveAuditEntries()
-        {
-            new DatabaseTester().Clean();
-
-            var creator = new Employee("1", "1", "1", "1");
-            var assignee = new Employee("2", "2", "2", "2");
-            var report = new ExpenseReport();
-            report.Submitter = creator;
-            report.Approver = assignee;
-            report.Title = "foo";
-            report.Description = "bar";
-            report.ChangeStatus(ExpenseReportStatus.Approved);
-            report.Number = "123";
-            report.AddAuditEntry(new AuditEntry(creator, DateTime.Now, ExpenseReportStatus.Submitted,
-                                                  ExpenseReportStatus.Approved));
-
-            using (ISession session = DataContext.GetTransactedSession())
-            {
-                session.SaveOrUpdate(creator);
-                session.SaveOrUpdate(assignee);
-                session.SaveOrUpdate(report);
-                session.Transaction.Commit();
-            }
-
-            ExpenseReport rehydratedExpenseReport;
-            using (ISession session2 = DataContext.GetTransactedSession())
-            {
-                rehydratedExpenseReport = session2.Load<ExpenseReport>(report.Id);
-            }
-
-            var x = report.GetAuditEntries()[0];
-            var y = rehydratedExpenseReport.GetAuditEntries()[0];
-            Assert.That(x.EndStatus, Is.EqualTo(y.EndStatus));
-        }
-
-        [Test]
-        public void ShouldSaveExpenses()
-        {
-            new DatabaseTester().Clean();
-
-            var creator = new Employee("1", "1", "1", "1");
-            var assignee = new Employee("2", "2", "2", "2");
-            var report = new ExpenseReport();
-            report.Submitter = creator;
-            report.Approver = assignee;
-            report.Title = "foo";
-            report.Description = "bar";
-            report.ChangeStatus(ExpenseReportStatus.Approved);
-            report.Number = "123";
-            report.AddExpense("howdy", 123.45m);
-
-            using (ISession session = DataContext.GetTransactedSession())
-            {
-                session.SaveOrUpdate(creator);
-                session.SaveOrUpdate(assignee);
-                session.SaveOrUpdate(report);
-                session.Transaction.Commit();
-            }
-
-            ExpenseReport rehydratedExpenseReport;
-            using (ISession session2 = DataContext.GetTransactedSession())
-            {
-                rehydratedExpenseReport = session2.Load<ExpenseReport>(report.Id);
-            }
-
-            Expense x = report.GetExpenses()[0];
-            Expense y = rehydratedExpenseReport.GetExpenses()[0];
-            Assert.That(x.Description, Is.EqualTo(y.Description));
-            Assert.That(x.Amount, Is.EqualTo(y.Amount));
-        }
-
-        [Test]
         public void ShouldSaveExpenseReportWithNewProperties()
         {
             // Clean the database
             new DatabaseTester().Clean();
             // Make employees
-            var creator = new Employee("1", "1", "1", "1");
-            var assignee = new Employee("2", "2", "2", "2");
+            var submitter = new Employee("1", "1", "1", "1");
+            var approver = new Employee("2", "2", "2", "2");
             DateTime testTime = new DateTime(2015, 1, 1);
             // popluate ExpenseReport
             var report = new ExpenseReport
             {
-                Submitter = creator,
-                Approver = assignee,
+                Submitter = submitter,
+                Approver = approver,
                 Title = "TestExpenseReport",
                 Description = "This is an expense report test",
                 Number = "123",
@@ -111,32 +40,132 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             };
 
             report.ChangeStatus(ExpenseReportStatus.Approved);
-            report.AddAuditEntry(new AuditEntry(creator, DateTime.Now, ExpenseReportStatus.Submitted,
-                                                  ExpenseReportStatus.Approved));
+            var auditEntry = new AuditEntry(submitter, DateTime.Now, ExpenseReportStatus.Submitted,
+                ExpenseReportStatus.Approved);
+            report.AddAuditEntry(auditEntry);
             
-            using (ISession session = DataContext.GetTransactedSession())
+            using (EfDataContext context = DataContextFactory.GetEfContext())
             {
-                session.SaveOrUpdate(creator);
-                session.SaveOrUpdate(assignee);
-                session.SaveOrUpdate(report);
-                session.Transaction.Commit();
+                context.Add(submitter);
+                context.Add(approver);
+                context.Add(auditEntry);
+                context.Add(report);
+                context.SaveChanges();
             }
 
-            ExpenseReport pulledExpenseReport;
-            using (ISession session = DataContext.GetTransactedSession())
+            ExpenseReport rehydratedExpenseReport;
+            using (EfDataContext context = DataContextFactory.GetEfContext())
             {
-                pulledExpenseReport = session.Load<ExpenseReport>(report.Id);
+                rehydratedExpenseReport = context.Set<ExpenseReport>().Include(x => x.Approver)
+                    .Include(x => x.Submitter).Single(x => x.Id == report.Id);
             }
 
-            Assert.That(pulledExpenseReport.MilesDriven, Is.EqualTo(report.MilesDriven));
-            Assert.That(pulledExpenseReport.Created, Is.EqualTo(report.Created));
-            Assert.That(pulledExpenseReport.FirstSubmitted, Is.EqualTo(report.FirstSubmitted));
-            Assert.That(pulledExpenseReport.LastSubmitted, Is.EqualTo(report.LastSubmitted));
-            Assert.That(pulledExpenseReport.LastWithdrawn, Is.EqualTo(report.LastWithdrawn));
-            Assert.That(pulledExpenseReport.LastCancelled, Is.EqualTo(report.LastCancelled));
-            Assert.That(pulledExpenseReport.LastApproved, Is.EqualTo(report.LastApproved));
-            Assert.That(pulledExpenseReport.LastDeclined, Is.EqualTo(report.LastDeclined));
-            Assert.That(pulledExpenseReport.Total, Is.EqualTo(report.Total));
+            rehydratedExpenseReport.Approver.ShouldEqual(approver);
+            rehydratedExpenseReport.Submitter.ShouldEqual(submitter);
+            rehydratedExpenseReport.Title.ShouldEqual("TestExpenseReport");
+            rehydratedExpenseReport.Description.ShouldEqual("This is an expense report test");
+            rehydratedExpenseReport.Number.ShouldEqual("123");
+            rehydratedExpenseReport.Status.ShouldEqual(ExpenseReportStatus.Approved);
+            Assert.That(rehydratedExpenseReport.MilesDriven, Is.EqualTo(report.MilesDriven));
+            Assert.That(rehydratedExpenseReport.Created, Is.EqualTo(report.Created));
+            Assert.That(rehydratedExpenseReport.FirstSubmitted, Is.EqualTo(report.FirstSubmitted));
+            Assert.That(rehydratedExpenseReport.LastSubmitted, Is.EqualTo(report.LastSubmitted));
+            Assert.That(rehydratedExpenseReport.LastWithdrawn, Is.EqualTo(report.LastWithdrawn));
+            Assert.That(rehydratedExpenseReport.LastCancelled, Is.EqualTo(report.LastCancelled));
+            Assert.That(rehydratedExpenseReport.LastApproved, Is.EqualTo(report.LastApproved));
+            Assert.That(rehydratedExpenseReport.LastDeclined, Is.EqualTo(report.LastDeclined));
+            Assert.That(rehydratedExpenseReport.Total, Is.EqualTo(report.Total));
+        }
+
+        [Test]
+        public void ShouldSaveAuditEntries()
+        {
+            new DatabaseTester().Clean();
+
+            var creator = new Employee("1", "1", "1", "1");
+            var assignee = new Employee("2", "2", "2", "2");
+            var report = new ExpenseReport();
+            report.Submitter = creator;
+            report.Approver = assignee;
+            report.Title = "foo";
+            report.Description = "bar";
+            report.ChangeStatus(ExpenseReportStatus.Approved);
+            report.Number = "123";
+            var auditEntry = new AuditEntry(creator, DateTime.Now, ExpenseReportStatus.Submitted,
+                ExpenseReportStatus.Approved);
+            report.AddAuditEntry(auditEntry);
+
+            using (EfDataContext context = DataContextFactory.GetEfContext())
+            {
+                context.Add(creator);
+                context.Add(assignee);
+                context.Add(auditEntry);
+                context.Add(report);
+                context.SaveChanges();
+            }
+
+            ExpenseReport rehydratedExpenseReport;
+            using (EfDataContext context = DataContextFactory.GetEfContext())
+            {
+                rehydratedExpenseReport = context.Set<ExpenseReport>()
+                    .Single(s => s.Id == report.Id);
+                context.Entry<ExpenseReport>(rehydratedExpenseReport).Collection(x=>x.AuditEntries).Load();
+            }
+
+            var x1 = report.AuditEntries.ToArray()[0];
+            var y1 = rehydratedExpenseReport.AuditEntries.ToArray()[0];
+            Assert.That(y1.EndStatus, Is.EqualTo(x1.EndStatus));
+        }
+
+        [Test]
+        public void ShouldCascadeDeleteAuditEntries()
+        {
+            new DatabaseTester().Clean();
+
+            var creator = new Employee("1", "1", "1", "1");
+            var assignee = new Employee("2", "2", "2", "2");
+            var report = new ExpenseReport();
+            report.Submitter = creator;
+            report.Approver = assignee;
+            report.Title = "foo";
+            report.Description = "bar";
+            report.ChangeStatus(ExpenseReportStatus.Approved);
+            report.Number = "123";
+            var auditEntry = new AuditEntry(creator, DateTime.Now, ExpenseReportStatus.Submitted,
+                ExpenseReportStatus.Approved);
+            report.AddAuditEntry(auditEntry);
+
+            using (EfDataContext context = DataContextFactory.GetEfContext())
+            {
+                context.Add(creator);
+                context.Add(assignee);
+                context.Add(auditEntry);
+                context.Add(report);
+                context.SaveChanges();
+            }
+
+            ExpenseReport rehydratedExpenseReport;
+            using (EfDataContext context = DataContextFactory.GetEfContext())
+            {
+                rehydratedExpenseReport = context.Set<ExpenseReport>()
+                    .Single(s => s.Id == report.Id);
+                context.Entry<ExpenseReport>(rehydratedExpenseReport).Collection(x => x.AuditEntries).Load();
+            }
+
+            rehydratedExpenseReport.AuditEntries.ToArray().Length.ShouldEqual(1);
+            var entryId = rehydratedExpenseReport.AuditEntries.ToArray()[0].Id;
+
+            using (EfDataContext context = DataContextFactory.GetEfContext())
+            {
+                context.Remove(rehydratedExpenseReport);
+                context.SaveChanges();
+            }
+
+            using (EfDataContext context = DataContextFactory.GetEfContext())
+            {
+                context.Set<AuditEntry>().Count(entry => entry.Id == entryId).ShouldEqual(0);
+                context.SaveChanges();
+            }
         }
     }
 }

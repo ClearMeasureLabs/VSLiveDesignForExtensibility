@@ -2,7 +2,6 @@ using System;
 using ClearMeasure.Bootcamp.Core.Model.ExpenseReportAnalytics;
 using ClearMeasure.Bootcamp.DataAccess;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
-using NHibernate;
 using NUnit.Framework;
 
 namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
@@ -30,9 +29,9 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             var handler = new AddExpenseReportFactHandler();
             handler.Handle(command);
 
-            using (ISession session = DataContext.GetTransactedSession())
+            using (IDbContext dbContext = DataContextFactory.GetContext())
             {
-                var facts = session.CreateCriteria<ExpenseReportFact>().List<ExpenseReportFact>();
+                var facts = dbContext.CreateCriteria<ExpenseReportFact>().List<ExpenseReportFact>();
                 Assert.That(facts.Count, Is.EqualTo(1));
             }
         }

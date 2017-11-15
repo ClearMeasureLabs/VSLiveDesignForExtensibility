@@ -27,7 +27,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
 
             Setup();
 
-            using (ISession session = DataContext.GetTransactedSession())
+            using (ISession session = DataContextFactory.GetContext())
             {
                 var query = session.CreateSQLQuery("select count(1), status from MostRecentExpenseReportFactView group by status");
                 var results = query.List();
@@ -48,7 +48,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
         private static void Setup()
         {
             var employee = new Employee("jpalermo", "Jeffrey", "Palermo", "jeffrey @ clear dash measure.com");
-            using (ISession session = DataContext.GetTransactedSession())
+            using (ISession session = DataContextFactory.GetContext())
             {
                 session.Save(employee);
                 session.Transaction.Commit();
@@ -84,7 +84,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
             report.Approver = employee;
             report.Total = total;
 
-            using (ISession session = DataContext.GetTransactedSession())
+            using (ISession session = DataContextFactory.GetContext())
             {
                 session.SaveOrUpdate(report);
                 session.Transaction.Commit();

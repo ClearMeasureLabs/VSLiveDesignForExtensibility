@@ -2,10 +2,13 @@
 using ClearMeasure.Bootcamp.Core.Model;
 using FluentNHibernate;
 using FluentNHibernate.Mapping;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.ValueGeneration;
 
 namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 {
-    public class ExpenseReportMap : ClassMap<ExpenseReport>
+    public class ExpenseReportMap : ClassMap<ExpenseReport>, IEntityFrameworkMapping
     {
         public ExpenseReportMap()
         {
@@ -48,23 +51,39 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
                 })
                 .Access.CamelCaseField()
                 .Not.LazyLoad();
+        }
 
-            HasMany(Reveal.Member<ExpenseReport, IEnumerable<Expense>>("_expenses"))
-                .AsList(part =>
-                {
-                    part.Column("Sequence");
-                    part.Type<int>();
-                })
-                .Table("Expense")
-                .Cascade.AllDeleteOrphan()
-                .KeyColumn("ExpenseReportId")
-                .Component(part =>
-                {
-                    part.Map(x => x.Description);
-                    part.Map(x => x.Amount);
-                })
-                .Access.CamelCaseField()
-                .Not.LazyLoad();
+        public EntityTypeBuilder Map(ModelBuilder modelBuilder)
+        {
+            var mapping = modelBuilder.Entity<ExpenseReport>();
+            mapping.UsePropertyAccessMode(PropertyAccessMode.Field);
+            mapping.HasKey(x => x.Id);
+            mapping.Property(x => x.Id).HasValueGenerator<SequentialGuidValueGenerator>().ValueGeneratedOnAdd();
+            mapping.Property(x => x.Number).IsRequired().HasMaxLength(5);
+            mapping.Property(x => x.Title).IsRequired().HasMaxLength(200);
+            mapping.Property(x => x.Description).IsRequired().HasMaxLength(4000);
+            mapping.OwnsOne(x => x.Status, builder =>
+            {
+                builder.Property<string>(x => x.Code).HasColumnName("Status").HasColumnType("nchar(3)");
+                builder.Ignore(x => x.FriendlyName).Ignore(x => x.Key).Ignore(x => x.SortBy);
+            });
+
+            mapping.Property(x => x.MilesDriven);
+            mapping.Property(x => x.Created);
+            mapping.Property(x => x.FirstSubmitted);
+            mapping.Property(x => x.LastSubmitted);
+            mapping.Property(x => x.LastWithdrawn);
+            mapping.Property(x => x.LastCancelled);
+            mapping.Property(x => x.LastApproved);
+            mapping.Property(x => x.LastDeclined);
+            mapping.Property(x => x.Total);
+
+            mapping.HasOne(x => x.Submitter);
+            mapping.HasOne(x => x.Approver);
+
+            mapping.HasMany(x => x.AuditEntries).WithOne(x=>x.ExpenseReport).OnDelete(DeleteBehavior.Cascade);
+            
+            return mapping;
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Plugins.DataAccess;
@@ -29,7 +30,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             report.ChangeStatus(ExpenseReportStatus.Approved);
             report.Number = "123";
 
-            using(ISession session = DataContext.GetTransactedSession())
+            using(ISession session = DataContextFactory.GetContext())
             {
                 session.SaveOrUpdate(creator);
                 session.SaveOrUpdate(assignee);
@@ -41,7 +42,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             bus.Send(new ExpenseReportSaveCommand {ExpenseReport = report});
 
             ExpenseReport rehydratedReport;
-            using(ISession session2 = DataContext.GetTransactedSession())
+            using(ISession session2 = DataContextFactory.GetContext())
             {
                 rehydratedReport = session2.Load<ExpenseReport>(report.Id);
             }
@@ -73,7 +74,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             report.AddAuditEntry(new AuditEntry(creator, DateTime.Now,ExpenseReportStatus.Submitted,
                                                   ExpenseReportStatus.Approved));
 
-            using(ISession session = DataContext.GetTransactedSession())
+            using(ISession session = DataContextFactory.GetContext())
             {
                 session.SaveOrUpdate(creator);
                 session.SaveOrUpdate(assignee);
@@ -85,13 +86,13 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             bus.Send(new ExpenseReportSaveCommand { ExpenseReport = report });
 
             ExpenseReport rehydratedReport;
-            using(ISession session2 = DataContext.GetTransactedSession())
+            using(ISession session2 = DataContextFactory.GetContext())
             {
                 rehydratedReport = session2.Load<ExpenseReport>(report.Id);
             }
 
-            var x = report.GetAuditEntries()[0];
-            var y = rehydratedReport.GetAuditEntries()[0];
+            var x = report.AuditEntries.ToArray()[0];
+            var y = rehydratedReport.AuditEntries.ToArray()[0];
             y.EndStatus.ShouldEqual(x.EndStatus);
             y.BeginStatus.ShouldEqual(x.BeginStatus);
             y.EmployeeName.ShouldEqual(x.EmployeeName);

@@ -108,7 +108,7 @@
 
             </nav>
     </fieldset>
-    @if (Model.ExpenseReport != null && Model.ExpenseReport.GetAuditEntries().Any())
+    @if (Model.ExpenseReport != null && Model.ExpenseReport.AuditEntries.Any())
     {
         <h3>Audit History</h3>
         <table class="table table-striped table-hover">
@@ -121,7 +121,7 @@
             </thead>
             <tbody>
                 @{ int i = 0;
-                    foreach (var auditEntry in Model.ExpenseReport.GetAuditEntries())
+                    foreach (var auditEntry in Model.ExpenseReport.AuditEntries)
                     {
                     <tr>
                         <td>@auditEntry.Employee.GetFullName()</td>

@@ -12,7 +12,7 @@ namespace ClearMeasure.Bootcamp.UI.DependencyResolution
             Scan(scanner =>
             {
                 scanner.AssemblyContainingType<Employee>();
-                scanner.AssemblyContainingType<DataContext>();
+                scanner.AssemblyContainingType<DataContextFactory>();
                 scanner.Assembly("ClearMeasure.Bootcamp.UI");
                 scanner.WithDefaultConventions();
                 scanner.ConnectImplementationsToTypesClosing(typeof (IRequestHandler<,>));

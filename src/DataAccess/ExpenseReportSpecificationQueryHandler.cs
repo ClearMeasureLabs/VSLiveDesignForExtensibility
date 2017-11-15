@@ -13,9 +13,9 @@ namespace ClearMeasure.Bootcamp.DataAccess
     {
         public MultipleResult<ExpenseReport> Handle(ExpenseReportSpecificationQuery command)
         {
-            using (ISession session = DataContext.GetTransactedSession())
+            using (IDbContext dbContext = DataContextFactory.GetContext())
             {
-                ICriteria criteria = session.CreateCriteria(typeof(ExpenseReport));
+                ICriteria criteria = dbContext.CreateCriteria(typeof(ExpenseReport));
 
                 if (command.Approver != null)
                 {
