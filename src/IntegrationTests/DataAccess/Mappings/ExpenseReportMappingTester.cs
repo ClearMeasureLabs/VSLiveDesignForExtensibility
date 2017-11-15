@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
-using FluentNHibernate.Utils;
 using Microsoft.EntityFrameworkCore;
-using NHibernate;
 using NUnit.Framework;
 using Should;
 
@@ -43,15 +40,17 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             };
 
             report.ChangeStatus(ExpenseReportStatus.Approved);
-            report.AddAuditEntry(new AuditEntry(submitter, DateTime.Now, ExpenseReportStatus.Submitted,
-                                                  ExpenseReportStatus.Approved));
+            var auditEntry = new AuditEntry(submitter, DateTime.Now, ExpenseReportStatus.Submitted,
+                ExpenseReportStatus.Approved);
+            report.AddAuditEntry(auditEntry);
             
-            using (ISession session = DataContextFactory.GetContext())
+            using (EfDataContext context = DataContextFactory.GetEfContext())
             {
-                session.SaveOrUpdate(submitter);
-                session.SaveOrUpdate(approver);
-                session.SaveOrUpdate(report);
-                session.Transaction.Commit();
+                context.Add(submitter);
+                context.Add(approver);
+                context.Add(auditEntry);
+                context.Add(report);
+                context.SaveChanges();
             }
 
             ExpenseReport rehydratedExpenseReport;
@@ -116,6 +115,57 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             var x1 = report.AuditEntries.ToArray()[0];
             var y1 = rehydratedExpenseReport.AuditEntries.ToArray()[0];
             Assert.That(y1.EndStatus, Is.EqualTo(x1.EndStatus));
+        }
+
+        [Test]
+        public void ShouldCascadeDeleteAuditEntries()
+        {
+            new DatabaseTester().Clean();
+
+            var creator = new Employee("1", "1", "1", "1");
+            var assignee = new Employee("2", "2", "2", "2");
+            var report = new ExpenseReport();
+            report.Submitter = creator;
+            report.Approver = assignee;
+            report.Title = "foo";
+            report.Description = "bar";
+            report.ChangeStatus(ExpenseReportStatus.Approved);
+            report.Number = "123";
+            var auditEntry = new AuditEntry(creator, DateTime.Now, ExpenseReportStatus.Submitted,
+                ExpenseReportStatus.Approved);
+            report.AddAuditEntry(auditEntry);
+
+            using (EfDataContext context = DataContextFactory.GetEfContext())
+            {
+                context.Add(creator);
+                context.Add(assignee);
+                context.Add(auditEntry);
+                context.Add(report);
+                context.SaveChanges();
+            }
+
+            ExpenseReport rehydratedExpenseReport;
+            using (EfDataContext context = DataContextFactory.GetEfContext())
+            {
+                rehydratedExpenseReport = context.Set<ExpenseReport>()
+                    .Single(s => s.Id == report.Id);
+                context.Entry<ExpenseReport>(rehydratedExpenseReport).Collection(x => x.AuditEntries).Load();
+            }
+
+            rehydratedExpenseReport.AuditEntries.ToArray().Length.ShouldEqual(1);
+            var entryId = rehydratedExpenseReport.AuditEntries.ToArray()[0].Id;
+
+            using (EfDataContext context = DataContextFactory.GetEfContext())
+            {
+                context.Remove(rehydratedExpenseReport);
+                context.SaveChanges();
+            }
+
+            using (EfDataContext context = DataContextFactory.GetEfContext())
+            {
+                context.Set<AuditEntry>().Count(entry => entry.Id == entryId).ShouldEqual(0);
+                context.SaveChanges();
+            }
         }
     }
 }
