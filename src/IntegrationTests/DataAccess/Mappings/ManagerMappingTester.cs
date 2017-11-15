@@ -19,11 +19,11 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             var one = new Manager("username", "Endurance", "Idehen", "Email");
             Employee adminAssistant = new Employee("Assistant", "Someone", "Else", "Email2");
             one.AdminAssistant = adminAssistant;
-            using (ISession session = DataContextFactory.GetContext())
+            using (EfDataContext context = DataContextFactory.GetEfContext())
             {
-                session.Save(one);
-                session.Save(adminAssistant);
-                session.Transaction.Commit();
+                context.Add(one);
+                context.Add(adminAssistant);
+                context.SaveChanges();
             }
 
             Manager rehydratedEmployee;
