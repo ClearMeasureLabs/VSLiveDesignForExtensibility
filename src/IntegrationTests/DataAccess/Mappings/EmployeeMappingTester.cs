@@ -15,16 +15,16 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             new DatabaseTester().Clean();
 
             var one = new Employee("1", "first1", "last1", "email1");
-            using (IDbContext dbContext = DataContextFactory.GetContext())
+            using (EfDataContext context = DataContextFactory.GetEfContext())
             {
-                dbContext.Save(one);
-                dbContext.Transaction.Commit();
+                context.Add(one);
+                context.SaveChanges();
             }
 
             Employee rehydratedEmployee;
-            using (IDbContext dbContext = DataContextFactory.GetContext())
+            using (EfDataContext context = DataContextFactory.GetEfContext())
             {
-                rehydratedEmployee = dbContext.Load<Employee>(one.Id);
+                rehydratedEmployee = context.Find<Employee>(one.Id);
             }
 
             rehydratedEmployee.UserName.ShouldEqual(one.UserName);
