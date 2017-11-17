@@ -12,6 +12,5 @@
   <files>
     <file src="..\packages\NUnit*\Tools\**" target="."/>
     <file src="..\packages\specflow*\Tools\**" target="."/>
-    <file src=".\bin\Release\**" target="."/>
   </files>
 </package>

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using ClearMeasure.Bootcamp.DataAccess.Mappings;
-using Microsoft.EntityFrameworkCore;
 using NHibernate;
 using NHibernate.Transform;
 
@@ -34,7 +32,13 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
                 _deleteSql = BuildDeleteTableSqlStatement();
             }
 
-            DataContextFactory.GetEfContext().Database.ExecuteSqlCommand(_deleteSql);
+            ISession session = _factory.OpenSession();
+
+            using (IDbCommand command = session.Connection.CreateCommand())
+            {
+                command.CommandText = _deleteSql;
+                command.ExecuteNonQuery();
+            }
         }
 
         private string BuildDeleteTableSqlStatement()
