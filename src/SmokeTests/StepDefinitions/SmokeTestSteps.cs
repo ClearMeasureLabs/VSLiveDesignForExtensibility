@@ -122,6 +122,7 @@ namespace ClearMeasure.Bootcamp.SmokeTests.StepDefinitions
         [Given(@"I am on the site")]
         public void GivenIAmOnTheSite()
         {
+            Console.WriteLine($"Homepage: {HomePage}");
             _driver.Navigate().GoToUrl(HomePage);
         }
 

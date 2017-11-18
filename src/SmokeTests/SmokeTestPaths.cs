@@ -10,11 +10,11 @@ namespace ClearMeasure.Bootcamp.SmokeTests
             // TODO: Think of a better, more robust way of finding the website root
             var path = AppDomain.CurrentDomain.BaseDirectory;
             // for running within VS
-            path = path.Replace(@"SmokeTests\bin\Debug", "UI");
+            path = path.Replace(@"SmokeTests\bin\Release", "UI");
             // for running from the command line
             path = path.Replace(@"build\test", @"src\UI");
             var port = ConfigurationManager.AppSettings["port"];
-            var arguments = $"/path:{path} /port:{port}";
+            var arguments = $"/path:{path} /port:{port} /clr:v4.0";
             return arguments;
         }
 
@@ -26,7 +26,7 @@ namespace ClearMeasure.Bootcamp.SmokeTests
 
         public static string GetDriversPath()
         {
-            var path = AppDomain.CurrentDomain.BaseDirectory.Replace(@"bin\Debug", "Drivers");
+            var path = AppDomain.CurrentDomain.BaseDirectory.Replace(@"bin\Release", "Drivers");
             return path;
         }
 
