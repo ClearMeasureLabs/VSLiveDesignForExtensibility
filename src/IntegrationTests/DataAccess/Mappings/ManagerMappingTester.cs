@@ -2,7 +2,6 @@ using System.Linq;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
 using Microsoft.EntityFrameworkCore;
-using NHibernate;
 using NUnit.Framework;
 using Should;
 

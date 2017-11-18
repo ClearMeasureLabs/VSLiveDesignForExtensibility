@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
-using FluentNHibernate.Utils;
 using Microsoft.EntityFrameworkCore;
-using NHibernate;
 using NUnit.Framework;
 using Should;
 
