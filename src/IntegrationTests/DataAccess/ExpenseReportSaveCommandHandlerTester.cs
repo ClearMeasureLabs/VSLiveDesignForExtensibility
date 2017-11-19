@@ -30,11 +30,11 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             report.ChangeStatus(ExpenseReportStatus.Approved);
             report.Number = "123";
 
-            using(ISession session = DataContextFactory.GetContext())
+            using(EfDataContext context = DataContextFactory.GetEfContext())
             {
-                session.SaveOrUpdate(creator);
-                session.SaveOrUpdate(assignee);
-                session.Transaction.Commit();
+                context.Add(creator);
+                context.Add(assignee);
+                context.SaveChanges();
             }
 
             IContainer container = DependencyRegistrarModule.EnsureDependenciesRegistered();
@@ -42,9 +42,11 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             bus.Send(new ExpenseReportSaveCommand {ExpenseReport = report});
 
             ExpenseReport rehydratedReport;
-            using(ISession session2 = DataContextFactory.GetContext())
+            using(EfDataContext context = DataContextFactory.GetEfContext())
             {
-                rehydratedReport = session2.Load<ExpenseReport>(report.Id);
+                rehydratedReport = context.Find<ExpenseReport>(report.Id);
+                context.Entry(rehydratedReport).Reference(x=>x.Submitter).Load();
+                context.Entry(rehydratedReport).Reference(x=>x.Approver).Load();
             }
 
             rehydratedReport.Id.ShouldEqual(report.Id);
