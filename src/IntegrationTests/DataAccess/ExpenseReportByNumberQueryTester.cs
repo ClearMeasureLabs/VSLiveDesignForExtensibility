@@ -17,30 +17,32 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
         {
             new DatabaseTester().Clean();
 
-            var creator = new Employee("1", "1", "1", "1");
-            var order1 = new ExpenseReport();
-            order1.Submitter = creator;
-            order1.Number = "123";
-            var report = new ExpenseReport();
-            report.Submitter = creator;
-            report.Number = "456";
+            var employee = new Employee("1", "1", "1", "1");
+            var report1 = new ExpenseReport();
+            report1.Submitter = employee;
+            report1.Number = "123";
+            report1.Status = ExpenseReportStatus.Approved;
+            var report2 = new ExpenseReport();
+            report2.Submitter = employee;
+            report2.Number = "456";
+            report2.Status = ExpenseReportStatus.Approved;
 
-            using (ISession session = DataContextFactory.GetContext())
+            using (EfDataContext context = DataContextFactory.GetEfContext())
             {
-                session.SaveOrUpdate(creator);
-                session.SaveOrUpdate(order1);
-                session.SaveOrUpdate(report);
-                session.Transaction.Commit();
+                context.Add(employee);
+                context.Add(report1);
+                context.Add(report2);
+                context.SaveChanges();
             }
 
             IContainer container = DependencyRegistrarModule.EnsureDependenciesRegistered();
             var bus = container.GetInstance<Bus>();
 
-            ExpenseReport order123 = bus.Send(new ExpenseReportByNumberQuery {ExpenseReportNumber = "123"}).Result;
-            ExpenseReport order456 = bus.Send(new ExpenseReportByNumberQuery {ExpenseReportNumber = "456"}).Result;
+            ExpenseReport report123 = bus.Send(new ExpenseReportByNumberQuery {ExpenseReportNumber = "123"}).Result;
+            ExpenseReport report456 = bus.Send(new ExpenseReportByNumberQuery {ExpenseReportNumber = "456"}).Result;
 
-            Assert.That(order123.Id, Is.EqualTo(order1.Id));
-            Assert.That(order456.Id, Is.EqualTo(report.Id));
+            Assert.That(report123.Id, Is.EqualTo(report1.Id));
+            Assert.That(report456.Id, Is.EqualTo(report2.Id));
         }
 
     }
