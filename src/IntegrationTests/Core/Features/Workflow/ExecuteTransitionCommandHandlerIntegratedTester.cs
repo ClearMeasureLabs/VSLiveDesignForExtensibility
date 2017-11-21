@@ -37,7 +37,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
                 session.Transaction.Commit();
             }
 
-            var command = new ExecuteTransitionCommand(report, "Save", employee, new DateTime(2001, 1, 1));
+            var command = new ExecuteTransitionCommand(report, "Save Draft", employee, new DateTime(2001, 1, 1));
 
             IContainer container = DependencyRegistrarModule.EnsureDependenciesRegistered();
             var bus = container.GetInstance<Bus>();

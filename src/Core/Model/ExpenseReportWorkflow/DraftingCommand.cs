@@ -9,7 +9,7 @@ namespace ClearMeasure.Bootcamp.Core.Model.ExpenseReportWorkflow
 
         public override string TransitionVerbPresentTense
         {
-            get { return "Save"; }
+            get { return "Save Draft"; }
         }
 
         public override string TransitionVerbPastTense

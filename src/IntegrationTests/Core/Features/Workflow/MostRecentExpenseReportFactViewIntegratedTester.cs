@@ -57,20 +57,20 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
             var startingDate = new DateTime(1974, 8, 4);
             for (int i = 0; i < 25; i++)
             {
-                RunToDraft(new NumberGenerator().GenerateNumber(), employee, 13*i, startingDate.AddMinutes(i), "Save");
+                RunToDraft(new NumberGenerator().GenerateNumber(), employee, 13*i, startingDate.AddMinutes(i), "Save Draft");
             }
             for (int i = 0; i < 25; i++)
             {
-                RunToDraft(new NumberGenerator().GenerateNumber(), employee, 13*i, startingDate.AddMinutes(i), "Save", "Submit");
+                RunToDraft(new NumberGenerator().GenerateNumber(), employee, 13*i, startingDate.AddMinutes(i), "Save Draft", "Submit");
             }
             for (int i = 0; i < 25; i++)
             {
-                RunToDraft(new NumberGenerator().GenerateNumber(), employee, 13*i, startingDate.AddMinutes(i), "Save", "Submit",
+                RunToDraft(new NumberGenerator().GenerateNumber(), employee, 13*i, startingDate.AddMinutes(i), "Save Draft", "Submit",
                     "Approve");
             }
             for (int i = 0; i < 25; i++)
             {
-                RunToDraft(new NumberGenerator().GenerateNumber(), employee, 13*i, startingDate.AddMinutes(i), "Save", "Submit",
+                RunToDraft(new NumberGenerator().GenerateNumber(), employee, 13*i, startingDate.AddMinutes(i), "Save Draft", "Submit",
                     "Approve");
             }
         }
