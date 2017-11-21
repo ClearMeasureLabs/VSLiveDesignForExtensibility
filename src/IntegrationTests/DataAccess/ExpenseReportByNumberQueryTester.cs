@@ -21,11 +21,9 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             var report1 = new ExpenseReport();
             report1.Submitter = employee;
             report1.Number = "123";
-            report1.Status = ExpenseReportStatus.Approved;
             var report2 = new ExpenseReport();
             report2.Submitter = employee;
             report2.Number = "456";
-            report2.Status = ExpenseReportStatus.Approved;
 
             using (EfDataContext context = DataContextFactory.GetEfContext())
             {
