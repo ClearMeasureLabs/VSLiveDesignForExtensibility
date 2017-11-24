@@ -13,20 +13,11 @@ SET NUMERIC_ROUNDABORT OFF;
 
 
 GO
-:setvar DatabaseName "ClearMeasure.Bootcamp"
-:setvar DefaultFilePrefix "ClearMeasure.Bootcamp"
-:setvar DefaultDataPath "C:\Program Files (x86)\Microsoft SQL Server\MSSQL12.SQLEXPRESS2014\MSSQL\DATA\"
-:setvar DefaultLogPath "C:\Program Files (x86)\Microsoft SQL Server\MSSQL12.SQLEXPRESS2014\MSSQL\DATA\"
-
-GO
-:on error exit
-GO
 /*
 Detect SQLCMD mode and disable script execution if SQLCMD mode is not supported.
 To re-enable the script after enabling SQLCMD mode, execute the following:
 SET NOEXEC OFF; 
 */
-:setvar __IsSqlCmdEnabled "True"
 GO
 IF N'$(__IsSqlCmdEnabled)' NOT LIKE N'True'
     BEGIN
