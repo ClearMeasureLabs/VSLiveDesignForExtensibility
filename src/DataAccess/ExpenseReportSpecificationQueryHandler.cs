@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.Core.Features.SearchExpenseReports;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Plugins.DataAccess;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
-using NHibernate;
-using NHibernate.Criterion;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClearMeasure.Bootcamp.DataAccess
 {
@@ -13,26 +13,26 @@ namespace ClearMeasure.Bootcamp.DataAccess
     {
         public MultipleResult<ExpenseReport> Handle(ExpenseReportSpecificationQuery command)
         {
-            using (IDbContext dbContext = DataContextFactory.GetContext())
+            using (EfDataContext dbContext = DataContextFactory.GetContext())
             {
-                ICriteria criteria = dbContext.CreateCriteria(typeof(ExpenseReport));
+                IQueryable<ExpenseReport> reports = dbContext.Set<ExpenseReport>().AsQueryable();
 
                 if (command.Approver != null)
                 {
-                    criteria.Add(Restrictions.Eq("Approver", command.Approver));
+                    reports = reports.Where(r => r.Approver == command.Approver);
                 }
 
                 if (command.Submitter != null)
                 {
-                    criteria.Add(Restrictions.Eq("Submitter", command.Submitter));
+                    reports = reports.Where(r => r.Submitter == command.Submitter);
                 }
 
                 if (command.Status != null)
                 {
-                    criteria.Add(Restrictions.Eq("Status", command.Status));
+                    reports = reports.Where(r => r.Status.Equals(command.Status));
                 }
 
-                IList<ExpenseReport> list = criteria.List<ExpenseReport>();
+                IList<ExpenseReport> list = reports.ToList();
                 return new MultipleResult<ExpenseReport> {Results = new List<ExpenseReport>(list).ToArray()};
             }
 

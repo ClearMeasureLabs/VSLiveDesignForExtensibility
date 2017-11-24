@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Plugins.DataAccess;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
-using NHibernate;
 
 namespace ClearMeasure.Bootcamp.DataAccess
 {
@@ -12,13 +11,9 @@ namespace ClearMeasure.Bootcamp.DataAccess
     {
         public MultipleResult<Employee> Handle(EmployeeSpecificationQuery request)
         {
-            using (IDbContext dbContext = DataContextFactory.GetContext())
+            using (EfDataContext dbContext = DataContextFactory.GetContext())
             {
-                ICriteria criteria = dbContext.CreateCriteria(typeof(Employee));
-                criteria.SetCacheable(true);
-                
-                IList<Employee> list = criteria.List<Employee>();
-                Employee[] employees = new List<Employee>(list).ToArray();
+                Employee[] employees = dbContext.Set<Employee>().ToArray();
                 Array.Sort(employees);
                 return new MultipleResult<Employee> {Results = employees};
             }

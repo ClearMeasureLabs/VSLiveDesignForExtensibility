@@ -1,7 +1,6 @@
 ﻿using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.Core.Model.ExpenseReportAnalytics;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
-using NHibernate;
 
 namespace ClearMeasure.Bootcamp.DataAccess
 {
@@ -9,10 +8,10 @@ namespace ClearMeasure.Bootcamp.DataAccess
     {
         public AddExpenseReportFactResult Handle(AddExpenseReportFactCommand command)
         {
-            using (IDbContext dbContext = DataContextFactory.GetContext())
+            using (EfDataContext dbContext = DataContextFactory.GetContext())
             {
-                dbContext.Save(command.ExpenseReportFact);
-                dbContext.Transaction.Commit();
+                dbContext.Add(command.ExpenseReportFact);
+                dbContext.SaveChanges();
             }
 
             return new AddExpenseReportFactResult

@@ -2,7 +2,6 @@
 using ClearMeasure.Bootcamp.Core.Features.SearchExpenseReports;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Plugins.DataAccess;
-using ClearMeasure.Bootcamp.DataAccess;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
 using ClearMeasure.Bootcamp.UI.DependencyResolution;
 using NUnit.Framework;
@@ -29,13 +28,13 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             order2.Approver = employee2;
             order2.Number = "456";
 
-            using (IDbContext dbContext = DataContextFactory.GetContext())
+            using (EfDataContext dbContext = DataContextFactory.GetContext())
             {
-                dbContext.SaveOrUpdate(employee1);
-                dbContext.SaveOrUpdate(employee2);
-                dbContext.SaveOrUpdate(order1);
-                dbContext.SaveOrUpdate(order2);
-                dbContext.Transaction.Commit();
+                dbContext.Add(employee1);
+                dbContext.Add(employee2);
+                dbContext.Add(order1);
+                dbContext.Add(order2);
+                dbContext.SaveChanges();
             }
 
             var specification = new ExpenseReportSpecificationQuery {Approver = employee1};
@@ -63,13 +62,13 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             order2.Submitter = creator2;
             order2.Number = "456";
 
-            using (IDbContext dbContext = DataContextFactory.GetContext())
+            using (EfDataContext dbContext = DataContextFactory.GetContext())
             {
-                dbContext.SaveOrUpdate(creator1);
-                dbContext.SaveOrUpdate(creator2);
-                dbContext.SaveOrUpdate(order1);
-                dbContext.SaveOrUpdate(order2);
-                dbContext.Transaction.Commit();
+                dbContext.Add(creator1);
+                dbContext.Add(creator2);
+                dbContext.Add(order1);
+                dbContext.Add(order2);
+                dbContext.SaveChanges();
             }
 
             var specification = new ExpenseReportSpecificationQuery{Submitter = creator1};
@@ -101,14 +100,14 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             order2.Number = "456";
             order2.Status = ExpenseReportStatus.Draft;
 
-            using(IDbContext dbContext = DataContextFactory.GetContext())
+            using(EfDataContext dbContext = DataContextFactory.GetContext())
             {
 
-                dbContext.SaveOrUpdate(employee1);
-                dbContext.SaveOrUpdate(employee2);
-                dbContext.SaveOrUpdate(order1);
-                dbContext.SaveOrUpdate(order2);
-                dbContext.Transaction.Commit();
+                dbContext.Add(employee1);
+                dbContext.Add(employee2);
+                dbContext.Add(order1);
+                dbContext.Add(order2);
+                dbContext.SaveChanges();
             }
 
             var specification = new ExpenseReportSpecificationQuery()
@@ -145,14 +144,14 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             order2.Number = "456";
             order2.Status = ExpenseReportStatus.Draft;
 
-            using (IDbContext dbContext = DataContextFactory.GetContext())
+            using (EfDataContext dbContext = DataContextFactory.GetContext())
             {
 
-                dbContext.SaveOrUpdate(employee1);
-                dbContext.SaveOrUpdate(employee2);
-                dbContext.SaveOrUpdate(order1);
-                dbContext.SaveOrUpdate(order2);
-                dbContext.Transaction.Commit();
+                dbContext.Add(employee1);
+                dbContext.Add(employee2);
+                dbContext.Add(order1);
+                dbContext.Add(order2);
+                dbContext.SaveChanges();
             }
 
             var specification = new ExpenseReportSpecificationQuery()

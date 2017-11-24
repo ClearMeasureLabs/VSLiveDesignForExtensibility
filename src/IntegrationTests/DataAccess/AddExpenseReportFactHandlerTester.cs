@@ -5,6 +5,7 @@ using ClearMeasure.Bootcamp.DataAccess;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
 using NUnit.Framework;
 using Should;
+using EfDataContext = ClearMeasure.Bootcamp.DataAccess.Mappings.EfDataContext;
 
 namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
 {

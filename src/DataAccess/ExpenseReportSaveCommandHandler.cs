@@ -2,7 +2,6 @@
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Plugins.DataAccess;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
-using NHibernate;
 
 namespace ClearMeasure.Bootcamp.DataAccess
 {
@@ -10,11 +9,10 @@ namespace ClearMeasure.Bootcamp.DataAccess
     {
         public SingleResult<ExpenseReport> Handle(ExpenseReportSaveCommand request)
         {
-            using (IDbContext dbContext = DataContextFactory.GetContext())
+            using (Mappings.EfDataContext context = DataContextFactory.GetEfContext())
             {
-                ITransaction transaction = dbContext.BeginTransaction();
-                dbContext.SaveOrUpdate(request.ExpenseReport);
-                transaction.Commit();
+                context.Update(request.ExpenseReport);
+                context.SaveChanges();
             }
 
             return new SingleResult<ExpenseReport>(request.ExpenseReport);

@@ -12,7 +12,7 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
             var mapping = modelBuilder.Entity<AuditEntry>().ToTable("EfAuditEntry");
             mapping.UsePropertyAccessMode(PropertyAccessMode.Field);
             mapping.HasKey(x => x.Id);
-            mapping.Property(x => x.Id).HasValueGenerator<SequentialGuidValueGenerator>().ValueGeneratedOnAdd();
+            mapping.Property(x => x.Id).IsRequired().HasValueGenerator<SequentialGuidValueGenerator>().ValueGeneratedOnAdd();
             mapping.HasOne(x => x.ExpenseReport);
             mapping.OwnsOne(x => x.BeginStatus, builder =>
             {

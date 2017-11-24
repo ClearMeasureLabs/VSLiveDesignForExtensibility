@@ -6,7 +6,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
     {
         public void Clean()
         {
-            new DatabaseEmptier(DataContextFactory.GetContext().SessionFactory).DeleteAllData();
+            new DatabaseEmptier().DeleteAllData();
         }
     }
 }

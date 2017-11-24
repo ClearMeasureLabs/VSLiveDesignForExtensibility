@@ -41,7 +41,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
 
             report.ChangeStatus(ExpenseReportStatus.Approved);
             var auditEntry = new AuditEntry(submitter, DateTime.Now, ExpenseReportStatus.Submitted,
-                ExpenseReportStatus.Approved);
+                ExpenseReportStatus.Approved, report);
             report.AddAuditEntry(auditEntry);
             
             using (EfDataContext context = DataContextFactory.GetEfContext())
@@ -92,7 +92,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             report.ChangeStatus(ExpenseReportStatus.Approved);
             report.Number = "123";
             var auditEntry = new AuditEntry(creator, DateTime.Now, ExpenseReportStatus.Submitted,
-                ExpenseReportStatus.Approved);
+                ExpenseReportStatus.Approved, report);
             report.AddAuditEntry(auditEntry);
 
             using (EfDataContext context = DataContextFactory.GetEfContext())
@@ -132,7 +132,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             report.ChangeStatus(ExpenseReportStatus.Approved);
             report.Number = "123";
             var auditEntry = new AuditEntry(creator, DateTime.Now, ExpenseReportStatus.Submitted,
-                ExpenseReportStatus.Approved);
+                ExpenseReportStatus.Approved, report);
             report.AddAuditEntry(auditEntry);
 
             using (EfDataContext context = DataContextFactory.GetEfContext())
@@ -149,7 +149,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             {
                 rehydratedExpenseReport = context.Set<ExpenseReport>()
                     .Single(s => s.Id == report.Id);
-                context.Entry<ExpenseReport>(rehydratedExpenseReport).Collection(x => x.AuditEntries).Load();
+                context.Entry(rehydratedExpenseReport).Collection(x => x.AuditEntries).Load();
             }
 
             rehydratedExpenseReport.AuditEntries.ToArray().Length.ShouldEqual(1);

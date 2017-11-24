@@ -1,28 +1,20 @@
-﻿using FluentNHibernate.Cfg;
-using NHibernate;
-using NHibernate.Cfg;
-
-namespace ClearMeasure.Bootcamp.DataAccess.Mappings
+﻿namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 {
     public class DataContextFactory
     {
-        private static ISessionFactory _sessionFactory;
         private static bool _startupComplete;
 
         private static readonly object _locker =
             new object();
 
-        public static IDbContext GetContext()
+        public static EfDataContext GetContext()
         {
-            EnsureStartup();
-            IDbContext dbContext = new DbContextWrapper(_sessionFactory.OpenSession());
-            dbContext.BeginTransaction();
-            return dbContext;
+            return new EfDataContext();
         }
 
         public static EfDataContext GetEfContext()
         {
-            EnsureStartup();
+//            EnsureStartup();
             return new EfDataContext();
         }
 
@@ -48,23 +40,6 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 
         private static void InitializeSessionFactory()
         {
-            Configuration configuration =
-                BuildConfiguration();
-            _sessionFactory =
-                configuration.BuildSessionFactory();
-        }
-
-        public static Configuration BuildConfiguration()
-        {
-            return
-                Fluently.Configure(
-                    new Configuration().Configure())
-                    .Mappings(cfg =>
-                        cfg.FluentMappings
-                            .AddFromAssembly(
-                                typeof (DataContextFactory)
-                                    .Assembly))
-                    .BuildConfiguration();
         }
     }
 }

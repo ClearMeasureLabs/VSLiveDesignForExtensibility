@@ -1,9 +1,8 @@
-﻿using ClearMeasure.Bootcamp.Core;
+﻿using System.Linq;
+using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Plugins.DataAccess;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
-using NHibernate;
-using NHibernate.Criterion;
 
 namespace ClearMeasure.Bootcamp.DataAccess
 {
@@ -11,13 +10,13 @@ namespace ClearMeasure.Bootcamp.DataAccess
     {
         public SingleResult<ExpenseReport> Handle(ExpenseReportByNumberQuery request)
         {
-            using (IDbContext dbContext = DataContextFactory.GetContext())
+            using (EfDataContext dbContext = DataContextFactory.GetContext())
             {
-                ICriteria criteria = dbContext.CreateCriteria(typeof (ExpenseReport));
-                criteria.Add(Restrictions.Eq("Number", request.ExpenseReportNumber));
-                criteria.SetFetchMode("AuditEntries", FetchMode.Eager);
-                var result = criteria.UniqueResult<ExpenseReport>();
-                return new SingleResult<ExpenseReport>(result);
+                var reports = dbContext.Set<ExpenseReport>().AsQueryable();
+                reports = reports.Where(r => r.Number == request.ExpenseReportNumber);
+                var report = reports.Single();
+                dbContext.Entry(report).Collection(r=>r.AuditEntries).Load();
+                return new SingleResult<ExpenseReport>(report);
             }
         }
     }

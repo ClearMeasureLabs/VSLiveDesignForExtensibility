@@ -28,7 +28,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
                 Number = "123",
                 Total = 100.25m
             };
-            var entry = new AuditEntry(employee, testTime, ExpenseReportStatus.Approved, ExpenseReportStatus.Cancelled);
+            var entry = new AuditEntry(employee, testTime, ExpenseReportStatus.Approved, ExpenseReportStatus.Cancelled, report);
             entry.ExpenseReport = report;
 
             

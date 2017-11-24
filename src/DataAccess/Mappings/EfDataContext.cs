@@ -13,7 +13,9 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connectionString = DataContextFactory.BuildConfiguration().GetProperty("connection.connection_string"); //ConfigurationManager.ConnectionStrings["Bootcamp"].ConnectionString;
+            var connectionString =
+                "server=localhost\\SQLEXPRESS2014;database=ClearMeasure.Bootcamp;Integrated Security=true;";
+//                DataContextFactory.BuildConfiguration().GetProperty("connection.connection_string"); //ConfigurationManager.ConnectionStrings["Bootcamp"].ConnectionString;
             optionsBuilder
                 .UseSqlServer(connectionString)
                 .ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.QueryClientEvaluationWarning));

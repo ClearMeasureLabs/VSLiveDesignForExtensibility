@@ -2,7 +2,6 @@
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
 using ClearMeasure.Bootcamp.IntegrationTests.DataAccess;
-using NHibernate;
 using NUnit.Framework;
 
 [assembly: Parallelizable(ParallelScope.None)]
@@ -15,12 +14,12 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
         public void PopulateDatabase()
         {
             new DatabaseTester().Clean();
-            ISession session = DataContextFactory.GetContext();
+            EfDataContext session = DataContextFactory.GetContext();
 
 
             //Trainer1
             var jpalermo = new Employee("jpalermo", "Jeffrey", "Palermo", "jeffrey@clear-measure.com");
-            session.SaveOrUpdate(jpalermo);
+            session.Add(jpalermo);
 
             //Person 1
             
@@ -28,7 +27,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
             
             //Person 3
             var damian = new Employee("damian", "Damian", "Brady", "damian@Gmail.com");
-            session.SaveOrUpdate(damian);
+            session.Add(damian);
             
             //Person 4
             
@@ -36,7 +35,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
 
             //Person 6
             var paul = new Employee("paul", "Paul", "Stovell", "Paul@myemail.com");
-            session.SaveOrUpdate(paul);
+            session.Add(paul);
             
             //Person 7
             
@@ -53,7 +52,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
             //Person 13
 
             var hsimpson = new Employee("hsimpson", "Homer", "Simpson", "homer@simpson.com");
-            session.SaveOrUpdate(hsimpson);
+            session.Add(hsimpson);
 
             foreach (ExpenseReportStatus status in ExpenseReportStatus.GetAllItems())
             {
@@ -69,7 +68,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
                 report.ChangeStatus(ExpenseReportStatus.Submitted);
                 report.ChangeStatus(ExpenseReportStatus.Approved);
 
-                session.SaveOrUpdate(report);
+                session.Add(report);
             }
 
             var order2 = new ExpenseReport();
@@ -80,9 +79,9 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
             order2.Title = "Expense report starting in status ";
             order2.Description = "Foo, foo, foo, foo ";
             new DateTime(2000, 1, 1, 8, 0, 0);
-            session.SaveOrUpdate(order2);
+            session.Add(order2);
 
-            session.Transaction.Commit();
+            session.SaveChanges();
             session.Dispose();
         }
     }

@@ -15,7 +15,7 @@ namespace ClearMeasure.Bootcamp.Core.Model
         public Employee Approver { get; set; }
         public string Number { get; set; }
         // New Properties
-        public int MilesDriven { get; set; }
+        public int? MilesDriven { get; set; }
         public DateTime? Created { get; set; }
         public DateTime? FirstSubmitted { get; set; }
         public DateTime? LastSubmitted { get; set; }
@@ -23,7 +23,7 @@ namespace ClearMeasure.Bootcamp.Core.Model
         public DateTime? LastCancelled { get; set; }
         public DateTime? LastApproved { get; set; }
         public DateTime? LastDeclined { get; set; }
-        public decimal Total { get; set; }
+        public decimal? Total { get; set; }
 
         public ExpenseReport()
         {
@@ -54,7 +54,7 @@ namespace ClearMeasure.Bootcamp.Core.Model
 
         public void ChangeStatus(Employee employee, DateTime date, ExpenseReportStatus beginStatus, ExpenseReportStatus endStatus)
         {
-            var auditItem = new AuditEntry(employee, date, beginStatus, endStatus);
+            var auditItem = new AuditEntry(employee, date, beginStatus, endStatus, this);
             _auditEntries.Add(auditItem);
             Status = endStatus;
         }

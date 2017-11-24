@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.Core.Features.Workflow;
 using ClearMeasure.Bootcamp.Core.Model;
@@ -10,8 +11,7 @@ using ClearMeasure.Bootcamp.Core.Services.Impl;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
 using ClearMeasure.Bootcamp.IntegrationTests.DataAccess;
 using ClearMeasure.Bootcamp.UI.DependencyResolution;
-using NHibernate;
-using NHibernate.Linq;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using StructureMap;
 
@@ -27,17 +27,21 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
 
             Setup();
 
-            using (ISession session = DataContextFactory.GetContext())
+            using (EfDataContext context = DataContextFactory.GetContext())
             {
-                var query = session.CreateSQLQuery("select count(1), status from MostRecentExpenseReportFactView group by status");
-                var results = query.List();
                 Dictionary<string, int> statuses = new Dictionary<string, int>();
-                foreach (object[] fields in results)
+                using (var command = context.Database.GetDbConnection().CreateCommand())
                 {
-                    int count = (int) fields[0];
-                    string status = (string) fields[1];
-                    statuses[status] = count;
+                    command.CommandText =
+                        "select count(1), status from MostRecentExpenseReportFactView group by status";
+
+                    DbDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        statuses.Add(reader.GetString(1), reader.GetInt32(0));
+                    }
                 }
+                
                 Assert.That(statuses["Approved"], Is.EqualTo(50));
                 Assert.That(statuses["Drafting"], Is.EqualTo(25));
                 Assert.That(statuses["Submitted"], Is.EqualTo(25));
@@ -48,10 +52,10 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
         private static void Setup()
         {
             var employee = new Employee("jpalermo", "Jeffrey", "Palermo", "jeffrey @ clear dash measure.com");
-            using (ISession session = DataContextFactory.GetContext())
+            using (EfDataContext context = DataContextFactory.GetEfContext())
             {
-                session.Save(employee);
-                session.Transaction.Commit();
+                context.Update(employee);
+                context.SaveChanges();
             }
 
             var startingDate = new DateTime(1974, 8, 4);
@@ -84,10 +88,10 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
             report.Approver = employee;
             report.Total = total;
 
-            using (ISession session = DataContextFactory.GetContext())
+            using (EfDataContext context = DataContextFactory.GetEfContext())
             {
-                session.SaveOrUpdate(report);
-                session.Transaction.Commit();
+                context.Update(report);
+                context.SaveChanges();
             }
 
             IContainer container = DependencyRegistrarModule.EnsureDependenciesRegistered();

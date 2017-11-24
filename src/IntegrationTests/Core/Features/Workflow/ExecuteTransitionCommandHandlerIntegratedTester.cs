@@ -8,7 +8,6 @@ using ClearMeasure.Bootcamp.Core.Model.ExpenseReportAnalytics;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
 using ClearMeasure.Bootcamp.IntegrationTests.DataAccess;
 using ClearMeasure.Bootcamp.UI.DependencyResolution;
-using NHibernate;
 using NUnit.Framework;
 using Should;
 using StructureMap;
@@ -30,11 +29,10 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
             report.Submitter = employee;
             report.Approver = employee;
 
-            using (ISession session = DataContextFactory.GetContext())
+            using (EfDataContext context = DataContextFactory.GetEfContext())
             {
-                session.SaveOrUpdate(employee);
-                session.SaveOrUpdate(report);
-                session.Transaction.Commit();
+                context.UpdateRange(employee, report);
+                context.SaveChanges();
             }
 
             var command = new ExecuteTransitionCommand(report, "Save Draft", employee, new DateTime(2001, 1, 1));
@@ -70,17 +68,17 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
 
             bus.Send(command);
 
-            using (ISession session = DataContextFactory.GetContext())
+            using (EfDataContext session = DataContextFactory.GetContext())
             {
-                session.Save(expenseReportFact);
-                session.Transaction.Commit();
+                session.Add(expenseReportFact);
+                session.SaveChanges();
             }
 
             ExpenseReportFact reHydratedExpenseReportFact;
 
-            using (ISession session = DataContextFactory.GetContext())
+            using (EfDataContext session = DataContextFactory.GetContext())
             {
-                reHydratedExpenseReportFact = session.Load<ExpenseReportFact>(expenseReportFact.Id);
+                reHydratedExpenseReportFact = session.Find<ExpenseReportFact>(expenseReportFact.Id);
             }
 
             reHydratedExpenseReportFact.Approver.ShouldEqual(expenseReportFact.Approver);

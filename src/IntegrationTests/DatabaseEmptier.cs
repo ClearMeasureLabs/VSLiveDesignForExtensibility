@@ -1,28 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
+using System.IO;
 using System.Linq;
-using NHibernate;
-using NHibernate.Transform;
+using ClearMeasure.Bootcamp.DataAccess.Mappings;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClearMeasure.Bootcamp.IntegrationTests
 {
     public class DatabaseEmptier
     {
-        private readonly ISessionFactory _factory;
-        //should not clear out two tables from test run to test run.
         private static readonly string[] _ignoredTables = new[] { "[dbo].[sysdiagrams]", "[dbo].[usd_AppliedDatabaseScript]" };
         private static string _deleteSql;
 
-        public DatabaseEmptier(ISessionFactory factory)
+        public DatabaseEmptier()
         {
-            _factory = factory;
         }
 
         private class Relationship
         {
-            public string PrimaryKeyTable { get; private set; }
-            public string ForeignKeyTable { get; private set; }
+            public string PrimaryKeyTable { get; set; }
+            public string ForeignKeyTable { get; set; }
         }
 
         public virtual void DeleteAllData()
@@ -32,9 +31,9 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
                 _deleteSql = BuildDeleteTableSqlStatement();
             }
 
-            ISession session = _factory.OpenSession();
+            var context = new EfDataContext();
 
-            using (IDbCommand command = session.Connection.CreateCommand())
+            using (IDbCommand command = context.Database.GetDbConnection().CreateCommand())
             {
                 command.CommandText = _deleteSql;
                 command.ExecuteNonQuery();
@@ -43,10 +42,9 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
 
         private string BuildDeleteTableSqlStatement()
         {
-            ISession session = _factory.OpenSession();
-
-            IList<string> allTables = GetAllTables(session);
-            IList<Relationship> allRelationships = GetRelationships(session);
+            var context = new EfDataContext();
+            IList<string> allTables = GetAllTables(context);
+            IList<Relationship> allRelationships = GetRelationships(context);
             string[] tablesToDelete = BuildTableList(allTables, allRelationships);
 
             return BuildTableSql(tablesToDelete);
@@ -93,10 +91,12 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
             return tablesToDelete.ToArray();
         }
 
-        private static IList<Relationship> GetRelationships(ISession session)
+        private static IList<Relationship> GetRelationships(EfDataContext context)
         {
-            ISQLQuery otherquery =
-                session.CreateSQLQuery(
+            var relationships = new List<Relationship>();
+            using (var command = context.Database.GetDbConnection().CreateCommand())
+            {
+                command.CommandText =
                     @"select
 	'[' + ss_pk.name + '].[' + so_pk.name + ']' as PrimaryKeyTable
 , '[' + ss_fk.name + '].[' + so_fk.name + ']' as ForeignKeyTable
@@ -110,20 +110,37 @@ from
 	  inner join sys.schemas ss_fk on st_fk.schema_id = ss_fk.schema_id
 order by
 	so_pk.name
-,   so_fk.name;");
-
-            return otherquery.SetResultTransformer(Transformers.AliasToBean<Relationship>()).List<Relationship>();
+,   so_fk.name;";
+                DbDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    relationships.Add(
+                        new Relationship()
+                        {
+                            PrimaryKeyTable = reader["PrimaryKeyTable"].ToString(),
+                            ForeignKeyTable = reader["ForeignKeyTable"].ToString()
+                        });
+                }
+            }
+            return relationships;
         }
 
-        private static IList<string> GetAllTables(ISession session)
+        private static IList<string> GetAllTables(EfDataContext context)
         {
-            ISQLQuery query =
-                session.CreateSQLQuery(
+            List<string> tables = new List<string>();
+            using (var command = context.Database.GetDbConnection().CreateCommand())
+            {
+                command.CommandText =
                     @"select '[' + s.name + '].[' + t.name + ']'
 from sys.tables t
-inner join sys.schemas s on t.schema_id = s.schema_id");
-
-            return query.List<string>().Except(_ignoredTables).ToList();
+inner join sys.schemas s on t.schema_id = s.schema_id";
+                DbDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    tables.Add(reader.GetString(0));
+                }
+                return tables.Except(_ignoredTables).ToList();
+            }
         }
     }
 }

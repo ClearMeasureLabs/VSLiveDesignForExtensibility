@@ -8,13 +8,14 @@ namespace ClearMeasure.Bootcamp.Core.Model
         {
         }
 
-        public AuditEntry(Employee employee, DateTime date, ExpenseReportStatus beginStatus, ExpenseReportStatus endStatus)
+        public AuditEntry(Employee employee, DateTime date, ExpenseReportStatus beginStatus, ExpenseReportStatus endStatus, ExpenseReport report)
         {
             Employee = employee;
             EmployeeName = Employee.GetFullName();
             Date = date;
             BeginStatus = beginStatus;
             EndStatus = endStatus;
+            ExpenseReport = report;
         }
 
         public virtual Employee Employee { get; set; }
