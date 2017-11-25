@@ -1,4 +1,5 @@
-﻿using ClearMeasure.Bootcamp.Core.Model;
+﻿using System;
+using ClearMeasure.Bootcamp.Core.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
@@ -12,17 +13,22 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
             var mapping = modelBuilder.Entity<AuditEntry>().ToTable("EfAuditEntry");
             mapping.UsePropertyAccessMode(PropertyAccessMode.Field);
             mapping.HasKey(x => x.Id);
-            mapping.Property(x => x.Id).IsRequired().HasValueGenerator<SequentialGuidValueGenerator>().ValueGeneratedOnAdd();
-            mapping.HasOne(x => x.ExpenseReport);
+            mapping.Property(x => x.Id).IsRequired()
+                .HasValueGenerator<SequentialGuidValueGenerator>()
+                .ValueGeneratedOnAdd()
+                .HasDefaultValue(Guid.Empty);
+            mapping.HasOne(x => x.ExpenseReport).WithMany(x=>x.AuditEntries);
             mapping.OwnsOne(x => x.BeginStatus, builder =>
             {
                 builder.Property<string>(x => x.Code).HasColumnName("BeginStatus").HasColumnType("nchar(3)");
                 builder.Ignore(x => x.FriendlyName).Ignore(x => x.Key).Ignore(x => x.SortBy);
+                builder.Property("AuditEntryId").HasDefaultValue(Guid.Empty); 
             });
             mapping.OwnsOne(x => x.EndStatus, builder =>
             {
                 builder.Property<string>(x => x.Code).HasColumnName("EndStatus").HasColumnType("nchar(3)");
                 builder.Ignore(x => x.FriendlyName).Ignore(x => x.Key).Ignore(x => x.SortBy);
+                builder.Property("AuditEntryId").HasDefaultValue(Guid.Empty); 
             });
             mapping.Property(x => x.Date);
             mapping.HasOne(x => x.Employee);

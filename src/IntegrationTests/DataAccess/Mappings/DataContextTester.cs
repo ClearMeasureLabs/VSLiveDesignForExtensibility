@@ -14,7 +14,12 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
         {
             var context = DataContextFactory.GetEfContext();
             context.Database.Migrate();
-            
+        }
+
+        [Test, Explicit]
+        public void ShouldDeleteAllDataFromDatabase()
+        {
+            new DatabaseEmptier().DeleteAllData();
         }
     }
 }

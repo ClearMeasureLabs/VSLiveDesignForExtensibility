@@ -29,7 +29,7 @@ namespace ClearMeasure.Bootcamp.DataAccess
 
                 if (command.Status != null)
                 {
-                    reports = reports.Where(r => r.Status.Equals(command.Status));
+                    reports = reports.Where(r => r.Status.Code == command.Status.Code);
                 }
 
                 IList<ExpenseReport> list = reports.ToList();

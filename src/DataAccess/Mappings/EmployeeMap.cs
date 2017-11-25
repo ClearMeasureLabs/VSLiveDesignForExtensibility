@@ -13,7 +13,10 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
             var mapping = modelBuilder.Entity<Employee>();
             mapping.UsePropertyAccessMode(PropertyAccessMode.Field);
             mapping.HasKey(x => x.Id);
-            mapping.Property(x => x.Id).IsRequired().HasValueGenerator<SequentialGuidValueGenerator>().ValueGeneratedOnAdd();
+            mapping.Property(x => x.Id).IsRequired()
+                .HasValueGenerator<SequentialGuidValueGenerator>()
+                .ValueGeneratedOnAdd()
+                .HasDefaultValue(Guid.Empty);
             mapping.Property(x => x.UserName).IsRequired().HasMaxLength(50);
             mapping.Property(x => x.FirstName).IsRequired().HasMaxLength(25);
             mapping.Property(x => x.LastName).IsRequired().HasMaxLength(25);

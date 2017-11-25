@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ClearMeasure.Bootcamp.Core.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -13,7 +14,10 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
             var mapping = modelBuilder.Entity<ExpenseReport>();
             mapping.UsePropertyAccessMode(PropertyAccessMode.Field);
             mapping.HasKey(x => x.Id);
-            mapping.Property(x => x.Id).IsRequired().HasValueGenerator<SequentialGuidValueGenerator>().ValueGeneratedOnAdd();
+            mapping.Property(x => x.Id).IsRequired()
+                .HasValueGenerator<SequentialGuidValueGenerator>()
+                .ValueGeneratedOnAdd()
+                .HasDefaultValue(Guid.Empty);
             mapping.Property(x => x.Number).IsRequired().HasMaxLength(5);
             mapping.Property(x => x.Title).IsRequired().HasMaxLength(200);
             mapping.Property(x => x.Description).IsRequired().HasMaxLength(4000);
@@ -21,6 +25,7 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
             {
                 builder.Property<string>(x => x.Code).HasColumnName("Status").HasColumnType("nchar(3)");
                 builder.Ignore(x => x.FriendlyName).Ignore(x => x.Key).Ignore(x => x.SortBy);
+                builder.Property("ExpenseReportId").HasDefaultValue(Guid.Empty);
             });
 
             mapping.Property(x => x.MilesDriven);
@@ -36,7 +41,8 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
             mapping.HasOne(x => x.Submitter);
             mapping.HasOne(x => x.Approver);
 
-            mapping.HasMany(x => x.AuditEntries).WithOne(x=>x.ExpenseReport).OnDelete(DeleteBehavior.Cascade);
+            mapping.HasMany(x => x.AuditEntries)
+                .WithOne(x=>x.ExpenseReport).OnDelete(DeleteBehavior.Cascade);
             
             return mapping;
         }

@@ -9,7 +9,7 @@ namespace ClearMeasure.Bootcamp.DataAccess
     {
         public SingleResult<ExpenseReport> Handle(ExpenseReportSaveCommand request)
         {
-            using (Mappings.EfDataContext context = DataContextFactory.GetEfContext())
+            using (EfDataContext context = DataContextFactory.GetEfContext())
             {
                 context.Update(request.ExpenseReport);
                 context.SaveChanges();

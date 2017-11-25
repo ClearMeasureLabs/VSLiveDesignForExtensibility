@@ -19,7 +19,51 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
 {
     [TestFixture]
     public class MostRecentExpenseReportFactViewIntegratedTester
-    {
+    { 
+        [Test]
+        public void ShouldReproduceOwnedInstanceBug()
+        {
+            new DatabaseTester().Clean();
+            var employee = new Employee("jpalermo", "Jeffrey", "Palermo", "jeffrey @ clear dash measure.com");
+            using (EfDataContext context = DataContextFactory.GetEfContext())
+            {
+                context.Update(employee);
+                context.SaveChanges();
+            }
+
+            var report = new ExpenseReport();
+            report.Number = "123";
+            report.Status = ExpenseReportStatus.Draft;
+            report.Submitter = employee;
+            report.Approver = employee;
+            report.Total = 34;
+
+            using (EfDataContext context = DataContextFactory.GetEfContext())
+            {
+                context.Update(report);
+                context.SaveChanges();
+            }
+
+            new DraftToSubmittedCommand().Execute(
+                new ExecuteTransitionCommand(report, "Submit", employee, DateTime.Now));
+
+            using (EfDataContext context = DataContextFactory.GetEfContext())
+            {
+                context.Update(report);
+                context.SaveChanges();
+            }
+
+            using (EfDataContext context = DataContextFactory.GetContext())
+            {
+                Dictionary<string, int> statuses = new Dictionary<string, int>();
+                context.ExecuteSql(
+                    "select count(1), status from MostRecentExpenseReportFactView group by status"
+                    , reader => statuses.Add(reader.GetString(1), reader.GetInt32(0)));
+
+                Assert.That(statuses["Submitted"], Is.EqualTo(1));
+            }
+        }
+
         [Test]
         public void ShouldReturnOnlyMostRecentExpenseReportFacts()
         {

@@ -27,10 +27,7 @@ IF N'$(__IsSqlCmdEnabled)' NOT LIKE N'True'
 
 
 GO
-USE [$(DatabaseName)];
 
-
-GO
 /*
 The column Date on table [dbo].[EfAuditEntry] must be changed from NULL to NOT NULL. If the table contains data, the ALTER script may not work. To avoid this issue, you must add values to this column for all rows or mark it as allowing NULL values, or enable the generation of smart-defaults as a deployment option.
 */
@@ -399,10 +396,7 @@ PRINT N'Checking existing data against newly created constraints';
 
 
 GO
-USE [$(DatabaseName)];
 
-
-GO
 ALTER TABLE [dbo].[EfAuditEntry] WITH CHECK CHECK CONSTRAINT [FK_EfAuditEntry_Employee_EmployeeId];
 
 ALTER TABLE [dbo].[EfAuditEntry] WITH CHECK CHECK CONSTRAINT [FK_EfAuditEntry_ExpenseReport_ExpenseReportId];

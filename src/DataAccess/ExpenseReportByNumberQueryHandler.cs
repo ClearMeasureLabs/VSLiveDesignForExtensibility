@@ -3,6 +3,7 @@ using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Plugins.DataAccess;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClearMeasure.Bootcamp.DataAccess
 {
@@ -12,10 +13,9 @@ namespace ClearMeasure.Bootcamp.DataAccess
         {
             using (EfDataContext dbContext = DataContextFactory.GetContext())
             {
-                var reports = dbContext.Set<ExpenseReport>().AsQueryable();
-                reports = reports.Where(r => r.Number == request.ExpenseReportNumber);
-                var report = reports.Single();
-                dbContext.Entry(report).Collection(r=>r.AuditEntries).Load();
+                ExpenseReport report = dbContext.Set<ExpenseReport>()
+                    .Include(r => r.AuditEntries)
+                    .Single(r => r.Number == request.ExpenseReportNumber);
                 return new SingleResult<ExpenseReport>(report);
             }
         }

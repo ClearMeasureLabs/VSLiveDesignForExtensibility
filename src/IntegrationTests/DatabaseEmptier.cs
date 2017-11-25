@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using System.IO;
 using System.Linq;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
 using Microsoft.EntityFrameworkCore;
@@ -33,11 +30,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
 
             var context = new EfDataContext();
 
-            using (IDbCommand command = context.Database.GetDbConnection().CreateCommand())
-            {
-                command.CommandText = _deleteSql;
-                command.ExecuteNonQuery();
-            }
+            context.Database.ExecuteSqlCommand(_deleteSql);
         }
 
         private string BuildDeleteTableSqlStatement()
@@ -94,10 +87,8 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
         private static IList<Relationship> GetRelationships(EfDataContext context)
         {
             var relationships = new List<Relationship>();
-            using (var command = context.Database.GetDbConnection().CreateCommand())
-            {
-                command.CommandText =
-                    @"select
+            context.ExecuteSql(
+                @"select
 	'[' + ss_pk.name + '].[' + so_pk.name + ']' as PrimaryKeyTable
 , '[' + ss_fk.name + '].[' + so_fk.name + ']' as ForeignKeyTable
 from
@@ -110,37 +101,26 @@ from
 	  inner join sys.schemas ss_fk on st_fk.schema_id = ss_fk.schema_id
 order by
 	so_pk.name
-,   so_fk.name;";
-                DbDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    relationships.Add(
-                        new Relationship()
-                        {
-                            PrimaryKeyTable = reader["PrimaryKeyTable"].ToString(),
-                            ForeignKeyTable = reader["ForeignKeyTable"].ToString()
-                        });
-                }
-            }
+,   so_fk.name;",
+                reader => relationships.Add(
+                    new Relationship()
+                    {
+                        PrimaryKeyTable = reader["PrimaryKeyTable"].ToString(),
+                        ForeignKeyTable = reader["ForeignKeyTable"].ToString()
+                    }));
+
             return relationships;
         }
 
         private static IList<string> GetAllTables(EfDataContext context)
         {
             List<string> tables = new List<string>();
-            using (var command = context.Database.GetDbConnection().CreateCommand())
-            {
-                command.CommandText =
-                    @"select '[' + s.name + '].[' + t.name + ']'
+            context.ExecuteSql(
+                @"select '[' + s.name + '].[' + t.name + ']'
 from sys.tables t
-inner join sys.schemas s on t.schema_id = s.schema_id";
-                DbDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    tables.Add(reader.GetString(0));
-                }
+inner join sys.schemas s on t.schema_id = s.schema_id",
+                reader => tables.Add(reader.GetString(0)));
                 return tables.Except(_ignoredTables).ToList();
-            }
         }
     }
 }
