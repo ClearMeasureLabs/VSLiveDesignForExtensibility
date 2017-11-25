@@ -44,8 +44,14 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
                 context.SaveChanges();
             }
 
-            new DraftToSubmittedCommand().Execute(
-                new ExecuteTransitionCommand(report, "Submit", employee, DateTime.Now));
+            var submitted = ExpenseReportStatus.Submitted;
+            report.AddAuditEntry(
+                new AuditEntry(employee, DateTime.Now, ExpenseReportStatus.Draft, 
+                submitted, report));
+            report.Status = submitted.Clone();
+
+//            new DraftToSubmittedCommand().Execute(
+//                new ExecuteTransitionCommand(report, "Submit", employee, DateTime.Now));
 
             using (EfDataContext context = DataContextFactory.GetEfContext())
             {

@@ -71,15 +71,15 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
                 session.Add(report);
             }
 
-            var order2 = new ExpenseReport();
-            order2.Number = Guid.NewGuid().ToString().Substring(0, 5).ToUpper();
-            order2.Submitter = jpalermo;
-            order2.Approver = jpalermo;
-            order2.Status = ExpenseReportStatus.Approved;
-            order2.Title = "Expense report starting in status ";
-            order2.Description = "Foo, foo, foo, foo ";
+            var report2 = new ExpenseReport();
+            report2.Number = Guid.NewGuid().ToString().Substring(0, 5).ToUpper();
+            report2.Submitter = jpalermo;
+            report2.Approver = jpalermo;
+            report2.Status = ExpenseReportStatus.Approved;
+            report2.Title = "Expense report starting in status ";
+            report2.Description = "Foo, foo, foo, foo ";
             new DateTime(2000, 1, 1, 8, 0, 0);
-            session.Add(order2);
+            session.Add(report2);
 
             session.SaveChanges();
             session.Dispose();

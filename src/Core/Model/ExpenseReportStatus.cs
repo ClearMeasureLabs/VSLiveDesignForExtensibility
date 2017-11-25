@@ -92,7 +92,12 @@ namespace ClearMeasure.Bootcamp.Core.Model
 			return _code.GetHashCode();
 		}
 
-		public bool IsEmpty()
+	    public ExpenseReportStatus Clone()
+	    {
+	        return FromCode(_code);
+	    }
+
+	    public bool IsEmpty()
 		{
 			return Code == "";
 		}

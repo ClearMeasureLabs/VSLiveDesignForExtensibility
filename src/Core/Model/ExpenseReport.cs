@@ -56,7 +56,7 @@ namespace ClearMeasure.Bootcamp.Core.Model
         {
             var auditItem = new AuditEntry(employee, date, beginStatus, endStatus, this);
             _auditEntries.Add(auditItem);
-            Status = endStatus;
+            Status = endStatus.Clone();
         }
 
         public IEnumerable<AuditEntry> AuditEntries => _auditEntries.ToArray();
