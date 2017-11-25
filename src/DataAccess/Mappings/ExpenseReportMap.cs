@@ -42,7 +42,7 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
             mapping.HasOne(x => x.Approver);
 
             mapping.HasMany(x => x.AuditEntries)
-                .WithOne(x=>x.ExpenseReport).OnDelete(DeleteBehavior.Cascade);
+                .WithOne(x=>x.ExpenseReport).IsRequired().OnDelete(DeleteBehavior.Cascade);
             
             return mapping;
         }

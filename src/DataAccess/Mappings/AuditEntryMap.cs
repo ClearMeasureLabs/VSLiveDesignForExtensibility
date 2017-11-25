@@ -17,7 +17,6 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
                 .HasValueGenerator<SequentialGuidValueGenerator>()
                 .ValueGeneratedOnAdd()
                 .HasDefaultValue(Guid.Empty);
-            mapping.HasOne(x => x.ExpenseReport).WithMany(x=>x.AuditEntries);
             mapping.OwnsOne(x => x.BeginStatus, builder =>
             {
                 builder.Property<string>(x => x.Code).HasColumnName("BeginStatus").HasColumnType("nchar(3)");

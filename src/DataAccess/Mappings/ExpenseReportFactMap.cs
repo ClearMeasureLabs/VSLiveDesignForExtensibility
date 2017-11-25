@@ -1,4 +1,4 @@
-﻿using ClearMeasure.Bootcamp.Core.Model;
+﻿using System;
 using ClearMeasure.Bootcamp.Core.Model.ExpenseReportAnalytics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -13,7 +13,10 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
             var mapping = modelBuilder.Entity<ExpenseReportFact>();
             mapping.UsePropertyAccessMode(PropertyAccessMode.Field);
             mapping.HasKey(x => x.Id);
-            mapping.Property(x => x.Id).IsRequired().HasValueGenerator<SequentialGuidValueGenerator>().ValueGeneratedOnAdd();
+            mapping.Property(x => x.Id).IsRequired()
+                .HasValueGenerator<SequentialGuidValueGenerator>()
+                .ValueGeneratedOnAdd()
+                .HasDefaultValue(Guid.Empty);
             mapping.Property(x => x.Number).HasMaxLength(5);
             mapping.Property(x => x.TimeStamp);
             mapping.Property(x => x.Total);

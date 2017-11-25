@@ -6,7 +6,7 @@ namespace ClearMeasure.Bootcamp.Core.Model
 {
     public class ExpenseReport
     {
-        private IList<AuditEntry> _auditEntries = new List<AuditEntry>();
+        private List<AuditEntry> _auditEntries = new List<AuditEntry>();
         public Guid Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }

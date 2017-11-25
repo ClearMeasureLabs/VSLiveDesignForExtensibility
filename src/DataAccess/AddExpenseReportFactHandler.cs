@@ -14,9 +14,7 @@ namespace ClearMeasure.Bootcamp.DataAccess
                 dbContext.SaveChanges();
             }
 
-            return new AddExpenseReportFactResult
-            {
-            };
+            return new AddExpenseReportFactResult();
         }
     }
 }

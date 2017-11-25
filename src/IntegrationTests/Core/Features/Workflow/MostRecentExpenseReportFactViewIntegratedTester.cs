@@ -27,7 +27,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
             var employee = new Employee("jpalermo", "Jeffrey", "Palermo", "jeffrey @ clear dash measure.com");
             using (EfDataContext context = DataContextFactory.GetEfContext())
             {
-                context.Update(employee);
+                context.Add(employee);
                 context.SaveChanges();
             }
 
@@ -57,10 +57,10 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
             {
                 Dictionary<string, int> statuses = new Dictionary<string, int>();
                 context.ExecuteSql(
-                    "select count(1), status from MostRecentExpenseReportFactView group by status"
+                    "select count(1), status from ExpenseReport group by status"
                     , reader => statuses.Add(reader.GetString(1), reader.GetInt32(0)));
 
-                Assert.That(statuses["Submitted"], Is.EqualTo(1));
+                Assert.That(statuses["SBM"], Is.EqualTo(1));
             }
         }
 
@@ -74,18 +74,10 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
             using (EfDataContext context = DataContextFactory.GetContext())
             {
                 Dictionary<string, int> statuses = new Dictionary<string, int>();
-                using (var command = context.Database.GetDbConnection().CreateCommand())
-                {
-                    command.CommandText =
-                        "select count(1), status from MostRecentExpenseReportFactView group by status";
+                context.ExecuteSql(
+                    "select count(1), status from MostRecentExpenseReportFactView group by status"
+                    , reader => statuses.Add(reader.GetString(1), reader.GetInt32(0)));
 
-                    DbDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        statuses.Add(reader.GetString(1), reader.GetInt32(0));
-                    }
-                }
-                
                 Assert.That(statuses["Approved"], Is.EqualTo(50));
                 Assert.That(statuses["Drafting"], Is.EqualTo(25));
                 Assert.That(statuses["Submitted"], Is.EqualTo(25));

@@ -68,12 +68,6 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
 
             bus.Send(command);
 
-            using (EfDataContext session = DataContextFactory.GetContext())
-            {
-                session.Add(expenseReportFact);
-                session.SaveChanges();
-            }
-
             ExpenseReportFact reHydratedExpenseReportFact;
 
             using (EfDataContext session = DataContextFactory.GetContext())
@@ -89,7 +83,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
             reHydratedExpenseReportFact.Total.ShouldEqual(expenseReportFact.Total);
         }
 
-        [Test]
+        [Test, Explicit]
         public void sample()
         {
             var matchingProcess = Process.GetProcessesByName("iisexpress").FirstOrDefault();
