@@ -15,7 +15,11 @@ namespace ClearMeasure.Bootcamp.DataAccess
         {
             using (EfDataContext dbContext = DataContextFactory.GetContext())
             {
-                IQueryable<ExpenseReport> reports = dbContext.Set<ExpenseReport>().AsQueryable();
+                IQueryable<ExpenseReport> reports = dbContext.Set<ExpenseReport>()
+                    .Include(r=>r.AuditEntries).ThenInclude(a=>a.Employee)
+                    .Include(r=>r.Submitter)
+                    .Include(r=>r.Approver)
+                    .AsQueryable();
 
                 if (command.Approver != null)
                 {

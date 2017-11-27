@@ -1,10 +1,13 @@
-﻿using ClearMeasure.Bootcamp.Core;
+﻿using System;
+using System.Linq;
+using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.Core.Features.SearchExpenseReports;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Plugins.DataAccess;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
 using ClearMeasure.Bootcamp.UI.DependencyResolution;
 using NUnit.Framework;
+using Should;
 using StructureMap;
 
 namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
@@ -166,6 +169,44 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
 
             Assert.That(reports.Length, Is.EqualTo(1));
             Assert.That(reports[0].Id, Is.EqualTo(order1.Id));
+        }
+
+        [Test]
+        public void ShouldEagerFetchAssociations()
+        {
+            new DatabaseTester().Clean();
+
+            var employee1 = new Employee("1", "1", "1", "1");
+            var employee2 = new Employee("2", "2", "2", "2");
+            var report = new ExpenseReport();
+            report.Submitter = employee1;
+            report.Approver = employee1;
+            report.Number = "123";
+            report.ChangeStatus(employee2, DateTime.Now, ExpenseReportStatus.Draft, ExpenseReportStatus.Submitted);;
+
+            using (EfDataContext dbContext = DataContextFactory.GetContext())
+            {
+
+                dbContext.Add(employee1);
+                dbContext.Add(report);
+                dbContext.SaveChanges();
+            }
+
+            var specification = new ExpenseReportSpecificationQuery()
+            {
+                Status = ExpenseReportStatus.Submitted
+            };
+
+            IContainer container = DependencyRegistrarModule.EnsureDependenciesRegistered();
+            var bus = container.GetInstance<Bus>();
+            MultipleResult<ExpenseReport> result = bus.Send(specification);
+            ExpenseReport[] reports = result.Results;
+
+            Assert.That(reports.Length, Is.EqualTo(1));
+            Assert.That(reports[0].Id, Is.EqualTo(report.Id));
+            reports[0].Submitter.ShouldEqual(employee1);
+            reports[0].Approver.ShouldEqual(employee1);
+            reports[0].AuditEntries.ToArray()[0].Employee.ShouldEqual(employee2);
         }
     }
 }

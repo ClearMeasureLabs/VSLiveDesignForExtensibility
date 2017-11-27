@@ -14,7 +14,9 @@ namespace ClearMeasure.Bootcamp.DataAccess
             using (EfDataContext dbContext = DataContextFactory.GetContext())
             {
                 ExpenseReport report = dbContext.Set<ExpenseReport>()
-                    .Include(r => r.AuditEntries)
+                    .Include(r => r.AuditEntries).ThenInclude(a=>a.Employee)
+                    .Include(r => r.Approver)
+                    .Include(r=>r.Submitter)    
                     .Single(r => r.Number == request.ExpenseReportNumber);
                 return new SingleResult<ExpenseReport>(report);
             }

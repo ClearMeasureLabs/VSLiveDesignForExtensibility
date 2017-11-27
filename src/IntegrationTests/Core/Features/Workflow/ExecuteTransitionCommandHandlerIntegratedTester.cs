@@ -5,6 +5,7 @@ using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.Core.Features.Workflow;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Model.ExpenseReportAnalytics;
+using ClearMeasure.Bootcamp.Core.Plugins.DataAccess;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
 using ClearMeasure.Bootcamp.IntegrationTests.DataAccess;
 using ClearMeasure.Bootcamp.UI.DependencyResolution;
@@ -44,6 +45,41 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
             result.NewStatus.ShouldEqual("Drafting");
         }
 
+        [Test]
+        public void ShouldReproduceMultiEmployeeBug()
+        {
+//            new ZDataLoader().PopulateDatabase();
+//            Employee currentUser = _session.GetCurrentUser();
+//
+//            ExpenseReport expenseReport;
+//
+//            if (model.Mode == EditMode.New)
+//                expenseReport = _expenseReportBuilder.Build(currentUser);
+//            else
+//                expenseReport = _bus.Send(new ExpenseReportByNumberQuery { ExpenseReportNumber = model.ExpenseReportNumber }).Result;
+//
+//            if (!ModelState.IsValid)
+//            {
+//                ViewBag.ExpenseReport = expenseReport;
+//                ViewBag.CurrentUser = currentUser;
+//                return View("Manage", model);
+//            }
+//
+//            Employee approver = _bus.Send(new EmployeeByUserNameQuery(model.ApproverUserName)).Result;
+//            Employee submitter = _bus.Send(new EmployeeByUserNameQuery(model.SubmitterUserName)).Result;
+//
+//            expenseReport.Number = model.ExpenseReportNumber;
+//            expenseReport.Submitter = submitter;
+//            expenseReport.Approver = approver;
+//            expenseReport.Title = model.Title;
+//            expenseReport.Description = model.Description;
+//            expenseReport.Total = model.Total;
+//
+//            var transitionCommand = new ExecuteTransitionCommand(expenseReport, command, currentUser,
+//                _calendar.GetCurrentTime());
+//
+//            ExecuteTransitionResult transitionResult = _bus.Send(transitionCommand);
+        }
 
         [Test]
         public void ShouldPersistExportReportFact()

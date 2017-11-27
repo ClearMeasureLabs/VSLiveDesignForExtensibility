@@ -79,7 +79,7 @@ namespace ClearMeasure.Bootcamp.Core.Model
 
 			if (!GetType().Equals(obj.GetType())) return false;
 
-			return _code.Equals(code.Code);
+			return Code.Equals(code.Code);
 		}
 
 		public override string ToString()
@@ -89,7 +89,7 @@ namespace ClearMeasure.Bootcamp.Core.Model
 
 		public override int GetHashCode()
 		{
-			return _code.GetHashCode();
+			return Code.GetHashCode();
 		}
 
 	    public ExpenseReportStatus Clone()
