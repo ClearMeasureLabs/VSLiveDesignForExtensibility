@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Data;
 using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
@@ -8,13 +9,11 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 {
     public class EfDataContext : DbContext
     {
-        private string _connectionString = "server=localhost\\SQLEXPRESS2014;database=ClearMeasure.Bootcamp;Integrated Security=true;";
+        private string _connectionString => ConfigurationManager.ConnectionStrings["Bootcamp"].ConnectionString;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connectionString =
-                _connectionString;
-//                DataContextFactory.BuildConfiguration().GetProperty("connection.connection_string"); //ConfigurationManager.ConnectionStrings["Bootcamp"].ConnectionString;
+            var connectionString = _connectionString;
             optionsBuilder
                 .UseSqlServer(connectionString)
                 .ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.QueryClientEvaluationWarning));
