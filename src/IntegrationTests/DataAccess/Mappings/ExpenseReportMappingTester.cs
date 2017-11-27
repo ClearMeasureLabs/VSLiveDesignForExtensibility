@@ -167,5 +167,39 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
                 context.SaveChanges();
             }
         }
+
+        [Test]
+        public void ShouldPersistMultipleInstancesOfSameEmployee()
+        {
+            new DatabaseTester().Clean();
+            var employee = new Employee("1", "1", "1", "1");
+            var report = new ExpenseReport
+            {
+                Submitter = employee,
+                Approver = employee,
+                Title = "TestExpenseReport",
+                Description = "This is an expense report test",
+                Number = "123",
+                Total = 100.25m
+            };
+
+            using (EfDataContext context = DataContextFactory.GetEfContext())
+            {
+                context.Add(report);
+                context.SaveChanges();
+            }
+
+            Employee approver = new EfDataContext().Find<Employee>(employee.Id);
+            Employee submitter = new EfDataContext().Find<Employee>(employee.Id);
+
+            report.Approver = approver;
+            report.Submitter = submitter;
+
+            using (var context = DataContextFactory.GetEfContext())
+            {
+                context.Update(report);
+                context.SaveChanges();
+            }
+        }
     }
 }

@@ -10,6 +10,8 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
     [TestFixture, Explicit]
     public class ZDataLoader
     {
+        public const string KnownExpenseReportNumber = "1A2B3";
+        public const string KnownEmployeeUsername = "jpalermo";
         [Test, Category("DataLoader")]
         public void PopulateDatabase()
         {
@@ -18,7 +20,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
 
 
             //Trainer1
-            var jpalermo = new Employee("jpalermo", "Jeffrey", "Palermo", "jeffrey@clear-measure.com");
+            var jpalermo = new Employee(KnownEmployeeUsername, "Jeffrey", "Palermo", "jeffrey@clear-measure.com");
             session.Add(jpalermo);
 
             //Person 1
@@ -72,11 +74,11 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
             }
 
             var report2 = new ExpenseReport();
-            report2.Number = Guid.NewGuid().ToString().Substring(0, 5).ToUpper();
+            report2.Number = KnownExpenseReportNumber;
             report2.Submitter = jpalermo;
             report2.Approver = jpalermo;
-            report2.Status = ExpenseReportStatus.Approved;
-            report2.Title = "Expense report starting in status ";
+            report2.Status = ExpenseReportStatus.Draft;
+            report2.Title = "Expense report starting in Draft status ";
             report2.Description = "Foo, foo, foo, foo ";
             new DateTime(2000, 1, 1, 8, 0, 0);
             session.Add(report2);

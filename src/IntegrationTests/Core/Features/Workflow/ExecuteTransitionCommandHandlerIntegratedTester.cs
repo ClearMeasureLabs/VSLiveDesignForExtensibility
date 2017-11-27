@@ -6,6 +6,7 @@ using ClearMeasure.Bootcamp.Core.Features.Workflow;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Model.ExpenseReportAnalytics;
 using ClearMeasure.Bootcamp.Core.Plugins.DataAccess;
+using ClearMeasure.Bootcamp.DataAccess;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
 using ClearMeasure.Bootcamp.IntegrationTests.DataAccess;
 using ClearMeasure.Bootcamp.UI.DependencyResolution;
@@ -46,39 +47,28 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
         }
 
         [Test]
-        public void ShouldReproduceMultiEmployeeBug()
+        public void ShouldSaveWithMultipleInstancesOfEmployee()
         {
-//            new ZDataLoader().PopulateDatabase();
-//            Employee currentUser = _session.GetCurrentUser();
-//
-//            ExpenseReport expenseReport;
-//
-//            if (model.Mode == EditMode.New)
-//                expenseReport = _expenseReportBuilder.Build(currentUser);
-//            else
-//                expenseReport = _bus.Send(new ExpenseReportByNumberQuery { ExpenseReportNumber = model.ExpenseReportNumber }).Result;
-//
-//            if (!ModelState.IsValid)
-//            {
-//                ViewBag.ExpenseReport = expenseReport;
-//                ViewBag.CurrentUser = currentUser;
-//                return View("Manage", model);
-//            }
-//
-//            Employee approver = _bus.Send(new EmployeeByUserNameQuery(model.ApproverUserName)).Result;
-//            Employee submitter = _bus.Send(new EmployeeByUserNameQuery(model.SubmitterUserName)).Result;
-//
-//            expenseReport.Number = model.ExpenseReportNumber;
-//            expenseReport.Submitter = submitter;
-//            expenseReport.Approver = approver;
-//            expenseReport.Title = model.Title;
-//            expenseReport.Description = model.Description;
-//            expenseReport.Total = model.Total;
-//
-//            var transitionCommand = new ExecuteTransitionCommand(expenseReport, command, currentUser,
-//                _calendar.GetCurrentTime());
-//
-//            ExecuteTransitionResult transitionResult = _bus.Send(transitionCommand);
+            new ZDataLoader().PopulateDatabase();
+            IContainer container = DependencyRegistrarModule.EnsureDependenciesRegistered();
+            var bus = container.GetInstance<Bus>();
+
+            Employee approver = bus.Send(new EmployeeByUserNameQuery(ZDataLoader.KnownEmployeeUsername)).Result;
+            Employee submitter = bus.Send(new EmployeeByUserNameQuery(ZDataLoader.KnownEmployeeUsername)).Result;
+
+            ExpenseReport expenseReport = new ExpenseReport();
+            expenseReport.Number = ZDataLoader.KnownExpenseReportNumber;
+            expenseReport.Submitter = submitter;
+            expenseReport.Approver = approver;
+            expenseReport.Title = "some title";
+            expenseReport.Description = "some descriptioni";
+            expenseReport.Total = 34;
+
+            using (var context = DataContextFactory.GetEfContext())
+            {
+                context.Update(expenseReport);
+                context.SaveChanges();
+            }
         }
 
         [Test]

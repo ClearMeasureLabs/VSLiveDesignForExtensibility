@@ -11,6 +11,8 @@ namespace ClearMeasure.Bootcamp.DataAccess
         {
             using (EfDataContext context = DataContextFactory.GetEfContext())
             {
+                context.Attach(request.ExpenseReport.Submitter);
+                context.Attach(request.ExpenseReport.Approver);
                 context.Update(request.ExpenseReport);
                 context.SaveChanges();
             }

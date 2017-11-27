@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 {
@@ -13,6 +16,7 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.EnableSensitiveDataLogging();
             var connectionString = _connectionString;
             optionsBuilder
                 .UseSqlServer(connectionString)
@@ -20,6 +24,7 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 
             base.OnConfiguring(optionsBuilder);
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             new EmployeeMap().Map(modelBuilder);
