@@ -14,14 +14,14 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             new DatabaseTester().Clean();
 
             var one = new Employee("1", "first1", "last1", "email1");
-            using (EfDataContext context = DataContextFactory.GetEfContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
                 context.Add(one);
                 context.SaveChanges();
             }
 
             Employee rehydratedEmployee;
-            using (EfDataContext context = DataContextFactory.GetEfContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
                 rehydratedEmployee = context.Find<Employee>(one.Id);
             }
@@ -38,14 +38,14 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             new DatabaseTester().Clean();
 
             var one = new Employee("1", "first1", "last1", "email1");
-            using (EfDataContext context = new EfDataContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
                 context.Add(one);
                 context.SaveChanges();
             }
 
             Employee rehydratedEmployee;
-            using (EfDataContext context = new EfDataContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
                 rehydratedEmployee = context.Find<Employee>(one.Id);
             }

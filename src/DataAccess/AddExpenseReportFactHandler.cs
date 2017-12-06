@@ -6,13 +6,17 @@ namespace ClearMeasure.Bootcamp.DataAccess
 {
     public class AddExpenseReportFactHandler : IRequestHandler<AddExpenseReportFactCommand, AddExpenseReportFactResult>
     {
+        private readonly EfCoreContext _context;
+
+        public AddExpenseReportFactHandler(EfCoreContext context)
+        {
+            _context = context;
+        }
+
         public AddExpenseReportFactResult Handle(AddExpenseReportFactCommand command)
         {
-            using (EfDataContext dbContext = DataContextFactory.GetContext())
-            {
-                dbContext.Add(command.ExpenseReportFact);
-                dbContext.SaveChanges();
-            }
+            _context.Add(command.ExpenseReportFact);
+            _context.SaveChanges();
 
             return new AddExpenseReportFactResult();
         }

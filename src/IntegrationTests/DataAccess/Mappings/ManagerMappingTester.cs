@@ -18,7 +18,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             var one = new Manager("username", "Endurance", "Idehen", "Email");
             Employee adminAssistant = new Employee("Assistant", "Someone", "Else", "Email2");
             one.AdminAssistant = adminAssistant;
-            using (EfDataContext context = DataContextFactory.GetEfContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
                 context.Add(one);
                 context.Add(adminAssistant);
@@ -26,7 +26,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             }
 
             Manager rehydratedEmployee;
-            using (EfDataContext context = DataContextFactory.GetEfContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
                 rehydratedEmployee = context.Set<Manager>().Include(x => x.AdminAssistant).Single(x => x.Id == one.Id);
             }

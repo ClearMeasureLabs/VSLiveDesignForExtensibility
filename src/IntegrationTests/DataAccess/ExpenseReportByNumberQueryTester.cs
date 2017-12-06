@@ -27,7 +27,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             report2.Submitter = employee;
             report2.Number = "456";
 
-            using (EfDataContext context = DataContextFactory.GetEfContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
                 context.Add(employee);
                 context.Add(report1);
@@ -59,7 +59,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             report1.Number = "123";
             report1.ChangeStatus(employee2, DateTime.Now, ExpenseReportStatus.Draft, ExpenseReportStatus.Submitted);
 
-            using (EfDataContext context = DataContextFactory.GetEfContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
                 context.Add(report1);
                 context.SaveChanges();

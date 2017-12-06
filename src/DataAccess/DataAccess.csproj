@@ -135,15 +135,15 @@
     <Compile Include="AddExpenseReportFactHandler.cs" />
     <Compile Include="ExpenseReportByNumberQueryHandler.cs" />
     <Compile Include="Mappings\AuditEntryMap.cs" />
-    <Compile Include="Mappings\DataContextFactory.cs" />
     <Compile Include="EmployeeByUserNameQueryHandler.cs" />
     <Compile Include="EmployeeSpecificationQueryHandler.cs" />
     <Compile Include="ExpenseReportSaveCommandHandler.cs" />
     <Compile Include="ExpenseReportSpecificationQueryHandler.cs" />
-    <Compile Include="Mappings\EfDataContext.cs" />
+    <Compile Include="Mappings\EfCoreContext.cs" />
     <Compile Include="Mappings\ExpenseReportFactMap.cs" />
     <Compile Include="Mappings\ExpenseReportMap.cs" />
     <Compile Include="Mappings\EmployeeMap.cs" />
+    <Compile Include="Mappings\IDataConfiguration.cs" />
     <Compile Include="Mappings\IEntityFrameworkMapping.cs" />
     <Compile Include="Mappings\ManagerMap.cs" />
   </ItemGroup>

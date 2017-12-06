@@ -16,7 +16,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
         public void PopulateDatabase()
         {
             new DatabaseTester().Clean();
-            EfDataContext session = DataContextFactory.GetContext();
+            EfCoreContext session = new DataContextFactory().GetContext();
 
 
             //Trainer1

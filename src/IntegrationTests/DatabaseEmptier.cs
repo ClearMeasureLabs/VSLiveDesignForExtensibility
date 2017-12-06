@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
+using ClearMeasure.Bootcamp.IntegrationTests.DataAccess;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClearMeasure.Bootcamp.IntegrationTests
@@ -28,14 +29,14 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
                 _deleteSql = BuildDeleteTableSqlStatement();
             }
 
-            var context = new EfDataContext();
+            var context = new DataContextFactory().GetContext();
 
             context.Database.ExecuteSqlCommand(_deleteSql);
         }
 
         private string BuildDeleteTableSqlStatement()
         {
-            var context = new EfDataContext();
+            var context = new DataContextFactory().GetContext();
             IList<string> allTables = GetAllTables(context);
             IList<Relationship> allRelationships = GetRelationships(context);
             string[] tablesToDelete = BuildTableList(allTables, allRelationships);
@@ -84,7 +85,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
             return tablesToDelete.ToArray();
         }
 
-        private static IList<Relationship> GetRelationships(EfDataContext context)
+        private static IList<Relationship> GetRelationships(EfCoreContext context)
         {
             var relationships = new List<Relationship>();
             context.ExecuteSql(
@@ -112,7 +113,7 @@ order by
             return relationships;
         }
 
-        private static IList<string> GetAllTables(EfDataContext context)
+        private static IList<string> GetAllTables(EfCoreContext context)
         {
             List<string> tables = new List<string>();
             context.ExecuteSql(

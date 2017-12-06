@@ -5,7 +5,6 @@ using ClearMeasure.Bootcamp.DataAccess;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
 using NUnit.Framework;
 using Should;
-using EfDataContext = ClearMeasure.Bootcamp.DataAccess.Mappings.EfDataContext;
 
 namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
 {
@@ -29,10 +28,10 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             };
         
             var command = new AddExpenseReportFactCommand(fact);
-            var handler = new AddExpenseReportFactHandler();
+            var handler = new AddExpenseReportFactHandler(new DataContextFactory().GetContext());
             handler.Handle(command);
 
-            using (EfDataContext context = DataContextFactory.GetEfContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
                 context.Set<ExpenseReportFact>().Count().ShouldEqual(1);
             }

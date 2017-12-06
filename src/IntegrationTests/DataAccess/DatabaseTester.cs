@@ -1,4 +1,4 @@
-﻿using ClearMeasure.Bootcamp.DataAccess.Mappings;
+﻿using ClearMeasure.Bootcamp.UI.DependencyResolution;
 
 namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
 {
@@ -6,6 +6,8 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
     {
         public void Clean()
         {
+            DependencyRegistrarModule.Reset();
+
             new DatabaseEmptier().DeleteAllData();
         }
     }

@@ -13,14 +13,15 @@ namespace ClearMeasure.Bootcamp.UI.DependencyResolution
             Scan(scanner =>
             {
                 scanner.AssemblyContainingType<Employee>();
-                scanner.AssemblyContainingType<DataContextFactory>();
+                scanner.AssemblyContainingType<EfCoreContext>();
                 scanner.Assembly("ClearMeasure.Bootcamp.UI");
                 scanner.WithDefaultConventions();
                 scanner.ConnectImplementationsToTypesClosing(typeof (IRequestHandler<,>));
             });
             For<SingleInstanceFactory>().Use<SingleInstanceFactory>(ctx => t => ctx.GetInstance(t));
-            For<DataContextFactory>().HybridHttpOrThreadLocalScoped().Use<DataContextFactory>();
-            
+            For<EfCoreContext>().HybridHttpOrThreadLocalScoped().Use<EfCoreContext>();
+            For<IDataConfiguration>().Use<ConfigFileDataConfiguration>();
+
         }
     }
 }

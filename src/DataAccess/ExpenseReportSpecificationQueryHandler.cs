@@ -9,38 +9,35 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClearMeasure.Bootcamp.DataAccess
 {
-    public class ExpenseReportSpecificationQueryHandler : IRequestHandler<ExpenseReportSpecificationQuery, MultipleResult<ExpenseReport>>
+    public class ExpenseReportSpecificationQueryHandler : IRequestHandler<ExpenseReportSpecificationQuery,
+        MultipleResult<ExpenseReport>>
     {
+        private readonly EfCoreContext _context;
+
+        public ExpenseReportSpecificationQueryHandler(EfCoreContext context)
+        {
+            _context = context;
+        }
+
         public MultipleResult<ExpenseReport> Handle(ExpenseReportSpecificationQuery command)
         {
-            using (EfDataContext dbContext = DataContextFactory.GetContext())
-            {
-                IQueryable<ExpenseReport> reports = dbContext.Set<ExpenseReport>()
-                    .Include(r=>r.AuditEntries).ThenInclude(a=>a.Employee)
-                    .Include(r=>r.Submitter)
-                    .Include(r=>r.Approver)
-                    .AsQueryable();
+            var reports = _context.Set<ExpenseReport>()
+                .Include(r => r.AuditEntries).ThenInclude(a => a.Employee)
+                .Include(r => r.Submitter)
+                .Include(r => r.Approver)
+                .AsQueryable();
 
-                if (command.Approver != null)
-                {
-                    reports = reports.Where(r => r.Approver == command.Approver);
-                }
+            if (command.Approver != null)
+                reports = reports.Where(r => r.Approver == command.Approver);
 
-                if (command.Submitter != null)
-                {
-                    reports = reports.Where(r => r.Submitter == command.Submitter);
-                }
+            if (command.Submitter != null)
+                reports = reports.Where(r => r.Submitter == command.Submitter);
 
-                if (command.Status != null)
-                {
-                    reports = reports.Where(r => r.Status.Code == command.Status.Code);
-                }
+            if (command.Status != null)
+                reports = reports.Where(r => r.Status.Code == command.Status.Code);
 
-                IList<ExpenseReport> list = reports.ToList();
-                return new MultipleResult<ExpenseReport> {Results = new List<ExpenseReport>(list).ToArray()};
-            }
-
-
+            IList<ExpenseReport> list = reports.ToList();
+            return new MultipleResult<ExpenseReport> {Results = new List<ExpenseReport>(list).ToArray()};
         }
     }
 }

@@ -10,17 +10,19 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 {
-    public class EfDataContext : DbContext
+    public class EfCoreContext : DbContext
     {
-        private bool _isDisposed = false;
-        private string _connectionString => ConfigurationManager.ConnectionStrings["Bootcamp"].ConnectionString;
+        private readonly IDataConfiguration _config;
 
-        public bool IsDisposed => _isDisposed;
+        public EfCoreContext(IDataConfiguration config)
+        {
+            _config = config;
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.EnableSensitiveDataLogging();
-            var connectionString = _connectionString;
+            var connectionString = _config.GetConnectionString();
             optionsBuilder
                 .UseSqlServer(connectionString)
                 .ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.QueryClientEvaluationWarning));
@@ -42,7 +44,7 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
         {
             using (var dbConnection = Database.GetDbConnection())
             {
-                dbConnection.ConnectionString = _connectionString;
+                dbConnection.ConnectionString = _config.GetConnectionString();
                 dbConnection.Open();
                 using (var command = dbConnection.CreateCommand())
                 {
@@ -57,12 +59,6 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
                 }
                 dbConnection.Close();
             }
-        }
-
-        public override void Dispose()
-        {
-            _isDisposed = true;
-            base.Dispose();
         }
     }
 }

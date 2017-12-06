@@ -31,7 +31,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
             report.Submitter = employee;
             report.Approver = employee;
 
-            using (EfDataContext context = DataContextFactory.GetEfContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
                 context.UpdateRange(employee, report);
                 context.SaveChanges();
@@ -64,7 +64,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
             expenseReport.Description = "some descriptioni";
             expenseReport.Total = 34;
 
-            using (var context = DataContextFactory.GetEfContext())
+            using (var context = container.GetInstance<EfCoreContext>())
             {
                 context.Update(expenseReport);
                 context.SaveChanges();
@@ -96,7 +96,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
 
             ExpenseReportFact reHydratedExpenseReportFact;
 
-            using (EfDataContext session = DataContextFactory.GetContext())
+            using (EfCoreContext session = new DataContextFactory().GetContext())
             {
                 reHydratedExpenseReportFact = session.Find<ExpenseReportFact>(expenseReportFact.Id);
             }

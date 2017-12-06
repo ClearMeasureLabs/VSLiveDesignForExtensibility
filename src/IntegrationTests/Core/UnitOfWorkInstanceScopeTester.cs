@@ -1,4 +1,5 @@
 ﻿using ClearMeasure.Bootcamp.DataAccess.Mappings;
+using ClearMeasure.Bootcamp.IntegrationTests.DataAccess;
 using ClearMeasure.Bootcamp.UI.DependencyResolution;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
@@ -15,8 +16,8 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core
         public void ShouldUseSameInstanceOfDataContextFactory()
         {
             IContainer container = DependencyRegistrarModule.EnsureDependenciesRegistered();
-            var factory1 = container.GetInstance<DataContextFactory>();
-            var factory2 = container.GetInstance<DataContextFactory>();
+            var factory1 = container.GetInstance<EfCoreContext>();
+            var factory2 = container.GetInstance<EfCoreContext>();
             object.ReferenceEquals(factory1, factory2).ShouldBeTrue();
         }
     }

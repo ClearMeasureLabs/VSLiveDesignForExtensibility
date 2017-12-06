@@ -2,9 +2,11 @@
 using System.Linq;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
+using ClearMeasure.Bootcamp.UI.DependencyResolution;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using Should;
+using StructureMap;
 
 namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
 {
@@ -44,7 +46,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
                 ExpenseReportStatus.Approved, report);
             report.AddAuditEntry(auditEntry);
             
-            using (EfDataContext context = DataContextFactory.GetEfContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
                 context.Add(submitter);
                 context.Add(approver);
@@ -54,7 +56,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             }
 
             ExpenseReport rehydratedExpenseReport;
-            using (EfDataContext context = DataContextFactory.GetEfContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
                 rehydratedExpenseReport = context.Set<ExpenseReport>().Include(x => x.Approver)
                     .Include(x => x.Submitter).Single(x => x.Id == report.Id);
@@ -95,7 +97,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
                 ExpenseReportStatus.Approved, report);
             report.AddAuditEntry(auditEntry);
 
-            using (EfDataContext context = DataContextFactory.GetEfContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
                 context.Add(creator);
                 context.Add(assignee);
@@ -105,7 +107,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             }
 
             ExpenseReport rehydratedExpenseReport;
-            using (EfDataContext context = DataContextFactory.GetEfContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
                 rehydratedExpenseReport = context.Set<ExpenseReport>()
                     .Single(s => s.Id == report.Id);
@@ -135,7 +137,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
                 ExpenseReportStatus.Approved, report);
             report.AddAuditEntry(auditEntry);
 
-            using (EfDataContext context = DataContextFactory.GetEfContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
                 context.Add(creator);
                 context.Add(assignee);
@@ -145,7 +147,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             }
 
             ExpenseReport rehydratedExpenseReport;
-            using (EfDataContext context = DataContextFactory.GetEfContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
                 rehydratedExpenseReport = context.Set<ExpenseReport>()
                     .Single(s => s.Id == report.Id);
@@ -155,13 +157,13 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             rehydratedExpenseReport.AuditEntries.ToArray().Length.ShouldEqual(1);
             var entryId = rehydratedExpenseReport.AuditEntries.ToArray()[0].Id;
 
-            using (EfDataContext context = DataContextFactory.GetEfContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
                 context.Remove(rehydratedExpenseReport);
                 context.SaveChanges();
             }
 
-            using (EfDataContext context = DataContextFactory.GetEfContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
                 context.Set<AuditEntry>().Count(entry => entry.Id == entryId).ShouldEqual(0);
                 context.SaveChanges();
@@ -183,23 +185,22 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
                 Total = 100.25m
             };
 
-            using (EfDataContext context = DataContextFactory.GetEfContext())
-            {
+            IContainer container = DependencyRegistrarModule.EnsureDependenciesRegistered();
+
+            EfCoreContext context = container.GetInstance<EfCoreContext>();
                 context.Add(report);
                 context.SaveChanges();
-            }
 
-            Employee approver = new EfDataContext().Find<Employee>(employee.Id);
-            Employee submitter = new EfDataContext().Find<Employee>(employee.Id);
+            Employee approver = container.GetInstance<EfCoreContext>().Find<Employee>(employee.Id);
+            Employee submitter = container.GetInstance<EfCoreContext>().Find<Employee>(employee.Id);
 
             report.Approver = approver;
             report.Submitter = submitter;
 
-            using (var context = DataContextFactory.GetEfContext())
-            {
-                context.Update(report);
-                context.SaveChanges();
-            }
+            EfCoreContext context2 = container.GetInstance<EfCoreContext>();
+
+            context2.Update(report);
+                context2.SaveChanges();
         }
     }
 }

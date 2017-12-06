@@ -5,17 +5,22 @@ using ClearMeasure.Bootcamp.DataAccess.Mappings;
 
 namespace ClearMeasure.Bootcamp.DataAccess
 {
-    public class ExpenseReportSaveCommandHandler : IRequestHandler<ExpenseReportSaveCommand, SingleResult<ExpenseReport>>
+    public class ExpenseReportSaveCommandHandler : IRequestHandler<ExpenseReportSaveCommand, SingleResult<ExpenseReport>
+    >
     {
+        private readonly EfCoreContext _context;
+
+        public ExpenseReportSaveCommandHandler(EfCoreContext context)
+        {
+            _context = context;
+        }
+
         public SingleResult<ExpenseReport> Handle(ExpenseReportSaveCommand request)
         {
-            using (EfDataContext context = DataContextFactory.GetEfContext())
-            {
-                context.Attach(request.ExpenseReport.Submitter);
-                context.Attach(request.ExpenseReport.Approver);
-                context.Update(request.ExpenseReport);
-                context.SaveChanges();
-            }
+            _context.Attach(request.ExpenseReport.Submitter);
+            _context.Attach(request.ExpenseReport.Approver);
+            _context.Update(request.ExpenseReport);
+            _context.SaveChanges();
 
             return new SingleResult<ExpenseReport>(request.ExpenseReport);
         }

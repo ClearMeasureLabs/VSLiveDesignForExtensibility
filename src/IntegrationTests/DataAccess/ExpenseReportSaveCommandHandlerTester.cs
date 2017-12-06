@@ -29,7 +29,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             report.ChangeStatus(ExpenseReportStatus.Approved);
             report.Number = "123";
 
-            using(EfDataContext context = DataContextFactory.GetEfContext())
+            using(EfCoreContext context = new DataContextFactory().GetContext())
             {
                 context.Add(creator);
                 context.Add(assignee);
@@ -41,7 +41,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             bus.Send(new ExpenseReportSaveCommand {ExpenseReport = report});
 
             ExpenseReport rehydratedReport;
-            using(EfDataContext context = DataContextFactory.GetEfContext())
+            using(EfCoreContext context = new DataContextFactory().GetContext())
             {
                 rehydratedReport = context.Find<ExpenseReport>(report.Id);
                 context.Entry(rehydratedReport).Reference(x=>x.Submitter).Load();
@@ -75,7 +75,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             report.AddAuditEntry(new AuditEntry(creator, DateTime.Now,ExpenseReportStatus.Submitted,
                                                   ExpenseReportStatus.Approved, report));
 
-            using(EfDataContext context = DataContextFactory.GetEfContext())
+            using(EfCoreContext context = new DataContextFactory().GetContext())
             {
                 context.Add(creator);
                 context.Add(assignee);
@@ -87,7 +87,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             bus.Send(new ExpenseReportSaveCommand { ExpenseReport = report });
 
             ExpenseReport rehydratedReport;
-            using(EfDataContext context = DataContextFactory.GetEfContext())
+            using(EfCoreContext context = new DataContextFactory().GetContext())
             {
                 rehydratedReport = context.Find<ExpenseReport>(report.Id);
                 context.Entry(rehydratedReport).Collection(r=>r.AuditEntries).Load();

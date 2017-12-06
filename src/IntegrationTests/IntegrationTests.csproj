@@ -119,6 +119,7 @@
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SqlClient, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Data.SqlClient.4.4.0\lib\net461\System.Data.SqlClient.dll</HintPath>
@@ -148,6 +149,7 @@
     <Compile Include="DataAccess\AddExpenseReportFactHandlerTester.cs" />
     <Compile Include="Core\Features\Workflow\ExecuteTransitionCommandHandlerIntegratedTester.cs" />
     <Compile Include="DataAccess\DatabaseTester.cs" />
+    <Compile Include="DataAccess\DataContextFactory.cs" />
     <Compile Include="DataAccess\EmployeeSpecificationQueryTester.cs" />
     <Compile Include="DataAccess\EmployeeByUserNameQueryTester.cs" />
     <Compile Include="DataAccess\ExpenseReportByNumberQueryTester.cs" />
