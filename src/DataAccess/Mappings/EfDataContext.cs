@@ -12,7 +12,10 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 {
     public class EfDataContext : DbContext
     {
+        private bool _isDisposed = false;
         private string _connectionString => ConfigurationManager.ConnectionStrings["Bootcamp"].ConnectionString;
+
+        public bool IsDisposed => _isDisposed;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -54,6 +57,12 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
                 }
                 dbConnection.Close();
             }
+        }
+
+        public override void Dispose()
+        {
+            _isDisposed = true;
+            base.Dispose();
         }
     }
 }

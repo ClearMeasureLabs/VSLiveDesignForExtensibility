@@ -1,45 +1,40 @@
-﻿namespace ClearMeasure.Bootcamp.DataAccess.Mappings
+﻿using System;
+
+namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 {
     public class DataContextFactory
     {
-        private static bool _startupComplete;
+        private static Func<DataContextFactory> _instanceBuilder = () => new DataContextFactory();
+        private readonly EfDataContext _context;
 
-        private static readonly object _locker =
-            new object();
+        public DataContextFactory()
+        {
+            _context = new EfDataContext();
+        }
 
         public static EfDataContext GetContext()
         {
-            return new EfDataContext();
+            var context = GetUsableContext();
+            return context;
         }
 
         public static EfDataContext GetEfContext()
         {
-//            EnsureStartup();
-            return new EfDataContext();
+            return _instanceBuilder()._context;
         }
 
-        public static void EnsureStartup()
+        private static EfDataContext GetUsableContext()
         {
-            if (!_startupComplete)
-            {
-                lock (_locker)
-                {
-                    if (!_startupComplete)
-                    {
-                        PerformStartup();
-                        _startupComplete = true;
-                    }
-                }
-            }
+            var context = _instanceBuilder()._context;
+            if (context == null || context.IsDisposed)
+                return new EfDataContext();
+
+            return context;
         }
 
-        private static void PerformStartup()
+        public static void SetInstanceBuilder(Func<DataContextFactory> instanceBuilder)
         {
-            InitializeSessionFactory();
-        }
-
-        private static void InitializeSessionFactory()
-        {
+            _instanceBuilder = instanceBuilder;
         }
     }
 }

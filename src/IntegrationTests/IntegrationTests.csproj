@@ -144,6 +144,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Core\Features\Workflow\MostRecentExpenseReportFactViewIntegratedTester.cs" />
+    <Compile Include="Core\UnitOfWorkInstanceScopeTester.cs" />
     <Compile Include="DataAccess\AddExpenseReportFactHandlerTester.cs" />
     <Compile Include="Core\Features\Workflow\ExecuteTransitionCommandHandlerIntegratedTester.cs" />
     <Compile Include="DataAccess\DatabaseTester.cs" />

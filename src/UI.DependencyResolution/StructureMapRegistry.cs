@@ -2,6 +2,7 @@ using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
 using StructureMap.Configuration.DSL;
+using StructureMap.Web;
 
 namespace ClearMeasure.Bootcamp.UI.DependencyResolution
 {
@@ -18,6 +19,8 @@ namespace ClearMeasure.Bootcamp.UI.DependencyResolution
                 scanner.ConnectImplementationsToTypesClosing(typeof (IRequestHandler<,>));
             });
             For<SingleInstanceFactory>().Use<SingleInstanceFactory>(ctx => t => ctx.GetInstance(t));
+            For<DataContextFactory>().HybridHttpOrThreadLocalScoped().Use<DataContextFactory>();
+            
         }
     }
 }
