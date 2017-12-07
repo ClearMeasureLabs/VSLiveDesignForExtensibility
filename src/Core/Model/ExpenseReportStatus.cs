@@ -143,5 +143,10 @@ namespace ClearMeasure.Bootcamp.Core.Model
         {
             return FromCode(code);
         }
-    }
+
+	    public void Change(ExpenseReportStatus status)
+	    {
+	        _innerStatus = status;
+	    }
+	}
 }

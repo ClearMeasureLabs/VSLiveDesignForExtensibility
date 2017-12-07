@@ -69,6 +69,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
                 report.ChangeStatus(jpalermo, DateTime.Now, ExpenseReportStatus.Draft, ExpenseReportStatus.Draft);
                 report.ChangeStatus(jpalermo, DateTime.Now, ExpenseReportStatus.Draft, ExpenseReportStatus.Submitted);
                 report.ChangeStatus(jpalermo, DateTime.Now, ExpenseReportStatus.Submitted, ExpenseReportStatus.Approved);
+
                 session.Add(report);
             }
 

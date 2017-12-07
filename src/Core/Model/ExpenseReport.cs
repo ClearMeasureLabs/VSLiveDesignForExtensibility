@@ -1,16 +1,22 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ClearMeasure.Bootcamp.Core.Model
 {
     public class ExpenseReport
     {
         private List<AuditEntry> _auditEntries = new List<AuditEntry>();
+        private ExpenseReportStatus _status;
         public Guid Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public ExpenseReportStatus Status { get; set; }
+
+        public ExpenseReportStatus Status
+        {
+            get { return _status; }
+            set { _status.Change(value);}
+        }
+
         public Employee Submitter { get; set; }
         public Employee Approver { get; set; }
         public string Number { get; set; }
@@ -27,7 +33,7 @@ namespace ClearMeasure.Bootcamp.Core.Model
 
         public ExpenseReport()
         {
-            Status = ExpenseReportStatus.Draft;
+            _status = ExpenseReportStatus.Draft;
             Description = "";
             Title = "";
         }

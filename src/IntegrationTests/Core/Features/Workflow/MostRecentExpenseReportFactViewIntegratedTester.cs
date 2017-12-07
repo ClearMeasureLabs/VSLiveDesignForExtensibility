@@ -113,7 +113,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
             }
         }
 
-        [Test, Ignore("Current mapping error")]
+        [Test]
         public void ShouldReturnOnlyMostRecentExpenseReportFacts()
         {
             new DatabaseTester().Clean();

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using ClearMeasure.Bootcamp.Core.Model;
 using NUnit.Framework;
+using Should;
 
 namespace ClearMeasure.Bootcamp.UnitTests.Core.Model
 {
@@ -74,9 +75,10 @@ namespace ClearMeasure.Bootcamp.UnitTests.Core.Model
         public void ShouldChangeStatus()
         {
             var report = new ExpenseReport();
-            report.Status = ExpenseReportStatus.Draft;
+            var status = report.Status;
             report.ChangeStatus(ExpenseReportStatus.Submitted);
             Assert.That(report.Status, Is.EqualTo(ExpenseReportStatus.Submitted));
+            ReferenceEquals(status, report.Status).ShouldBeTrue();
         }
     }
 }
