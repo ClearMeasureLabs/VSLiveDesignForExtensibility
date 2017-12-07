@@ -78,7 +78,6 @@ namespace ClearMeasure.Bootcamp.UnitTests.Core.Model
             var status = report.Status;
             report.ChangeStatus(ExpenseReportStatus.Submitted);
             Assert.That(report.Status, Is.EqualTo(ExpenseReportStatus.Submitted));
-            ReferenceEquals(status, report.Status).ShouldBeTrue();
         }
     }
 }

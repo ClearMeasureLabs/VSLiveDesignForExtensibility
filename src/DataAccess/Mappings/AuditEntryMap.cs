@@ -17,20 +17,12 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
                 .HasValueGenerator<SequentialGuidValueGenerator>()
                 .ValueGeneratedOnAdd()
                 .HasDefaultValue(Guid.Empty);
-            mapping.OwnsOne(x => x.BeginStatus, builder =>
-            {
-                builder.Property<string>(x => x.Code).HasColumnName("BeginStatus").HasColumnType("nchar(3)");
-                builder.Ignore(x => x.FriendlyName).Ignore(x => x.Key).Ignore(x => x.SortBy);
-                builder.Property(typeof(Guid), "AuditEntryId").HasDefaultValue(Guid.Empty); 
-            });
-            mapping.OwnsOne(x => x.EndStatus, builder =>
-            {
-                builder.Property<string>(x => x.Code).HasColumnName("EndStatus").HasColumnType("nchar(3)");
-                builder.Ignore(x => x.FriendlyName).Ignore(x => x.Key).Ignore(x => x.SortBy);
-                builder.Property(typeof(Guid), "AuditEntryId").HasDefaultValue(Guid.Empty); 
-            });
+            mapping.Property<string>("BeginStatusCode").HasColumnName("BeginStatus").HasColumnType("nchar(3)"); 
+            mapping.Property<string>("EndStatusCode").HasColumnName("EndStatus").HasColumnType("nchar(3)");
             mapping.Property(x => x.Date);
             mapping.HasOne(x => x.Employee);
+            mapping.Ignore(x => x.BeginStatus);
+            mapping.Ignore(x => x.EndStatus);
 
             return mapping;
         }

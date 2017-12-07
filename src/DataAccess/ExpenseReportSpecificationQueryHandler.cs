@@ -34,7 +34,7 @@ namespace ClearMeasure.Bootcamp.DataAccess
                 reports = reports.Where(r => r.Submitter == command.Submitter);
 
             if (command.Status != null)
-                reports = reports.Where(r => r.Status.Code == command.Status.Code);
+                reports = reports.Where(r => r.StatusCode == command.Status.Code);
 
             IList<ExpenseReport> list = reports.ToList();
             return new MultipleResult<ExpenseReport> {Results = new List<ExpenseReport>(list).ToArray()};

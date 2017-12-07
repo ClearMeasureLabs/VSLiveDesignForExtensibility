@@ -6,15 +6,15 @@ namespace ClearMeasure.Bootcamp.Core.Model
     public class ExpenseReport
     {
         private List<AuditEntry> _auditEntries = new List<AuditEntry>();
-        private ExpenseReportStatus _status;
+        private string _statusCode;
         public Guid Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
 
         public ExpenseReportStatus Status
         {
-            get { return _status; }
-            set { _status.Change(value);}
+            get { return ExpenseReportStatus.FromCode(_statusCode); }
+            set { _statusCode = value.Code;}
         }
 
         public Employee Submitter { get; set; }
@@ -33,7 +33,7 @@ namespace ClearMeasure.Bootcamp.Core.Model
 
         public ExpenseReport()
         {
-            _status = ExpenseReportStatus.Draft;
+            Status = ExpenseReportStatus.Draft;
             Description = "";
             Title = "";
         }
@@ -109,5 +109,10 @@ namespace ClearMeasure.Bootcamp.Core.Model
         }
 
         public static IEqualityComparer<ExpenseReport> IdComparer { get; } = new IdEqualityComparer();
+
+        public string StatusCode
+        {
+            get { return _statusCode; }
+        }
     }
 }

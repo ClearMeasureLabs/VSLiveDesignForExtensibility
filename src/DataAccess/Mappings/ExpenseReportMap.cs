@@ -21,13 +21,8 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
             mapping.Property(x => x.Number).IsRequired().HasMaxLength(5);
             mapping.Property(x => x.Title).IsRequired().HasMaxLength(200);
             mapping.Property(x => x.Description).IsRequired().HasMaxLength(4000);
-            mapping.OwnsOne(x => x.Status, builder =>
-            {
-                builder.Property<string>(x => x.Code).HasColumnName("Status").HasColumnType("nchar(3)");
-                builder.Ignore(x => x.FriendlyName).Ignore(x => x.Key).Ignore(x => x.SortBy);
-                builder.Property(typeof(Guid), "ExpenseReportId").HasDefaultValue(Guid.Empty);
-            });
-
+            mapping.Property<string>("StatusCode").HasColumnName("Status").HasColumnType("nchar(3)");
+            mapping.Ignore(x => x.Status);
             mapping.Property(x => x.MilesDriven);
             mapping.Property(x => x.Created);
             mapping.Property(x => x.FirstSubmitted);
