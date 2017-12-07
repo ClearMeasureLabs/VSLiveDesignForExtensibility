@@ -25,7 +25,7 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
             {
                 builder.Property<string>(x => x.Code).HasColumnName("Status").HasColumnType("nchar(3)");
                 builder.Ignore(x => x.FriendlyName).Ignore(x => x.Key).Ignore(x => x.SortBy);
-                builder.Property("ExpenseReportId").HasDefaultValue(Guid.Empty);
+                builder.Property(typeof(Guid), "ExpenseReportId").HasDefaultValue(Guid.Empty);
             });
 
             mapping.Property(x => x.MilesDriven);

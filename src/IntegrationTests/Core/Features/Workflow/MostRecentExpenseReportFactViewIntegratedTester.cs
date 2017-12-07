@@ -33,12 +33,10 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
                     "Save Draft", "Submit");
             for (var i = 0; i < 25; i++)
                 RunToDraft(new NumberGenerator().GenerateNumber(), employee, 13 * i, startingDate.AddMinutes(i),
-                    "Save Draft", "Submit",
-                    "Approve");
+                    "Save Draft", "Submit", "Approve");
             for (var i = 0; i < 25; i++)
                 RunToDraft(new NumberGenerator().GenerateNumber(), employee, 13 * i, startingDate.AddMinutes(i),
-                    "Save Draft", "Submit",
-                    "Approve");
+                    "Save Draft", "Submit", "Approve");
         }
 
         private static void RunToDraft(string number, Employee employee, int total, DateTime startingDate,
@@ -98,9 +96,6 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
                     submitted, report));
             report.Status = submitted.Clone();
 
-//            new DraftToSubmittedCommand().Execute(
-//                new ExecuteTransitionCommand(report, "Submit", employee, DateTime.Now));
-
             using (var context = new DataContextFactory().GetContext())
             {
                 context.Update(report);
@@ -118,7 +113,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
             }
         }
 
-        [Test, Explicit]
+        [Test, Ignore("Current mapping error")]
         public void ShouldReturnOnlyMostRecentExpenseReportFacts()
         {
             new DatabaseTester().Clean();

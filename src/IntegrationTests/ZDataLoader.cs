@@ -66,10 +66,9 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
                 report.Title = "Expense report starting in status " + status;
                 report.Description = "Foo, foo, foo, foo " + status;
                 new DateTime(2000, 1, 1, 8, 0, 0);
-                report.ChangeStatus(ExpenseReportStatus.Draft);
-                report.ChangeStatus(ExpenseReportStatus.Submitted);
-                report.ChangeStatus(ExpenseReportStatus.Approved);
-
+                report.ChangeStatus(jpalermo, DateTime.Now, ExpenseReportStatus.Draft, ExpenseReportStatus.Draft);
+                report.ChangeStatus(jpalermo, DateTime.Now, ExpenseReportStatus.Draft, ExpenseReportStatus.Submitted);
+                report.ChangeStatus(jpalermo, DateTime.Now, ExpenseReportStatus.Submitted, ExpenseReportStatus.Approved);
                 session.Add(report);
             }
 

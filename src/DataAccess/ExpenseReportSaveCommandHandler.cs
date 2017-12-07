@@ -17,8 +17,6 @@ namespace ClearMeasure.Bootcamp.DataAccess
 
         public SingleResult<ExpenseReport> Handle(ExpenseReportSaveCommand request)
         {
-            _context.Attach(request.ExpenseReport.Submitter);
-            _context.Attach(request.ExpenseReport.Approver);
             _context.Update(request.ExpenseReport);
             _context.SaveChanges();
 
