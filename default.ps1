@@ -65,7 +65,7 @@ task ConnectionString {
     $connection_string = "server=$databaseserver;database=$databasename;$integratedSecurity;"
     write-host "Using connection string: $connection_string"
     if ( Test-Path "$efConfig" ) {
-        poke-xml $efConfig "//add[@name='Bootcamp']/@connectionString" $connection_string null
+        poke-xml $efConfig "//add[@name='Bootcamp']/@connectionString" $connection_string
     }
 	Write-Host("##[section]Finishing: Build task 'ConnectionString'")
 }
@@ -76,7 +76,7 @@ task InjectConnectionString {
     $connection_string = $injectedConnectionString
     write-host "Using connection string to : $databaseServer"
     if ( Test-Path "$efConfig" ) {
-        poke-xml $efConfig "//add[@name='Bootcamp']/@connectionString" $connection_string null
+        poke-xml $efConfig "//add[@name='Bootcamp']/@connectionString" $connection_string
     }
 	Write-Host("##[section]Finishing: Build task 'InjectConnectionString'")
 }
@@ -274,16 +274,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyInformationalVersionAttribute(""$version"")]"  | out-file $filename -encoding "ASCII"    
 }
 
-function script:poke-xml($filePath, $xpath, $value, $namespaces = @{}) {
+function script:poke-xml($filePath, $xpath, $value) {
     [xml] $fileXml = Get-Content $filePath
-    
-    if($namespaces -ne $null -and $namespaces.Count -gt 0) {
-        $ns = New-Object Xml.XmlNamespaceManager $fileXml.NameTable
-        $namespaces.GetEnumerator() | %{ $ns.AddNamespace($_.Key,$_.Value) }
-        $node = $fileXml.SelectSingleNode($xpath,$ns)
-    } else {
-        $node = $fileXml.SelectSingleNode($xpath)
-    }
+    $node = $fileXml.SelectSingleNode($xpath)
     
     Assert ($node -ne $null) "could not find node @ $xpath"
         
