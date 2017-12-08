@@ -9,13 +9,11 @@ $DatabaseName = $OctopusParameters["DatabaseName"]
 $connection_string = "server=$DatabaseServer;database=$DatabaseName;$integratedSecurity;"
 
 $xpath = "//add[@name='Bootcamp']/@connectionString"
-$fileXml = $configFile
+$filePath = Resolve-Path $configFile
 $value = $connection_string
 
 [xml] $fileXml = Get-Content $filePath
 $node = $fileXml.SelectSingleNode($xpath)
-    
-Assert ($node -ne $null) "could not find node @ $xpath"
         
 if($node.NodeType -eq "Element") {
     $node.InnerText = $value

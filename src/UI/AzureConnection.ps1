@@ -10,13 +10,11 @@ $databasePassword = $env:DatabasePassword
 $connection_string = "Server=tcp:$databaseServer,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 
 $xpath = "//add[@name='Bootcamp']/@connectionString"
-$fileXml = $configFile
+$filePath = Resolve-Path $configFile
 $value = $connection_string
 
 [xml] $fileXml = Get-Content $filePath
 $node = $fileXml.SelectSingleNode($xpath)
-    
-Assert ($node -ne $null) "could not find node @ $xpath"
         
 if($node.NodeType -eq "Element") {
     $node.InnerText = $value
