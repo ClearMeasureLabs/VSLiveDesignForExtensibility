@@ -9,23 +9,21 @@ $DatabaseName = $OctopusParameters["DatabaseName"]
 $connection_string = "server=$DatabaseServer;database=$DatabaseName;$integratedSecurity;"
 
 $xpath = "//add[@name='Bootcamp']/@connectionString"
+$fileXml = $configFile
+$value = $connection_string
 
-poke-xml $configFile $xpath $connection_string
+[xml] $fileXml = Get-Content $filePath
+$node = $fileXml.SelectSingleNode($xpath)
     
-function script:poke-xml($filePath, $xpath, $value) {
-    [xml] $fileXml = Get-Content $filePath
-    $node = $fileXml.SelectSingleNode($xpath)
-    
-    Assert ($node -ne $null) "could not find node @ $xpath"
+Assert ($node -ne $null) "could not find node @ $xpath"
         
-    if($node.NodeType -eq "Element") {
-        $node.InnerText = $value
-    } else {
-        $node.Value = $value
-    }
+if($node.NodeType -eq "Element") {
+    $node.InnerText = $value
+} else {
+    $node.Value = $value
+}
 
-    $fileXml.Save($filePath) 
-} 
+$fileXml.Save($filePath) 
 
 Write-Host "DatabaseServer: $DatabaseServer"
 Write-Host "DatabaseName: $DatabaseName"
