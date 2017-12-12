@@ -1,18 +1,14 @@
 ﻿using System.Diagnostics;
 using System.Linq;
-using ClearMeasure.Bootcamp.IntegrationTests;
 using NUnit.Framework;
-using TechTalk.SpecFlow;
 
 [assembly: Parallelizable(ParallelScope.None)]
-namespace ClearMeasure.Bootcamp.SmokeTests.StepDefinitions
+namespace ClearMeasure.Bootcamp.SmokeTests.Scenarios
 {
-    [Binding]
-    public static class SmokeTestsBootstrapper
+    public static class ScenariosBootstrapper
     {
         private static Process _iisProcess;
 
-        [BeforeTestRun]
         public static void Startup()
         {
             // kill off existing IIS Express instance if present
@@ -29,7 +25,6 @@ namespace ClearMeasure.Bootcamp.SmokeTests.StepDefinitions
             _iisProcess.Start();
         }
         
-        [AfterTestRun]
         public static void Cleanup()
         {
             // stop IIS Express

@@ -10,7 +10,7 @@ namespace ClearMeasure.Bootcamp.SmokeTests
             // TODO: Think of a better, more robust way of finding the website root
             var path = AppDomain.CurrentDomain.BaseDirectory;
             // for running within VS
-            path = path.Replace(@"SmokeTests\bin\Release", "UI");
+            path = path.Replace(@"SmokeTests\bin\Debug", "UI");
             // for running from the command line
             path = path.Replace(@"build\test", @"src\UI");
             var port = ConfigurationManager.AppSettings["port"];

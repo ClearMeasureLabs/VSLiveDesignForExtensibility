@@ -102,7 +102,7 @@ task Test -depends Compile {
 	Write-Host("##[section]Finishing: Build task 'Test'")
 }
 
-task AcceptanceTest -depends Test {
+task AcceptanceTest {
 	Write-Host("##[section]Starting: Build task 'AcceptanceTest'")
     copy_all_assemblies_for_test $test_dir
 	exec {
