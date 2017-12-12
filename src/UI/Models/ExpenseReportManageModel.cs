@@ -36,7 +36,7 @@ namespace ClearMeasure.Bootcamp.UI.Models
 
         [Required]
         [DataType(DataType.Currency)]
-        public decimal Total { get; set; }
+        public decimal? Total { get; set; }
 
         public bool IsReadOnly { get; set; }
         public bool CanReassign { get; set; }

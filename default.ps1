@@ -26,7 +26,7 @@ properties {
 	$databaseUser = $env:DatabaseUser
 	$databasePassword = $env:DatabasePassword
     $databaseScripts = "$source_dir\Database\scripts"
-    $hibernateConfig = "$source_dir\hibernate.cfg.xml"
+    $efConfig = "$source_dir\ConnectionStrings.config"
     $schemaDatabaseName = $databaseName + "_schema"
     $integratedSecurity = "Integrated Security=true"
     $connection_string = "server=$databaseserver;database=$databasename;$databaseUser;"
@@ -39,7 +39,7 @@ properties {
 	Write-Host("db password is $databasePassword")
 }
 
-task default -depends Init, Compile, RebuildDatabase, Test, LoadData
+task default -depends Init, ConnectionString, Compile, RebuildDatabase, Test, LoadData
 task ci -depends Init, CommonAssemblyInfo, ConnectionString, Compile, RebuildDatabase, Test
 task ci-assume-db -depends Init, CommonAssemblyInfo, InjectConnectionString, Compile, UpdateDatabaseAzure, Test
 
@@ -64,8 +64,8 @@ task ConnectionString {
 	Write-Host("##[section]Starting: Build task 'ConnectionString'")
     $connection_string = "server=$databaseserver;database=$databasename;$integratedSecurity;"
     write-host "Using connection string: $connection_string"
-    if ( Test-Path "$hibernateConfig" ) {
-        poke-xml $hibernateConfig "//e:property[@name = 'connection.connection_string']" $connection_string @{"e" = "urn:nhibernate-configuration-2.2"}
+    if ( Test-Path "$efConfig" ) {
+        poke-xml $efConfig "//add[@name='Bootcamp']/@connectionString" $connection_string
     }
 	Write-Host("##[section]Finishing: Build task 'ConnectionString'")
 }
@@ -75,8 +75,8 @@ task InjectConnectionString {
 	$injectedConnectionString = "Server=tcp:$databaseServer,1433;Initial Catalog=$databaseName;Persist Security Info=False;User ID=$databaseUser;Password=$databasePassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
     $connection_string = $injectedConnectionString
     write-host "Using connection string to : $databaseServer"
-    if ( Test-Path "$hibernateConfig" ) {
-        poke-xml $hibernateConfig "//e:property[@name = 'connection.connection_string']" $connection_string @{"e" = "urn:nhibernate-configuration-2.2"}
+    if ( Test-Path "$efConfig" ) {
+        poke-xml $efConfig "//add[@name='Bootcamp']/@connectionString" $connection_string
     }
 	Write-Host("##[section]Finishing: Build task 'InjectConnectionString'")
 }
@@ -102,7 +102,7 @@ task Test -depends Compile {
 	Write-Host("##[section]Finishing: Build task 'Test'")
 }
 
-task AcceptanceTest -depends Test {
+task AcceptanceTest {
 	Write-Host("##[section]Starting: Build task 'AcceptanceTest'")
     copy_all_assemblies_for_test $test_dir
 	exec {
@@ -156,8 +156,8 @@ task CreateCompareSchema -depends SchemaConnectionString {
 task SchemaConnectionString {
     $connection_string = "server=$databaseserver;database=$schemaDatabaseName;@integratedSecurity;"
     write-host "Using connection string: $connection_string"
-    #if ( Test-Path "$hibernateConfig" ) {
-    #    poke-xml $hibernateConfig "//e:property[@name = 'connection.connection_string']" $connection_string @{"e" = "urn:nhibernate-configuration-2.2"}
+    #if ( Test-Path "$efConfig" ) {
+    #    poke-xml $efConfig "//add[@name='Bootcamp']/@connectionString" $connection_string null
     #}
 }
 
@@ -274,16 +274,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyInformationalVersionAttribute(""$version"")]"  | out-file $filename -encoding "ASCII"    
 }
 
-function script:poke-xml($filePath, $xpath, $value, $namespaces = @{}) {
+function script:poke-xml($filePath, $xpath, $value) {
     [xml] $fileXml = Get-Content $filePath
-    
-    if($namespaces -ne $null -and $namespaces.Count -gt 0) {
-        $ns = New-Object Xml.XmlNamespaceManager $fileXml.NameTable
-        $namespaces.GetEnumerator() | %{ $ns.AddNamespace($_.Key,$_.Value) }
-        $node = $fileXml.SelectSingleNode($xpath,$ns)
-    } else {
-        $node = $fileXml.SelectSingleNode($xpath)
-    }
+    $node = $fileXml.SelectSingleNode($xpath)
     
     Assert ($node -ne $null) "could not find node @ $xpath"
         

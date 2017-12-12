@@ -35,7 +35,6 @@ namespace ClearMeasure.Bootcamp.UI.DependencyResolution
 					if (!_dependenciesRegistered)
 					{
 					    Initialize();
-                        DataContextFactory.EnsureStartup();
 						_dependenciesRegistered = true;
 					}
 				}
@@ -43,6 +42,12 @@ namespace ClearMeasure.Bootcamp.UI.DependencyResolution
 
 		    return Container;
 		}
+
+	    public static void Reset()
+	    {
+	        _dependenciesRegistered = false;
+	        Container = null;
+	    }
 
 	    private static void Initialize()
 	    {

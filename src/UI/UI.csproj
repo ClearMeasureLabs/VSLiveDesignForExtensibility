@@ -213,10 +213,6 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\hibernate.cfg.xml">
-      <Link>hibernate.cfg.xml</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\ClearMeasureLogo.png" />
@@ -231,6 +227,10 @@
     <Content Include="PostDeploy.ps1" />
     <Content Include="newrelic.config" />
     <Content Include="AzureConnection.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\ConnectionStrings.config">
+      <Link>ConnectionStrings.config</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />

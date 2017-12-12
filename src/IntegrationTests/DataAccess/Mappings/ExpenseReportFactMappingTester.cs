@@ -2,7 +2,6 @@
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Model.ExpenseReportAnalytics;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
-using NHibernate;
 using NUnit.Framework;
 using Should;
 
@@ -30,14 +29,13 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             ExpenseReportFact expenseReportFact = new ExpenseReportFact(expenseReport,new DateTime(2012,1,1));
 
 
-            using (ISession session = DataContextFactory.GetContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
-                //session.SaveOrUpdate(expenseReport);
-                session.SaveOrUpdate(expenseReportFact);
-                session.Transaction.Commit();
+                context.Add(expenseReportFact);
+                context.SaveChanges();
             }
 
-            using (EfDataContext context = DataContextFactory.GetEfContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
                 var reportFact = context.Find<ExpenseReportFact>(expenseReportFact.Id);
 

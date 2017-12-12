@@ -2,29 +2,19 @@
 # PostDeploy.ps1
 #
 $path = $PSScriptRoot
-$hibernateConfig = "$path\bin\hibernate.cfg.xml"
+$configFile = "$path\ConnectionStrings.config"
 $integratedSecurity = "Integrated Security=true"
 $DatabaseServer = $OctopusParameters["DatabaseServer"]
 $DatabaseName = $OctopusParameters["DatabaseName"]
 $connection_string = "server=$DatabaseServer;database=$DatabaseName;$integratedSecurity;"
-#poke-xml $hibernateConfig "//e:property[@name = 'connection.connection_string']" $connection_string @{"e" = "urn:nhibernate-configuration-2.2"}
 
-$filePath = $hibernateConfig
-$xpath = "//e:property[@name = 'connection.connection_string']"
+$xpath = "//add[@name='Bootcamp']/@connectionString"
+$filePath = Resolve-Path $configFile
 $value = $connection_string
-$namespaces = @{"e" = "urn:nhibernate-configuration-2.2"}
-
 
 [xml] $fileXml = Get-Content $filePath
-    
-if($namespaces -ne $null -and $namespaces.Count -gt 0) {
-    $ns = New-Object Xml.XmlNamespaceManager $fileXml.NameTable
-    $namespaces.GetEnumerator() | %{ $ns.AddNamespace($_.Key,$_.Value) }
-    $node = $fileXml.SelectSingleNode($xpath,$ns)
-} else {
-    $node = $fileXml.SelectSingleNode($xpath)
-}
-    
+$node = $fileXml.SelectSingleNode($xpath)
+        
 if($node.NodeType -eq "Element") {
     $node.InnerText = $value
 } else {
@@ -32,3 +22,7 @@ if($node.NodeType -eq "Element") {
 }
 
 $fileXml.Save($filePath) 
+
+Write-Host "DatabaseServer: $DatabaseServer"
+Write-Host "DatabaseName: $DatabaseName"
+Write-Host "-----------------------"

@@ -5,10 +5,11 @@ using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.Core.Features.Workflow;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Model.ExpenseReportAnalytics;
+using ClearMeasure.Bootcamp.Core.Plugins.DataAccess;
+using ClearMeasure.Bootcamp.DataAccess;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
 using ClearMeasure.Bootcamp.IntegrationTests.DataAccess;
 using ClearMeasure.Bootcamp.UI.DependencyResolution;
-using NHibernate;
 using NUnit.Framework;
 using Should;
 using StructureMap;
@@ -30,14 +31,13 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
             report.Submitter = employee;
             report.Approver = employee;
 
-            using (ISession session = DataContextFactory.GetContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
-                session.SaveOrUpdate(employee);
-                session.SaveOrUpdate(report);
-                session.Transaction.Commit();
+                context.UpdateRange(employee, report);
+                context.SaveChanges();
             }
 
-            var command = new ExecuteTransitionCommand(report, "Save", employee, new DateTime(2001, 1, 1));
+            var command = new ExecuteTransitionCommand(report, "Save Draft", employee, new DateTime(2001, 1, 1));
 
             IContainer container = DependencyRegistrarModule.EnsureDependenciesRegistered();
             var bus = container.GetInstance<Bus>();
@@ -46,6 +46,30 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
             result.NewStatus.ShouldEqual("Drafting");
         }
 
+        [Test]
+        public void ShouldSaveWithMultipleInstancesOfEmployee()
+        {
+            new ZDataLoader().PopulateDatabase();
+            IContainer container = DependencyRegistrarModule.EnsureDependenciesRegistered();
+            var bus = container.GetInstance<Bus>();
+
+            Employee approver = bus.Send(new EmployeeByUserNameQuery(ZDataLoader.KnownEmployeeUsername)).Result;
+            Employee submitter = bus.Send(new EmployeeByUserNameQuery(ZDataLoader.KnownEmployeeUsername)).Result;
+
+            ExpenseReport expenseReport = new ExpenseReport();
+            expenseReport.Number = ZDataLoader.KnownExpenseReportNumber;
+            expenseReport.Submitter = submitter;
+            expenseReport.Approver = approver;
+            expenseReport.Title = "some title";
+            expenseReport.Description = "some descriptioni";
+            expenseReport.Total = 34;
+
+            using (var context = container.GetInstance<EfCoreContext>())
+            {
+                context.Update(expenseReport);
+                context.SaveChanges();
+            }
+        }
 
         [Test]
         public void ShouldPersistExportReportFact()
@@ -70,17 +94,11 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
 
             bus.Send(command);
 
-            using (ISession session = DataContextFactory.GetContext())
-            {
-                session.Save(expenseReportFact);
-                session.Transaction.Commit();
-            }
-
             ExpenseReportFact reHydratedExpenseReportFact;
 
-            using (ISession session = DataContextFactory.GetContext())
+            using (EfCoreContext session = new DataContextFactory().GetContext())
             {
-                reHydratedExpenseReportFact = session.Load<ExpenseReportFact>(expenseReportFact.Id);
+                reHydratedExpenseReportFact = session.Find<ExpenseReportFact>(expenseReportFact.Id);
             }
 
             reHydratedExpenseReportFact.Approver.ShouldEqual(expenseReportFact.Approver);
@@ -91,7 +109,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
             reHydratedExpenseReportFact.Total.ShouldEqual(expenseReportFact.Total);
         }
 
-        [Test]
+        [Test, Explicit]
         public void sample()
         {
             var matchingProcess = Process.GetProcessesByName("iisexpress").FirstOrDefault();

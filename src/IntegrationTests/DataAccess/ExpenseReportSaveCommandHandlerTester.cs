@@ -5,7 +5,6 @@ using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Plugins.DataAccess;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
 using ClearMeasure.Bootcamp.UI.DependencyResolution;
-using NHibernate;
 using NUnit.Framework;
 using Should;
 using StructureMap;
@@ -30,11 +29,11 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             report.ChangeStatus(ExpenseReportStatus.Approved);
             report.Number = "123";
 
-            using(ISession session = DataContextFactory.GetContext())
+            using(EfCoreContext context = new DataContextFactory().GetContext())
             {
-                session.SaveOrUpdate(creator);
-                session.SaveOrUpdate(assignee);
-                session.Transaction.Commit();
+                context.Add(creator);
+                context.Add(assignee);
+                context.SaveChanges();
             }
 
             IContainer container = DependencyRegistrarModule.EnsureDependenciesRegistered();
@@ -42,9 +41,11 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             bus.Send(new ExpenseReportSaveCommand {ExpenseReport = report});
 
             ExpenseReport rehydratedReport;
-            using(ISession session2 = DataContextFactory.GetContext())
+            using(EfCoreContext context = new DataContextFactory().GetContext())
             {
-                rehydratedReport = session2.Load<ExpenseReport>(report.Id);
+                rehydratedReport = context.Find<ExpenseReport>(report.Id);
+                context.Entry(rehydratedReport).Reference(x=>x.Submitter).Load();
+                context.Entry(rehydratedReport).Reference(x=>x.Approver).Load();
             }
 
             rehydratedReport.Id.ShouldEqual(report.Id);
@@ -72,13 +73,13 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             report.ChangeStatus(ExpenseReportStatus.Approved);
             report.Number = "123";
             report.AddAuditEntry(new AuditEntry(creator, DateTime.Now,ExpenseReportStatus.Submitted,
-                                                  ExpenseReportStatus.Approved));
+                                                  ExpenseReportStatus.Approved, report));
 
-            using(ISession session = DataContextFactory.GetContext())
+            using(EfCoreContext context = new DataContextFactory().GetContext())
             {
-                session.SaveOrUpdate(creator);
-                session.SaveOrUpdate(assignee);
-                session.Transaction.Commit();   
+                context.Add(creator);
+                context.Add(assignee);
+                context.SaveChanges();   
             }
 
             IContainer container = DependencyRegistrarModule.EnsureDependenciesRegistered();
@@ -86,9 +87,10 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             bus.Send(new ExpenseReportSaveCommand { ExpenseReport = report });
 
             ExpenseReport rehydratedReport;
-            using(ISession session2 = DataContextFactory.GetContext())
+            using(EfCoreContext context = new DataContextFactory().GetContext())
             {
-                rehydratedReport = session2.Load<ExpenseReport>(report.Id);
+                rehydratedReport = context.Find<ExpenseReport>(report.Id);
+                context.Entry(rehydratedReport).Collection(r=>r.AuditEntries).Load();
             }
 
             var x = report.AuditEntries.ToArray()[0];

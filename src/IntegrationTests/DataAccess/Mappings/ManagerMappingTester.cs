@@ -2,7 +2,6 @@ using System.Linq;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
 using Microsoft.EntityFrameworkCore;
-using NHibernate;
 using NUnit.Framework;
 using Should;
 
@@ -19,15 +18,15 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             var one = new Manager("username", "Endurance", "Idehen", "Email");
             Employee adminAssistant = new Employee("Assistant", "Someone", "Else", "Email2");
             one.AdminAssistant = adminAssistant;
-            using (ISession session = DataContextFactory.GetContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
-                session.Save(one);
-                session.Save(adminAssistant);
-                session.Transaction.Commit();
+                context.Add(one);
+                context.Add(adminAssistant);
+                context.SaveChanges();
             }
 
             Manager rehydratedEmployee;
-            using (EfDataContext context = DataContextFactory.GetEfContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
                 rehydratedEmployee = context.Set<Manager>().Include(x => x.AdminAssistant).Single(x => x.Id == one.Id);
             }

@@ -18,7 +18,7 @@ namespace ClearMeasure.Bootcamp.Core.Services.Impl
 			ExpenseReport expenseReport = new ExpenseReport();
 			expenseReport.Number = _numberGenerator.GenerateNumber();
 			expenseReport.Submitter = creator;
-			expenseReport.Status = ExpenseReportStatus.Draft;
+			expenseReport.Status.Change(ExpenseReportStatus.Draft);
 		    expenseReport.Created = _calendar.GetCurrentTime();
 			return expenseReport;
 		}

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using ClearMeasure.Bootcamp.Core.Model;
 using NUnit.Framework;
+using Should;
 
 namespace ClearMeasure.Bootcamp.UnitTests.Core.Model
 {
@@ -20,7 +21,7 @@ namespace ClearMeasure.Bootcamp.UnitTests.Core.Model
             Assert.That(report.Submitter, Is.EqualTo(null));
             Assert.That(report.Approver, Is.EqualTo(null));
             Assert.That(report.AuditEntries.ToArray().Length, Is.EqualTo(0));
-            Assert.That(report.Total, Is.EqualTo(0.0));
+            Assert.That(report.Total, Is.Null);
         }
 
         [Test]
@@ -39,7 +40,7 @@ namespace ClearMeasure.Bootcamp.UnitTests.Core.Model
             var creator = new Employee();
             var assignee = new Employee();
             DateTime auditDate = new DateTime(2000, 1, 1, 8, 0, 0);
-            AuditEntry testAudit = new AuditEntry(creator, auditDate, ExpenseReportStatus.Submitted, ExpenseReportStatus.Approved);
+            AuditEntry testAudit = new AuditEntry(creator, auditDate, ExpenseReportStatus.Submitted, ExpenseReportStatus.Approved, report);
 
             report.Id = guid;
             report.Title = "Title";
@@ -74,7 +75,7 @@ namespace ClearMeasure.Bootcamp.UnitTests.Core.Model
         public void ShouldChangeStatus()
         {
             var report = new ExpenseReport();
-            report.Status = ExpenseReportStatus.Draft;
+            var status = report.Status;
             report.ChangeStatus(ExpenseReportStatus.Submitted);
             Assert.That(report.Status, Is.EqualTo(ExpenseReportStatus.Submitted));
         }

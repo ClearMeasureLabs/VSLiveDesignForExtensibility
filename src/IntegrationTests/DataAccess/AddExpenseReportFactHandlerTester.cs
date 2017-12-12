@@ -1,8 +1,10 @@
 using System;
+using System.Linq;
 using ClearMeasure.Bootcamp.Core.Model.ExpenseReportAnalytics;
 using ClearMeasure.Bootcamp.DataAccess;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
 using NUnit.Framework;
+using Should;
 
 namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
 {
@@ -26,13 +28,12 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             };
         
             var command = new AddExpenseReportFactCommand(fact);
-            var handler = new AddExpenseReportFactHandler();
+            var handler = new AddExpenseReportFactHandler(new DataContextFactory().GetContext());
             handler.Handle(command);
 
-            using (IDbContext dbContext = DataContextFactory.GetContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
-                var facts = dbContext.CreateCriteria<ExpenseReportFact>().List<ExpenseReportFact>();
-                Assert.That(facts.Count, Is.EqualTo(1));
+                context.Set<ExpenseReportFact>().Count().ShouldEqual(1);
             }
         }
     }

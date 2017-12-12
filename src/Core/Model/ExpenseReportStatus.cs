@@ -5,11 +5,11 @@ namespace ClearMeasure.Bootcamp.Core.Model
 {
     public class ExpenseReportStatus
 	{
-		public static readonly ExpenseReportStatus None = new ExpenseReportStatus("", "", " ", 0);
-		public static readonly ExpenseReportStatus Draft = new ExpenseReportStatus("DFT", "Draft", "Drafting", 1);
-		public static readonly ExpenseReportStatus Submitted = new ExpenseReportStatus("SBM", "Submitted", "Submitted", 2);
-		public static readonly ExpenseReportStatus Approved = new ExpenseReportStatus("APV", "Approved", "Approved", 3);
-		public static readonly ExpenseReportStatus Cancelled = new ExpenseReportStatus("CAN", "Cancelled", "Cancelled", 4);
+		private static ExpenseReportStatus None = new ExpenseReportStatus("", "", " ", 0);
+		public static ExpenseReportStatus Draft => new ExpenseReportStatus("DFT", "Draft", "Drafting", 1);
+		public static ExpenseReportStatus Submitted => new ExpenseReportStatus("SBM", "Submitted", "Submitted", 2);
+		public static ExpenseReportStatus Approved => new ExpenseReportStatus("APV", "Approved", "Approved", 3);
+		public static ExpenseReportStatus Cancelled => new ExpenseReportStatus("CAN", "Cancelled", "Cancelled", 4);
 		
 	    private readonly string _code;
 		private readonly string _key;
@@ -79,7 +79,7 @@ namespace ClearMeasure.Bootcamp.Core.Model
 
 			if (!GetType().Equals(obj.GetType())) return false;
 
-			return _code.Equals(code.Code);
+			return Code.Equals(code.Code);
 		}
 
 		public override string ToString()
@@ -89,10 +89,15 @@ namespace ClearMeasure.Bootcamp.Core.Model
 
 		public override int GetHashCode()
 		{
-			return _code.GetHashCode();
+			return Code.GetHashCode();
 		}
 
-		public bool IsEmpty()
+	    public ExpenseReportStatus Clone()
+	    {
+	        return FromCode(_code);
+	    }
+
+	    public bool IsEmpty()
 		{
 			return Code == "";
 		}
@@ -101,7 +106,7 @@ namespace ClearMeasure.Bootcamp.Core.Model
 		{
 			ExpenseReportStatus[] items = GetAllItems();
 			ExpenseReportStatus match =
-				Array.Find(items, delegate(ExpenseReportStatus instance) { return instance.Code == code; });
+				Array.Find(items, delegate(ExpenseReportStatus instance) { return instance._code == code; });
 
 			if (match == null)
 			{
@@ -138,5 +143,10 @@ namespace ClearMeasure.Bootcamp.Core.Model
         {
             return FromCode(code);
         }
-    }
+
+	    public void Change(ExpenseReportStatus expenseReportStatus)
+	    {
+	        _innerStatus = expenseReportStatus;
+	    }
+	}
 }

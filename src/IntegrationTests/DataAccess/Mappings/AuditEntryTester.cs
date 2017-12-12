@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
-using FluentNHibernate.Utils;
+using ClearMeasure.Bootcamp.UI.DependencyResolution;
 using Microsoft.EntityFrameworkCore;
-using NHibernate;
 using NUnit.Framework;
 using Should;
 
@@ -21,7 +19,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             new DatabaseTester().Clean();
             // Make employees
             var employee = new Employee("1", "1", "1", "1");
-            DateTime testTime = new DateTime(2015, 1, 1);
+            var testTime = new DateTime(2015, 1, 1);
             // popluate ExpenseReport
             var report = new ExpenseReport
             {
@@ -31,11 +29,12 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
                 Number = "123",
                 Total = 100.25m
             };
-            var entry = new AuditEntry(employee, testTime, ExpenseReportStatus.Approved, ExpenseReportStatus.Cancelled);
+            var entry = new AuditEntry(employee, testTime, ExpenseReportStatus.Approved, ExpenseReportStatus.Cancelled,
+                report);
             entry.ExpenseReport = report;
 
-            
-            using (EfDataContext context = DataContextFactory.GetEfContext())
+
+            using (var context = new DataContextFactory().GetContext())
             {
                 context.Add(employee);
                 context.Add(report);
@@ -44,7 +43,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             }
 
             AuditEntry rehydratedEntry;
-            using (EfDataContext context = DataContextFactory.GetEfContext())
+            using (var context = new DataContextFactory().GetContext())
             {
                 rehydratedEntry = context.Set<AuditEntry>().Include(x => x.ExpenseReport)
                     .Include(x => x.Employee).Single(x => x.Id == entry.Id);
@@ -55,6 +54,35 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             rehydratedEntry.BeginStatus.ShouldEqual(ExpenseReportStatus.Approved);
             rehydratedEntry.EndStatus.ShouldEqual(ExpenseReportStatus.Cancelled);
             rehydratedEntry.Date.ShouldEqual(testTime);
+        }
+
+        [Test]
+        public void ShouldProveOwnedEntityMappingForStatus()
+        {
+            new DatabaseTester().Clean();
+            var employee = new Employee("1", "1", "1", "1");
+            var testTime = new DateTime(2015, 1, 1);
+            var report = new ExpenseReport
+            {
+                Submitter = employee,
+                Title = "TestExpenseReport",
+                Description = "This is an expense report test",
+                Number = "123",
+                Total = 100.25m,
+                Status = ExpenseReportStatus.Approved
+            };
+            report.ChangeStatus(employee, testTime, ExpenseReportStatus.Submitted, ExpenseReportStatus.Approved);
+            report.ChangeStatus(employee, testTime, ExpenseReportStatus.Approved, ExpenseReportStatus.Cancelled);
+
+            var container = DependencyRegistrarModule.EnsureDependenciesRegistered();
+            var context = container.GetInstance<EfCoreContext>();
+            context.Add(report);
+            context.SaveChanges();
+
+            IQueryable<AuditEntry> entries = context.Set<AuditEntry>().Include(x => x.ExpenseReport)
+                .Include(x => x.Employee).Where(x => x.ExpenseReport.Id == report.Id);
+
+            entries.Count().ShouldEqual(2);
         }
     }
 }

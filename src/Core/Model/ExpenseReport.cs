@@ -1,21 +1,27 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ClearMeasure.Bootcamp.Core.Model
 {
     public class ExpenseReport
     {
-        private IList<AuditEntry> _auditEntries = new List<AuditEntry>();
+        private List<AuditEntry> _auditEntries = new List<AuditEntry>();
+        private string _statusCode;
         public Guid Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public ExpenseReportStatus Status { get; set; }
+
+        public ExpenseReportStatus Status
+        {
+            get { return ExpenseReportStatus.FromCode(_statusCode); }
+            set { _statusCode = value.Code;}
+        }
+
         public Employee Submitter { get; set; }
         public Employee Approver { get; set; }
         public string Number { get; set; }
         // New Properties
-        public int MilesDriven { get; set; }
+        public int? MilesDriven { get; set; }
         public DateTime? Created { get; set; }
         public DateTime? FirstSubmitted { get; set; }
         public DateTime? LastSubmitted { get; set; }
@@ -23,7 +29,7 @@ namespace ClearMeasure.Bootcamp.Core.Model
         public DateTime? LastCancelled { get; set; }
         public DateTime? LastApproved { get; set; }
         public DateTime? LastDeclined { get; set; }
-        public decimal Total { get; set; }
+        public decimal? Total { get; set; }
 
         public ExpenseReport()
         {
@@ -54,9 +60,9 @@ namespace ClearMeasure.Bootcamp.Core.Model
 
         public void ChangeStatus(Employee employee, DateTime date, ExpenseReportStatus beginStatus, ExpenseReportStatus endStatus)
         {
-            var auditItem = new AuditEntry(employee, date, beginStatus, endStatus);
+            var auditItem = new AuditEntry(employee, date, beginStatus, endStatus, this);
             _auditEntries.Add(auditItem);
-            Status = endStatus;
+            Status = endStatus.Clone();
         }
 
         public IEnumerable<AuditEntry> AuditEntries => _auditEntries.ToArray();
@@ -103,5 +109,10 @@ namespace ClearMeasure.Bootcamp.Core.Model
         }
 
         public static IEqualityComparer<ExpenseReport> IdComparer { get; } = new IdEqualityComparer();
+
+        public string StatusCode
+        {
+            get { return _statusCode; }
+        }
     }
 }

@@ -97,5 +97,7 @@ namespace ClearMeasure.Bootcamp.Core.Model
         {
             return !(a == b);
         }
+
+        
     }
 }

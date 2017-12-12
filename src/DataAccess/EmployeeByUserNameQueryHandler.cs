@@ -1,22 +1,24 @@
-﻿using ClearMeasure.Bootcamp.Core;
+﻿using System.Linq;
+using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Plugins.DataAccess;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
-using NHibernate;
 
 namespace ClearMeasure.Bootcamp.DataAccess
 {
     public class EmployeeByUserNameQueryHandler : IRequestHandler<EmployeeByUserNameQuery, SingleResult<Employee>>
     {
+        private readonly EfCoreContext _context;
+
+        public EmployeeByUserNameQueryHandler(EfCoreContext context)
+        {
+            _context = context;
+        }
+
         public SingleResult<Employee> Handle(EmployeeByUserNameQuery specification)
         {
-            using (IDbContext dbContext = DataContextFactory.GetContext())
-            {
-                IQuery query = dbContext.CreateQuery("from Employee emp where emp.UserName = :username");
-                query.SetParameter("username", specification.UserName);
-                var match = query.UniqueResult<Employee>();
-                return new SingleResult<Employee>(match);
-            }
+            var employee = _context.Set<Employee>().SingleOrDefault(e => e.UserName == specification.UserName);
+            return new SingleResult<Employee>(employee);
         }
     }
 }

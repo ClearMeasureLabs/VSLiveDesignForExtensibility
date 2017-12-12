@@ -3,7 +3,6 @@ using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Plugins.DataAccess;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
 using ClearMeasure.Bootcamp.UI.DependencyResolution;
-using NHibernate;
 using NUnit.Framework;
 using StructureMap;
 
@@ -21,12 +20,12 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             var two = new Employee("2", "first2", "last2", "email2");
             var three = new Employee("3", "first3", "last3", "email3");
 
-            using (ISession session = DataContextFactory.GetContext())
+            using (EfCoreContext context = new DataContextFactory().GetContext())
             {
-                session.SaveOrUpdate(one);
-                session.SaveOrUpdate(two);
-                session.SaveOrUpdate(three);
-                session.Transaction.Commit();
+                context.Add(one);
+                context.Add(two);
+                context.Add(three);
+                context.SaveChanges();
             }
 
             IContainer container = DependencyRegistrarModule.EnsureDependenciesRegistered();

@@ -118,7 +118,7 @@ namespace ClearMeasure.Bootcamp.UI.Controllers
 
         public bool UserCanChangeAssignee(ExpenseReport expenseReport)
         {
-            if (expenseReport.Status != ExpenseReportStatus.Draft)
+            if (!expenseReport.Status.Equals(ExpenseReportStatus.Draft))
             {
                 return false;
             }
