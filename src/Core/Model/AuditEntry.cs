@@ -21,17 +21,17 @@ namespace ClearMeasure.Bootcamp.Core.Model
             ExpenseReport = report;
         }
 
-        public virtual Employee Employee { get; set; }
-        public virtual DateTime Date { get; set; }
-        public virtual string EmployeeName { get; set; }
+        public Employee Employee { get; set; }
+        public DateTime Date { get; set; }
+        public string EmployeeName { get; set; }
 
-        public virtual ExpenseReportStatus BeginStatus
+        public ExpenseReportStatus BeginStatus
         {
             get { return ExpenseReportStatus.FromCode(_beginStatusCode); }
             set { _beginStatusCode = value.Code; }
         }
 
-        public virtual ExpenseReportStatus EndStatus
+        public ExpenseReportStatus EndStatus
         {
             get { return ExpenseReportStatus.FromCode(_endStatusCode); }
             set { _endStatusCode = value.Code; }

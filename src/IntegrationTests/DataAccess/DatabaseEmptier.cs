@@ -1,20 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ClearMeasure.Bootcamp.DataAccess.Mappings;
-using ClearMeasure.Bootcamp.IntegrationTests.DataAccess;
 using Microsoft.EntityFrameworkCore;
 
-namespace ClearMeasure.Bootcamp.IntegrationTests
+namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
 {
     public class DatabaseEmptier
     {
         private static readonly string[] _ignoredTables = new[] { "[dbo].[sysdiagrams]", "[dbo].[usd_AppliedDatabaseScript]" };
         private static string _deleteSql;
-
-        public DatabaseEmptier()
-        {
-        }
 
         private class Relationship
         {
@@ -29,16 +23,15 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
                 _deleteSql = BuildDeleteTableSqlStatement();
             }
 
-            var context = new DataContextFactory().GetContext();
+            var context = new StubbedDataContextFactory().GetContext();
 
             context.Database.ExecuteSqlCommand(_deleteSql);
         }
 
         private string BuildDeleteTableSqlStatement()
         {
-            var context = new DataContextFactory().GetContext();
-            IList<string> allTables = GetAllTables(context);
-            IList<Relationship> allRelationships = GetRelationships(context);
+            IList<string> allTables = GetAllTables();
+            IList<Relationship> allRelationships = GetRelationships();
             string[] tablesToDelete = BuildTableList(allTables, allRelationships);
 
             return BuildTableSql(tablesToDelete);
@@ -85,10 +78,10 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
             return tablesToDelete.ToArray();
         }
 
-        private static IList<Relationship> GetRelationships(EfCoreContext context)
+        private static IList<Relationship> GetRelationships()
         {
             var relationships = new List<Relationship>();
-            context.ExecuteSql(
+            new SqlExecuter().ExecuteSql(
                 @"select
 	'[' + ss_pk.name + '].[' + so_pk.name + ']' as PrimaryKeyTable
 , '[' + ss_fk.name + '].[' + so_fk.name + ']' as ForeignKeyTable
@@ -113,10 +106,11 @@ order by
             return relationships;
         }
 
-        private static IList<string> GetAllTables(EfCoreContext context)
+        private static IList<string> GetAllTables()
         {
             List<string> tables = new List<string>();
-            context.ExecuteSql(
+
+            new SqlExecuter().ExecuteSql(
                 @"select '[' + s.name + '].[' + t.name + ']'
 from sys.tables t
 inner join sys.schemas s on t.schema_id = s.schema_id",

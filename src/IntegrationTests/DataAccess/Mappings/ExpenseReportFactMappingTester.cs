@@ -29,13 +29,13 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             ExpenseReportFact expenseReportFact = new ExpenseReportFact(expenseReport,new DateTime(2012,1,1));
 
 
-            using (EfCoreContext context = new DataContextFactory().GetContext())
+            using (EfCoreContext context = new StubbedDataContextFactory().GetContext())
             {
                 context.Add(expenseReportFact);
                 context.SaveChanges();
             }
 
-            using (EfCoreContext context = new DataContextFactory().GetContext())
+            using (EfCoreContext context = new StubbedDataContextFactory().GetContext())
             {
                 var reportFact = context.Find<ExpenseReportFact>(expenseReportFact.Id);
 

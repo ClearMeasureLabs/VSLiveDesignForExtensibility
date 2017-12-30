@@ -28,10 +28,10 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             };
         
             var command = new AddExpenseReportFactCommand(fact);
-            var handler = new AddExpenseReportFactHandler(new DataContextFactory().GetContext());
+            var handler = new AddExpenseReportFactHandler(new StubbedDataContextFactory().GetContext());
             handler.Handle(command);
 
-            using (EfCoreContext context = new DataContextFactory().GetContext())
+            using (EfCoreContext context = new StubbedDataContextFactory().GetContext())
             {
                 context.Set<ExpenseReportFact>().Count().ShouldEqual(1);
             }

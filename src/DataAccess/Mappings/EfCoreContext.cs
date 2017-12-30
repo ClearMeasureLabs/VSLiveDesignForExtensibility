@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Data.Common;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 {
@@ -38,27 +31,6 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
             new ManagerMap().Map(modelBuilder);
             new AuditEntryMap().Map(modelBuilder);
             new ExpenseReportFactMap().Map(modelBuilder);
-        }
-
-        public void ExecuteSql(string commandText, Action<DbDataReader> readerAction)
-        {
-            using (var dbConnection = Database.GetDbConnection())
-            {
-                dbConnection.ConnectionString = _config.GetConnectionString();
-                dbConnection.Open();
-                using (var command = dbConnection.CreateCommand())
-                {
-                    command.CommandType = CommandType.Text;
-                    command.CommandText =
-                        commandText;
-                    DbDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        readerAction(reader);
-                    }
-                }
-                dbConnection.Close();
-            }
         }
     }
 }

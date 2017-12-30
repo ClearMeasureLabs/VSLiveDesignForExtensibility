@@ -23,6 +23,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -110,7 +112,6 @@
     <Compile Include="Model\DevOps\StepSetup.cs" />
     <Compile Include="Model\DevOps\ValidationStep.cs" />
     <Compile Include="Model\DevOps\VersionStamp.cs" />
-    <Compile Include="Model\Expense.cs" />
     <Compile Include="Plugins\DataAccess\ExpenseReportByNumberQuery.cs" />
     <Compile Include="Plugins\DataAccess\ExpenseReportSaveCommand.cs" />
     <Compile Include="Plugins\DataAccess\MultipleResult.cs" />
@@ -128,8 +129,6 @@
     <Compile Include="Model\Employee.cs" />
     <Compile Include="Model\ExpenseReportWorkflow\SubmittedToApprovedCommand.cs" />
     <Compile Include="Model\ExpenseReportWorkflow\DraftToCancelledCommand.cs" />
-    <Compile Include="Model\ListItem.cs" />
-    <Compile Include="Model\Role.cs" />
     <Compile Include="Model\ExpenseReportWorkflow\DraftToSubmittedCommand.cs" />
     <Compile Include="Model\ExpenseReportWorkflow\DraftingCommand.cs" />
     <Compile Include="Model\ExpenseReportWorkflow\StateCommandBase.cs" />

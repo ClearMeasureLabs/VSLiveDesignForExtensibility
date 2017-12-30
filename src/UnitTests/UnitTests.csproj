@@ -23,6 +23,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -91,7 +93,6 @@
     <Compile Include="Core\Model\ExpenseReportWorkflow\SubmittedToApprovedCommandTester.cs" />
     <Compile Include="Core\Model\ExpenseReportWorkflow\DraftToCancelledCommandTester.cs" />
     <Compile Include="Core\Model\ManagerTester.cs" />
-    <Compile Include="Core\Model\RoleTester.cs" />
     <Compile Include="Core\Model\ExpenseReportWorkflow\DraftToSubmittedCommandTester.cs" />
     <Compile Include="Core\Model\ExpenseReportWorkflow\DraftingCommandTester.cs" />
     <Compile Include="Core\Model\ExpenseReportWorkflow\StateCommandBaseTester.cs" />

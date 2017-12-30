@@ -12,7 +12,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
         [Test, Explicit]
         public void CreateSchema()
         {
-            var context = new DataContextFactory().GetContext();
+            var context = new StubbedDataContextFactory().GetContext();
             context.Database.Migrate();
         }
 

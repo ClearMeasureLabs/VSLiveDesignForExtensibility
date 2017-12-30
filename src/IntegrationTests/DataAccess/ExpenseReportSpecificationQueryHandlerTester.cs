@@ -31,7 +31,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             order2.Approver = employee2;
             order2.Number = "456";
 
-            using (EfCoreContext dbContext = new DataContextFactory().GetContext())
+            using (EfCoreContext dbContext = new StubbedDataContextFactory().GetContext())
             {
                 dbContext.Add(employee1);
                 dbContext.Add(employee2);
@@ -65,7 +65,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             order2.Submitter = creator2;
             order2.Number = "456";
 
-            using (EfCoreContext dbContext = new DataContextFactory().GetContext())
+            using (EfCoreContext dbContext = new StubbedDataContextFactory().GetContext())
             {
                 dbContext.Add(creator1);
                 dbContext.Add(creator2);
@@ -103,7 +103,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             order2.Number = "456";
             order2.Status = ExpenseReportStatus.Draft;
 
-            using(EfCoreContext dbContext = new DataContextFactory().GetContext())
+            using(EfCoreContext dbContext = new StubbedDataContextFactory().GetContext())
             {
 
                 dbContext.Add(employee1);
@@ -147,7 +147,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             order2.Number = "456";
             order2.Status = ExpenseReportStatus.Draft;
 
-            using (EfCoreContext dbContext = new DataContextFactory().GetContext())
+            using (EfCoreContext dbContext = new StubbedDataContextFactory().GetContext())
             {
 
                 dbContext.Add(employee1);
@@ -184,7 +184,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             report.Number = "123";
             report.ChangeStatus(employee2, DateTime.Now, ExpenseReportStatus.Draft, ExpenseReportStatus.Submitted);;
 
-            using (EfCoreContext dbContext = new DataContextFactory().GetContext())
+            using (EfCoreContext dbContext = new StubbedDataContextFactory().GetContext())
             {
 
                 dbContext.Add(employee1);
