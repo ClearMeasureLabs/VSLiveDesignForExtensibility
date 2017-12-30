@@ -71,7 +71,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
         {
             new DatabaseTester().Clean();
             var employee = new Employee("jpalermo", "Jeffrey", "Palermo", "jeffrey @ clear dash measure.com");
-            using (var context = new DataContextFactory().GetContext())
+            using (var context = new StubbedDataContextFactory().GetContext())
             {
                 context.Add(employee);
                 context.SaveChanges();
@@ -84,7 +84,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
             report.Approver = employee;
             report.Total = 34;
 
-            using (var context = new DataContextFactory().GetContext())
+            using (var context = new StubbedDataContextFactory().GetContext())
             {
                 context.Update(report);
                 context.SaveChanges();
@@ -96,16 +96,16 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
                     submitted, report));
             report.Status = submitted.Clone();
 
-            using (var context = new DataContextFactory().GetContext())
+            using (var context = new StubbedDataContextFactory().GetContext())
             {
                 context.Update(report);
                 context.SaveChanges();
             }
 
-            using (var context = new DataContextFactory().GetContext())
+            using (var context = new StubbedDataContextFactory().GetContext())
             {
                 var statuses = new Dictionary<string, int>();
-                context.ExecuteSql(
+                new SqlExecuter().ExecuteSql(
                     "select count(1), status from ExpenseReport group by status"
                     , reader => statuses.Add(reader.GetString(1), reader.GetInt32(0)));
 
@@ -120,10 +120,8 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.Core.Features.Workflow
 
             Setup();
 
-            var container = DependencyRegistrarModule.EnsureDependenciesRegistered();
-            var context = container.GetInstance<EfCoreContext>();
             var statuses = new Dictionary<string, int>();
-            context.ExecuteSql(
+            new SqlExecuter().ExecuteSql(
                 "select count(1), status from MostRecentExpenseReportFactView group by status"
                 , reader => statuses.Add(reader.GetString(1), reader.GetInt32(0)));
 

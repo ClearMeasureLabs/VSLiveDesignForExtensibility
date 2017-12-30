@@ -21,7 +21,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
             var two = new Employee("2", "first2", "last2", "email2");
             var three = new Employee("3", "first3", "last3", "email3");
 
-            using (EfCoreContext context = new DataContextFactory().GetContext())
+            using (EfCoreContext context = new StubbedDataContextFactory().GetContext())
             {
                 context.Add(one);
                 context.Add(two);

@@ -46,7 +46,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
                 ExpenseReportStatus.Approved, report);
             report.AddAuditEntry(auditEntry);
             
-            using (EfCoreContext context = new DataContextFactory().GetContext())
+            using (EfCoreContext context = new StubbedDataContextFactory().GetContext())
             {
                 context.Add(submitter);
                 context.Add(approver);
@@ -56,7 +56,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             }
 
             ExpenseReport rehydratedExpenseReport;
-            using (EfCoreContext context = new DataContextFactory().GetContext())
+            using (EfCoreContext context = new StubbedDataContextFactory().GetContext())
             {
                 rehydratedExpenseReport = context.Set<ExpenseReport>().Include(x => x.Approver)
                     .Include(x => x.Submitter).Single(x => x.Id == report.Id);
@@ -97,7 +97,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
                 ExpenseReportStatus.Approved, report);
             report.AddAuditEntry(auditEntry);
 
-            using (EfCoreContext context = new DataContextFactory().GetContext())
+            using (EfCoreContext context = new StubbedDataContextFactory().GetContext())
             {
                 context.Add(creator);
                 context.Add(assignee);
@@ -107,7 +107,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             }
 
             ExpenseReport rehydratedExpenseReport;
-            using (EfCoreContext context = new DataContextFactory().GetContext())
+            using (EfCoreContext context = new StubbedDataContextFactory().GetContext())
             {
                 rehydratedExpenseReport = context.Set<ExpenseReport>()
                     .Single(s => s.Id == report.Id);
@@ -137,7 +137,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
                 ExpenseReportStatus.Approved, report);
             report.AddAuditEntry(auditEntry);
 
-            using (EfCoreContext context = new DataContextFactory().GetContext())
+            using (EfCoreContext context = new StubbedDataContextFactory().GetContext())
             {
                 context.Add(creator);
                 context.Add(assignee);
@@ -147,7 +147,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             }
 
             ExpenseReport rehydratedExpenseReport;
-            using (EfCoreContext context = new DataContextFactory().GetContext())
+            using (EfCoreContext context = new StubbedDataContextFactory().GetContext())
             {
                 rehydratedExpenseReport = context.Set<ExpenseReport>()
                     .Single(s => s.Id == report.Id);
@@ -157,13 +157,13 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             rehydratedExpenseReport.AuditEntries.ToArray().Length.ShouldEqual(1);
             var entryId = rehydratedExpenseReport.AuditEntries.ToArray()[0].Id;
 
-            using (EfCoreContext context = new DataContextFactory().GetContext())
+            using (EfCoreContext context = new StubbedDataContextFactory().GetContext())
             {
                 context.Remove(rehydratedExpenseReport);
                 context.SaveChanges();
             }
 
-            using (EfCoreContext context = new DataContextFactory().GetContext())
+            using (EfCoreContext context = new StubbedDataContextFactory().GetContext())
             {
                 context.Set<AuditEntry>().Count(entry => entry.Id == entryId).ShouldEqual(0);
                 context.SaveChanges();

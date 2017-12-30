@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -149,7 +150,7 @@
     <Compile Include="DataAccess\AddExpenseReportFactHandlerTester.cs" />
     <Compile Include="Core\Features\Workflow\ExecuteTransitionCommandHandlerIntegratedTester.cs" />
     <Compile Include="DataAccess\DatabaseTester.cs" />
-    <Compile Include="DataAccess\DataContextFactory.cs" />
+    <Compile Include="DataAccess\StubbedDataContextFactory.cs" />
     <Compile Include="DataAccess\EmployeeSpecificationQueryTester.cs" />
     <Compile Include="DataAccess\EmployeeByUserNameQueryTester.cs" />
     <Compile Include="DataAccess\ExpenseReportByNumberQueryTester.cs" />
@@ -159,10 +160,11 @@
     <Compile Include="DataAccess\Mappings\ExpenseReportFactMappingTester.cs" />
     <Compile Include="DataAccess\Mappings\AuditEntryTester.cs" />
     <Compile Include="DataAccess\Mappings\ManagerMappingTester.cs" />
-    <Compile Include="DatabaseEmptier.cs" />
+    <Compile Include="DataAccess\DatabaseEmptier.cs" />
     <Compile Include="DataAccess\Mappings\EmployeeMappingTester.cs" />
     <Compile Include="DataAccess\Mappings\ExpenseReportMappingTester.cs" />
     <Compile Include="AcceptanceTests\ManagerCanApproveWorkOrderAcceptanceTester.cs" />
+    <Compile Include="DataAccess\SqlExecuter.cs" />
     <Compile Include="ZDataLoader.cs" />
   </ItemGroup>
   <ItemGroup>

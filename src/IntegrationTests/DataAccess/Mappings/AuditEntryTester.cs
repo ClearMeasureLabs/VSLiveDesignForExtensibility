@@ -34,7 +34,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             entry.ExpenseReport = report;
 
 
-            using (var context = new DataContextFactory().GetContext())
+            using (var context = new StubbedDataContextFactory().GetContext())
             {
                 context.Add(employee);
                 context.Add(report);
@@ -43,7 +43,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
             }
 
             AuditEntry rehydratedEntry;
-            using (var context = new DataContextFactory().GetContext())
+            using (var context = new StubbedDataContextFactory().GetContext())
             {
                 rehydratedEntry = context.Set<AuditEntry>().Include(x => x.ExpenseReport)
                     .Include(x => x.Employee).Single(x => x.Id == entry.Id);
