@@ -32,7 +32,7 @@ properties {
     $connection_string = "server=$databaseserver;database=$databasename;$databaseUser;"
     $AliaSql = "$source_dir\Database\scripts\AliaSql.exe"
     $webapp_dir = "$source_dir\UI"
-    $vs2017_dir = "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise"
+    $vs2017_dir = "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise";
     $vstest_dir = "$vs2017_dir\Common7\IDE\CommonExtensions\Microsoft\TestWindow"
 
     if([string]::IsNullOrEmpty($version)) { $version = "1.0.0"}
@@ -42,8 +42,8 @@ properties {
 }
 
 task default -depends Init, ConnectionString, Compile, RebuildDatabase, Test, LoadData
-task ci -depends Init, CommonAssemblyInfo, ConnectionString, Compile, RebuildDatabase, Test
-task ci-assume-db -depends Init, CommonAssemblyInfo, InjectConnectionString, Compile, UpdateDatabaseAzure, Test
+task ci -depends Init, CommonAssemblyInfo, ConnectionString, Compile, RebuildDatabase, Test, CodeCoverage
+task ci-assume-db -depends Init, CommonAssemblyInfo, InjectConnectionString, Compile, UpdateDatabaseAzure, Test, CodeCoverage
 
 task Init {
 	Write-Host("##[section]Starting: Build task 'Init'")
@@ -86,7 +86,7 @@ task InjectConnectionString {
 task Compile -depends Init {
 	Write-Host("##[section]Starting: Build task 'Compile'")
     exec {
-        & "$vs2017_dir\MSBuild\15.0\Bin\msbuild.exe" /t:Clean`;Rebuild /v:m /maxcpucount:1 /nologo /p:Configuration=$projectConfig /p:OctoPackPackageVersion=$version /p:RunOctoPack=$runOctoPack /p:OctoPackEnforceAddingFiles=true $source_dir\$projectName.sln
+        & 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe' /t:Clean`;Rebuild /v:m /maxcpucount:1 /nologo /p:Configuration=$projectConfig /p:OctoPackPackageVersion=$version /p:RunOctoPack=$runOctoPack /p:OctoPackEnforceAddingFiles=true $source_dir\$projectName.sln
     }
 
 	#
@@ -99,7 +99,7 @@ task Test -depends Compile {
 	Write-Host("##[section]Starting: Build task 'Test'")
     copy_all_assemblies_for_test $test_dir
     exec {
-        & $vstest_dir\vstest.console.exe "C:\Repos\ClearMeasureBootcamp\src\UnitTests\bin\Release\ClearMeasure.Bootcamp.UnitTests.dll" /Logger:trx
+        & $nunitPath\nunit3-console.exe $test_dir\$unitTestAssembly $test_dir\$integrationTestAssembly --workers=1 --noheader --result="$build_dir\TestResult.xml"`;format=nunit2
     }
 	Write-Host("##[section]Finishing: Build task 'Test'")
 }
@@ -167,6 +167,13 @@ task CommonAssemblyInfo {
 	Write-Host("##[section]Starting: Build task 'CommonAssemblyInfo'")
     create-commonAssemblyInfo "$version" $projectName "$source_dir\CommonAssemblyInfo.cs"
 	Write-Host("##[section]Finishing: Build task 'CommonAssemblyInfo'")
+}
+
+task CodeCoverage {
+    Write-Host("##[section]Starting: Build task 'CodeCoverage'")
+    exec {
+        & $vstest_dir\vstest.console.exe $test_dir\$unitTestAssembly $test_dir\$integrationTestAssembly /TestAdapterPath:"C:\Repos\ClearMeasureBootcamp\src\packages" /Logger:trx /Enablecodecoverage
+    }
 }
  
 
