@@ -32,6 +32,8 @@ properties {
     $connection_string = "server=$databaseserver;database=$databasename;$databaseUser;"
     $AliaSql = "$source_dir\Database\scripts\AliaSql.exe"
     $webapp_dir = "$source_dir\UI"
+    $vs2017_dir = "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise";
+    $vstest_dir = "$vs2017_dir\Common7\IDE\CommonExtensions\Microsoft\TestWindow"
 
     if([string]::IsNullOrEmpty($version)) { $version = "1.0.0"}
     if([string]::IsNullOrEmpty($projectConfig)) {$projectConfig = "Release"}
@@ -40,8 +42,8 @@ properties {
 }
 
 task default -depends Init, ConnectionString, Compile, RebuildDatabase, Test, LoadData
-task ci -depends Init, CommonAssemblyInfo, ConnectionString, Compile, RebuildDatabase, Test
-task ci-assume-db -depends Init, CommonAssemblyInfo, InjectConnectionString, Compile, UpdateDatabaseAzure, Test
+task ci -depends Init, CommonAssemblyInfo, ConnectionString, Compile, RebuildDatabase, Test, CodeCoverage
+task ci-assume-db -depends Init, CommonAssemblyInfo, InjectConnectionString, Compile, UpdateDatabaseAzure, Test, CodeCoverage
 
 task Init {
 	Write-Host("##[section]Starting: Build task 'Init'")
@@ -165,6 +167,13 @@ task CommonAssemblyInfo {
 	Write-Host("##[section]Starting: Build task 'CommonAssemblyInfo'")
     create-commonAssemblyInfo "$version" $projectName "$source_dir\CommonAssemblyInfo.cs"
 	Write-Host("##[section]Finishing: Build task 'CommonAssemblyInfo'")
+}
+
+task CodeCoverage {
+    Write-Host("##[section]Starting: Build task 'CodeCoverage'")
+    exec {
+        & $vstest_dir\vstest.console.exe $test_dir\$unitTestAssembly $test_dir\$integrationTestAssembly /TestAdapterPath:"C:\Repos\ClearMeasureBootcamp\src\packages" /Logger:trx /Enablecodecoverage
+    }
 }
  
 
