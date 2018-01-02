@@ -42,8 +42,8 @@ properties {
 }
 
 task default -depends Init, ConnectionString, Compile, RebuildDatabase, Test, LoadData
-task ci -depends Init, CommonAssemblyInfo, ConnectionString, Compile, RebuildDatabase, Test, CodeCoverage
-task ci-assume-db -depends Init, CommonAssemblyInfo, InjectConnectionString, Compile, UpdateDatabaseAzure, Test, CodeCoverage
+task ci -depends Init, CommonAssemblyInfo, ConnectionString, Compile, RebuildDatabase, Test
+task ci-assume-db -depends Init, CommonAssemblyInfo, InjectConnectionString, Compile, UpdateDatabaseAzure, Test
 
 task Init {
 	Write-Host("##[section]Starting: Build task 'Init'")
