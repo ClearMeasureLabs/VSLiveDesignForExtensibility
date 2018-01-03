@@ -172,7 +172,7 @@ task CommonAssemblyInfo {
 task CodeCoverage {
     Write-Host("##[section]Starting: Build task 'CodeCoverage'")
     exec {
-        & $vstest_dir\vstest.console.exe $test_dir\$unitTestAssembly $test_dir\$integrationTestAssembly /TestAdapterPath:"C:\Repos\ClearMeasureBootcamp\src\packages" /Logger:trx /Enablecodecoverage
+        & $vstest_dir\vstest.console.exe $test_dir\$unitTestAssembly $test_dir\$integrationTestAssembly /TestAdapterPath:$test_dir /Logger:trx /Enablecodecoverage
     }
 }
  
