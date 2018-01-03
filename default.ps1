@@ -34,6 +34,7 @@ properties {
     $webapp_dir = "$source_dir\UI"
     $vs2017_dir = "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise";
     $vstest_dir = "$vs2017_dir\Common7\IDE\CommonExtensions\Microsoft\TestWindow"
+    $testresults_dir = "$base_dir\TestResults"
 
     if([string]::IsNullOrEmpty($version)) { $version = "1.0.0"}
     if([string]::IsNullOrEmpty($projectConfig)) {$projectConfig = "Release"}
@@ -42,13 +43,14 @@ properties {
 }
 
 task default -depends Init, ConnectionString, Compile, RebuildDatabase, Test, LoadData
-task ci -depends Init, CommonAssemblyInfo, ConnectionString, Compile, RebuildDatabase, Test, CodeCoverage
-task ci-assume-db -depends Init, CommonAssemblyInfo, InjectConnectionString, Compile, UpdateDatabaseAzure, Test, CodeCoverage
+task ci -depends Init, CommonAssemblyInfo, ConnectionString, Compile, RebuildDatabase, CodeCoverage
+task ci-assume-db -depends Init, CommonAssemblyInfo, InjectConnectionString, Compile, UpdateDatabaseAzure, CodeCoverage
 
 task Init {
 	Write-Host("##[section]Starting: Build task 'Init'")
     delete_file $package_file
     rd $build_dir -recurse -force  -ErrorAction Ignore
+    rd $testresults_dir -recurse -force -ErrorAction Ignore
    
     create_directory $test_dir
     create_directory $build_dir
@@ -171,8 +173,9 @@ task CommonAssemblyInfo {
 
 task CodeCoverage {
     Write-Host("##[section]Starting: Build task 'CodeCoverage'")
+    copy_all_assemblies_for_test $test_dir
     exec {
-        & $vstest_dir\vstest.console.exe $test_dir\$unitTestAssembly $test_dir\$integrationTestAssembly /TestAdapterPath:$test_dir /Logger:trx /Enablecodecoverage
+        & $vstest_dir\vstest.console.exe $test_dir\$unitTestAssembly $test_dir\$integrationTestAssembly /TestAdapterPath:$test_dir /Logger:trx /Enablecodecoverage /Settings:$source_dir\CodeCoverage.runSettings
     }
 }
  
