@@ -12,6 +12,9 @@ namespace ClearMeasure.Bootcamp.UI
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         protected void Application_Start()
         {
+            var telemetry = new Microsoft.ApplicationInsights.TelemetryClient();
+            telemetry.TrackTrace("TelemetryClient - Slow response - database01");
+
             Log.Info("bootcamp app started");
 
             AreaRegistration.RegisterAllAreas();
