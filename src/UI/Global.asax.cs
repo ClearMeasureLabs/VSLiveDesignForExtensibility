@@ -1,7 +1,9 @@
-﻿using System.Web.Http;
+﻿using System.IO;
+using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using log4net.Config;
 using log4net.Repository.Hierarchy;
 using UI;
 
@@ -12,8 +14,10 @@ namespace ClearMeasure.Bootcamp.UI
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         protected void Application_Start()
         {
+            XmlConfigurator.ConfigureAndWatch(new FileInfo(Server.MapPath("~/log4net.config")));
+
             var telemetry = new Microsoft.ApplicationInsights.TelemetryClient();
-            telemetry.TrackTrace("TelemetryClient - Slow response - database01");
+            telemetry.TrackEvent("AppStarted");
 
             Log.Info("bootcamp app started");
 
