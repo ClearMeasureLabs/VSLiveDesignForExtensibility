@@ -1,0 +1,72 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "webTestName": {
+            "type": "string"
+        },
+        "appName": {
+            "type": "string"
+        },
+        "URL": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "alertRuleName": "[concat(parameters('webTestName'), '-', toLower(parameters('appName')), '-', subscription().subscriptionId)]"
+    },
+    "resources": [
+        {
+            "value": [
+                {
+                    "id": "[resourceId('Microsoft.Insights/webtests', parameters('webTestName'))]",
+                    "name": "[parameters('webTestName')]",
+                    "type": "microsoft.insights/webtests",
+                    "location": "southcentralus",
+                    "tags": {
+                        "[concat('hidden-link:', resourceId('Microsoft.Insights/components', parameters('appName')))]": "Resource",
+                        "[concat('hidden-link:', resourceId('Microsoft.Insights/webtests', concat(parameters('webTestName'), '-', toLower(parameters('appName')))))]": "Resource"
+                    },
+                    "kind": null,
+                    "etag": "\"00000b0f-0000-0000-0000-5a53cc4b0000\"",
+                    "properties": {
+                        "SyntheticMonitorId": "[parameters('webTestName')]",
+                        "Name": "URL ping test",
+                        "Description": "",
+                        "Enabled": true,
+                        "Frequency": 300,
+                        "Timeout": 120,
+                        "Kind": "ping",
+                        "RetryEnabled": true,
+                        "Locations": [
+                            {
+                                "Id": "us-tx-sn1-azr"
+                            },
+                            {
+                                "Id": "us-il-ch1-azr"
+                            },
+                            {
+                                "Id": "us-ca-sjc-azr"
+                            },
+                            {
+                                "Id": "us-va-ash-azr"
+                            },
+                            {
+                                "Id": "us-fl-mia-edge"
+                            }
+                        ],
+                        "Configuration": {
+                            "WebTest": "[concat('<WebTest ... Name=\"', parameters('webTestName') , '\" ... Url=\"', parameters('URL'), '\" ...>')]"
+                        },
+                        "provisioningState": "Succeeded"
+                    }
+                }
+            ],
+            "nextLink": null
+        },
+        {
+            //alert rule JSON file contents
+        }
+        //Don't forget to close your brackets
+    ]
+}
