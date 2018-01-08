@@ -22,3 +22,11 @@
         <p><a class="btn btn-default" href="/expensereportsearch">Track &raquo;</a></p>
     </div>
 </div>
+
+@section scripts
+{
+    <script>
+        appInsights.trackTrace("ClientsideLogging - visited home page");
+        appInsights.trackEvent("ClientsideEventVisitedHomePage");
+    </script>
+}
