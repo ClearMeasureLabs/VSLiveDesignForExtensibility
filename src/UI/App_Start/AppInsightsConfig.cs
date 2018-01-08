@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using ClearMeasure.Bootcamp.Core.Services;
 using ClearMeasure.Bootcamp.Core.Services.Impl;
 using Microsoft.ApplicationInsights.Channel;
@@ -12,6 +13,7 @@ namespace ClearMeasure.Bootcamp.UI
         {
             TelemetryConfiguration.Active.InstrumentationKey = ConfigurationManager.AppSettings["APPINSIGHTS_INSTRUMENTATIONKEY"];
             TelemetryConfiguration.Active.TelemetryInitializers.Add(new TelemetryInitializer());
+            TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = Boolean.Parse(ConfigurationManager.AppSettings["AppInsightsDeveloperMode"]);
         }
 
         public class TelemetryInitializer : ITelemetryInitializer
@@ -20,7 +22,7 @@ namespace ClearMeasure.Bootcamp.UI
             {
                 IApplicationInformation appInfo = new ApplicationInformation();
                 // Component.Version maps to application_Version
-                telemetry.Context.Component.Version = $"{appInfo.ProductName}-{appInfo.ProductVersion}";
+                telemetry.Context.Component.Version = appInfo.ProductVersion;
                 // Environment will be mapped to customDimensions
                 telemetry.Context.Properties.Add("Environment", ConfigurationManager.AppSettings["SiteEnvironment"]);
             }
