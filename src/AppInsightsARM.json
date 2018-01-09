@@ -45,50 +45,7 @@
             "metadata": {
                 "description": "Enter the application url."
             }
-        },
-        "priceCode": {
-            "type": "int",
-            "defaultValue": 1,
-            "allowedValues": [
-                1,
-                2
-            ],
-            "metadata": {
-                "description": "1 = Basic, 2 = Enterprise"
-            }
-        },
-        "dailyQuota": {
-            "type": "int",
-            "defaultValue": 100,
-            "minValue": 1,
-            "metadata": {
-                "description": "Enter daily quota in GB."
-            }
-        },
-        "dailyQuotaResetTime": {
-            "type": "int",
-            "defaultValue": 24,
-            "metadata": {
-                "description": "Enter daily quota reset hour in UTC (0 to 23). Values outside the range will get a random reset hour."
-            }
-        },
-        "warningThreshold": {
-            "type": "int",
-            "defaultValue": 90,
-            "minValue": 1,
-            "maxValue": 100,
-            "metadata": {
-                "description": "Enter the % value of daily quota after which warning mail to be sent. "
-            }
         }
-    },
-    "variables": {
-        "priceArray": [
-            "Basic",
-            "Application Insights Enterprise"
-        ],
-        "pricePlan": "[take(variables('priceArray'),parameters('priceCode'))]",
-        "billingplan": "[concat(parameters('appName'),'/', variables('pricePlan')[0])]"
     },
     "resources": [
         {
