@@ -1,4 +1,5 @@
 ﻿using System;
+using ClearMeasure.Bootcamp.Core.Services;
 
 namespace ClearMeasure.Bootcamp.Core
 {
@@ -42,7 +43,7 @@ namespace ClearMeasure.Bootcamp.Core
             {
                 throw new InvalidOperationException("Handler was not found for request of type " + request.GetType(), e);
             }
-            var wrapperHandler = Activator.CreateInstance(wrapperType, handler);
+            var wrapperHandler = Activator.CreateInstance(wrapperType, handler, _singleInstanceFactory(typeof(IKeyTransaction)));
             return (RequestHandler<TResponse>)wrapperHandler;
         }
 
@@ -54,14 +55,17 @@ namespace ClearMeasure.Bootcamp.Core
         private class RequestHandler<TCommand, TResult> : RequestHandler<TResult> where TCommand : IRequest<TResult>
         {
             private readonly IRequestHandler<TCommand, TResult> _inner;
+            private readonly IKeyTransaction _keyTransaction;
 
-            public RequestHandler(IRequestHandler<TCommand, TResult> inner)
+            public RequestHandler(IRequestHandler<TCommand, TResult> inner, IKeyTransaction keyTransaction)
             {
                 _inner = inner;
+                _keyTransaction = keyTransaction;
             }
 
             public override TResult Handle(IRequest<TResult> message)
             {
+                _keyTransaction.Track(message.GetType().Name);
                 return _inner.Handle((TCommand)message);
             }
         }
