@@ -2,71 +2,140 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "appName": {
+            "type": "string",
+            "metadata": {
+                "description": "Enter the application name."
+            }
+        },
+        "appType": {
+            "type": "string",
+            "defaultValue": "web",
+            "allowedValues": [
+                "web",
+                "java",
+                "HockeyAppBridge",
+                "other"
+            ],
+            "metadata": {
+                "description": "Enter the application type."
+            }
+        },
+        "appLocation": {
+            "type": "string",
+            "defaultValue": "East US",
+            "allowedValues": [
+                "South Central US",
+                "West Europe",
+                "East US",
+                "North Europe"
+            ],
+            "metadata": {
+                "description": "Enter the application location."
+            }
+        },
         "webTestName": {
             "type": "string"
         },
-        "appName": {
-            "type": "string"
+        "URL": { "type": "string" },
+        "priceCode": {
+            "type": "int",
+            "defaultValue": 1,
+            "allowedValues": [
+                1,
+                2
+            ],
+            "metadata": {
+                "description": "1 = Basic, 2 = Enterprise"
+            }
         },
-        "URL": {
-            "type": "string"
+        "dailyQuota": {
+            "type": "int",
+            "defaultValue": 100,
+            "minValue": 1,
+            "metadata": {
+                "description": "Enter daily quota in GB."
+            }
+        },
+        "dailyQuotaResetTime": {
+            "type": "int",
+            "defaultValue": 24,
+            "metadata": {
+                "description": "Enter daily quota reset hour in UTC (0 to 23). Values outside the range will get a random reset hour."
+            }
+        },
+        "warningThreshold": {
+            "type": "int",
+            "defaultValue": 90,
+            "minValue": 1,
+            "maxValue": 100,
+            "metadata": {
+                "description": "Enter the % value of daily quota after which warning mail to be sent. "
+            }
         }
     },
     "variables": {
-        "alertRuleName": "[concat(parameters('webTestName'), '-', toLower(parameters('appName')), '-', subscription().subscriptionId)]"
+        "priceArray": [
+            "Basic",
+            "Application Insights Enterprise"
+        ],
+        "pricePlan": "[take(variables('priceArray'),parameters('priceCode'))]",
+        "billingplan": "[concat(parameters('appName'),'/', variables('pricePlan')[0])]"
     },
     "resources": [
         {
-            "value": [
-                {
-                    "id": "[resourceId('Microsoft.Insights/webtests', parameters('webTestName'))]",
-                    "name": "[parameters('webTestName')]",
-                    "type": "microsoft.insights/webtests",
-                    "location": "southcentralus",
-                    "tags": {
-                        "[concat('hidden-link:', resourceId('Microsoft.Insights/components', parameters('appName')))]": "Resource",
-                        "[concat('hidden-link:', resourceId('Microsoft.Insights/webtests', concat(parameters('webTestName'), '-', toLower(parameters('appName')))))]": "Resource"
-                    },
-                    "kind": null,
-                    "etag": "\"00000b0f-0000-0000-0000-5a53cc4b0000\"",
-                    "properties": {
-                        "SyntheticMonitorId": "[parameters('webTestName')]",
-                        "Name": "URL ping test",
-                        "Description": "",
-                        "Enabled": true,
-                        "Frequency": 300,
-                        "Timeout": 120,
-                        "Kind": "ping",
-                        "RetryEnabled": true,
-                        "Locations": [
-                            {
-                                "Id": "us-tx-sn1-azr"
-                            },
-                            {
-                                "Id": "us-il-ch1-azr"
-                            },
-                            {
-                                "Id": "us-ca-sjc-azr"
-                            },
-                            {
-                                "Id": "us-va-ash-azr"
-                            },
-                            {
-                                "Id": "us-fl-mia-edge"
-                            }
-                        ],
-                        "Configuration": {
-                            "WebTest": "[concat('<WebTest ... Name=\"', parameters('webTestName') , '\" ... Url=\"', parameters('URL'), '\" ...>')]"
-                        },
-                        "provisioningState": "Succeeded"
-                    }
-                }
-            ],
-            "nextLink": null
+            "type": "microsoft.insights/components",
+            "kind": "[parameters('appType')]",
+            "name": "[parameters('appName')]",
+            "apiVersion": "2014-04-01",
+            "location": "[parameters('appLocation')]",
+            "tags": {},
+            "properties": {
+                "ApplicationId": "[parameters('appName')]"
+            },
+            "dependsOn": []
         },
         {
-            //alert rule JSON file contents
+            "id": "[resourceId('Microsoft.Insights/webtests', parameters('webTestName'))]",
+            "name": "[parameters('webTestName')]",
+            "type": "microsoft.insights/webtests",
+            "apiVersion": "2014-04-01",
+            "location": "eastus",
+            "tags": {
+                "[concat('hidden-link:', resourceId('Microsoft.Insights/components', parameters('appName')))]": "Resource"
+            },
+            "kind": null,
+            "properties": {
+                "SyntheticMonitorId": "[parameters('webTestName')]",
+                "Name": "pingtest",
+                "Description": "",
+                "Enabled": true,
+                "Frequency": 300,
+                "Timeout": 120,
+                "Kind": "ping",
+                "RetryEnabled": true,
+                "Locations": [
+                    {
+                        "Id": "us-tx-sn1-azr"
+                    },
+                    {
+                        "Id": "us-il-ch1-azr"
+                    },
+                    {
+                        "Id": "us-ca-sjc-azr"
+                    },
+                    {
+                        "Id": "us-va-ash-azr"
+                    },
+                    {
+                        "Id": "us-fl-mia-edge"
+                    }
+                ],
+                "Configuration": {
+                    "WebTest": "<WebTest         Name=\"[parameters('webTestName')]\"         Id=\"ada0b2b7-dc4c-4a54-9411-b8d3435cf647\"         Enabled=\"True\"         CssProjectStructure=\"\"         CssIteration=\"\"         Timeout=\"120\"         WorkItemIds=\"\"         xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\"         Description=\"\"         CredentialUserName=\"\"         CredentialPassword=\"\"         PreAuthenticate=\"True\"         Proxy=\"default\"         StopOnError=\"False\"         RecordedResultFile=\"\"         ResultsLocale=\"\">        <Items>        <Request         Method=\"GET\"         Guid=\"ab17f60f-d2a8-ef59-2df6-b0aff5697fc4\"         Version=\"1.1\"         Url=\"[parameters('URL')]\"         ThinkTime=\"0\"         Timeout=\"120\"         ParseDependentRequests=\"True\"         FollowRedirects=\"True\"         RecordResult=\"True\"         Cache=\"False\"         ResponseTimeGoal=\"0\"         Encoding=\"utf-8\"         ExpectedHttpStatusCode=\"200\"         ExpectedResponseUrl=\"\"         ReportingName=\"\"         IgnoreHttpStatusCode=\"False\" />        </Items>        </WebTest>" 
+                },
+                "provisioningState": "Succeeded"
+            }
         }
-        //Don't forget to close your brackets
     ]
 }
