@@ -6,9 +6,9 @@ properties {
     $source_dir = "$base_dir\src"
     $unitTestAssembly = "ClearMeasure.Bootcamp.UnitTests.dll"
     $integrationTestAssembly = "ClearMeasure.Bootcamp.IntegrationTests.dll"
-    $acceptanceTestAssembly = "ClearMeasure.Bootcamp.SmokeTests.dll"
-    $acceptanceTestProject = "$source_dir\SmokeTests\SmokeTests.csproj"
-    $projectConfig = $env:Configuration
+    $acceptanceTestAssembly = "ClearMeasure.Bootcamp.AcceptanceTests.dll"
+    $acceptanceTestProject = "$source_dir\AcceptanceTests\AcceptanceTests.csproj"
+	$projectConfig = $env:Configuration
     $version = $env:Version
     $nunitPath = Resolve-Path("$source_dir\packages\NUnit.Console*\Tools")
 
@@ -107,13 +107,12 @@ task Test -depends Compile {
 }
 
 task AcceptanceTest {
-    Write-Host("##[section]Starting: Build task 'AcceptanceTest'")
+	Write-Host("##[section]Starting: Build task 'AcceptanceTest'")
     copy_all_assemblies_for_test $test_dir
-    exec {
+	exec {
         & $nunitPath\nunit3-console.exe $test_dir\$acceptanceTestAssembly --workers=1 --noheader --result="$build_dir\AcceptanceTestResult.xml"`;format=nunit2 --out="$build_dir\AcceptanceTestResult.txt"
-        & $specflowPath\specflow.exe nunitexecutionreport $acceptanceTestProject /xmlTestResult:"$build_dir\AcceptanceTestResult.xml" /testOutput:"$build_dir\AcceptanceTestResult.txt" /out:"$build_dir\AcceptanceTestResult.html"
-    }
-    Write-Host("##[section]Finishing: Build task 'AcceptanceTest'")
+	}
+	Write-Host("##[section]Finishing: Build task 'AcceptanceTest'")
 }
 
 task RebuildDatabase -depends ConnectionString {
@@ -155,8 +154,6 @@ task CreateCompareSchema -depends SchemaConnectionString {
     }
 }
 
-
-
 task SchemaConnectionString {
     $connection_string = "server=$databaseserver;database=$schemaDatabaseName;@integratedSecurity;"
     write-host "Using connection string: $connection_string"
@@ -177,6 +174,7 @@ task CodeCoverage {
     exec {
         & $vstest_dir\vstest.console.exe $test_dir\$unitTestAssembly $test_dir\$integrationTestAssembly /TestAdapterPath:$test_dir /Logger:trx /Enablecodecoverage /Settings:$source_dir\CodeCoverage.runSettings
     }
+    Write-Host("##[section]Finishing: Build task 'CodeCoverage'")
 }
  
 
