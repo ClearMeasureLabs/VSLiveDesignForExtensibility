@@ -22,6 +22,9 @@
     },
     "serverFarmResourceGroup": {
       "type": "String"
+    },
+    "appInsightsInstrumentationKey": {
+      "type": "String"
     }
   },
   "resources": [
@@ -38,7 +41,7 @@
           "appSettings": [
             {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-              "value": "[reference(resourceId('microsoft.insights/components/', parameters('name')), '2015-05-01').InstrumentationKey]"
+              "value": "[parameters('appInsightsInstrumentationKey')]"
             }
           ]
         },
@@ -46,8 +49,7 @@
         "serverFarmId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', parameters('serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
-        "[resourceId('microsoft.insights/components/', parameters('name'))]"
+        "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
       ]
     },
     {
@@ -64,19 +66,6 @@
         "workerSizeId": "[parameters('workerSize')]",
         "reserved": false,
         "numberOfWorkers": "1"
-      }
-    },
-    {
-      "type": "microsoft.insights/components",
-      "name": "[parameters('name')]",
-      "apiVersion": "2015-05-01",
-      "location": "South Central US",
-      "tags": {
-        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('name'))]": "Resource"
-      },
-      "properties": {
-        "ApplicationId": "[parameters('name')]",
-        "Request_Source": "IbizaWebAppExtensionCreate"
       }
     }
   ]
