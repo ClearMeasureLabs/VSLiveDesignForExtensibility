@@ -33,6 +33,8 @@ namespace ClearMeasure.Bootcamp.Core.Model.ExpenseReportWorkflow
         protected override bool userCanExecute(Employee currentUser, ExpenseReport report)
         {
             if (report.Approver == null) return false;
+            if (report.Title.ToLower().Contains("fake"))
+                return false;
             return report.Approver.CanActOnBehalf(currentUser);
         }
 
