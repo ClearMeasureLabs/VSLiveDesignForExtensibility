@@ -94,7 +94,6 @@
     <Content Include="Database.nuspec" />
     <Content Include="scripts\Update\0014-Ceate-EFAuditEntry-Table.sql" />
     <Content Include="scripts\Update\0015-Schema-modifications-for-efcore2-cutover.sql" />
-    <Content Include="scripts\Update\0016-EmployeeHiredOnColumn.sql" />
     <Content Include="UpdateAzureSQL.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
