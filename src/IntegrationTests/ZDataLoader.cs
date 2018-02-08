@@ -11,7 +11,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
     public class ZDataLoader
     {
         public const string KnownExpenseReportNumber = "1A2B3";
-        public const string KnownEmployeeUsername = "jpalermo";
+        public const string KnownEmployeeUsername = "Jeffrey Palermo";
         [Test, Category("DataLoader")]
         public void PopulateDatabase()
         {
