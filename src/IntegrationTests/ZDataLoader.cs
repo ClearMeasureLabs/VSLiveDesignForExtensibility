@@ -41,11 +41,13 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
             //Person 6
             var paul = new Employee("paul", "Paul", "Stovell", "Paul@myemail.com");
             session.Add(paul);
-            
+
             //Person 7
-            
+
             //Person 8
-            
+            var steve = new Employee("Steve Hickman", "Steve", "Hickman", "steve@clear-measure.com");
+            session.Add(steve);
+
             //Person 9
 
             //Person 10
