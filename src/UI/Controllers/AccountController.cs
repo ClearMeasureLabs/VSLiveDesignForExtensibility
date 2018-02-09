@@ -68,7 +68,7 @@ namespace ClearMeasure.Bootcamp.UI.Controllers
             FederatedAuthentication.SessionAuthenticationModule.SignOut();
 
             // Redirect to Auth0's logout endpoint
-            var returnTo = Url.Action("Index", "Home", null, protocol: Request.Url.Scheme);
+            var returnTo = Url.Action("Login", "Account", null, protocol: Request.Url.Scheme);
             return this.Redirect(
                 string.Format(CultureInfo.InvariantCulture,
                     "https://{0}/v2/logout?returnTo={1}",

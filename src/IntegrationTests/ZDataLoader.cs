@@ -30,9 +30,12 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
             //Person 3
             var damian = new Employee("damian", "Damian", "Brady", "damian@Gmail.com");
             session.Add(damian);
-            
+
             //Person 4
-            
+
+            var scott = new Employee("Scott Wilson", "Scott", "Wilson", "scottw@clear-measure.com");
+            session.Add(scott);
+
             //Person 5
 
             //Person 6
