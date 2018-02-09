@@ -11,7 +11,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
     public class ZDataLoader
     {
         public const string KnownExpenseReportNumber = "1A2B3";
-        public const string KnownEmployeeUsername = "jpalermo";
+        public const string KnownEmployeeUsername = "Jeffrey Palermo";
         [Test, Category("DataLoader")]
         public void PopulateDatabase()
         {
@@ -30,19 +30,24 @@ namespace ClearMeasure.Bootcamp.IntegrationTests
             //Person 3
             var damian = new Employee("damian", "Damian", "Brady", "damian@Gmail.com");
             session.Add(damian);
-            
+
             //Person 4
-            
+
+            var scott = new Employee("Scott Wilson", "Scott", "Wilson", "scottw@clear-measure.com");
+            session.Add(scott);
+
             //Person 5
 
             //Person 6
             var paul = new Employee("paul", "Paul", "Stovell", "Paul@myemail.com");
             session.Add(paul);
-            
+
             //Person 7
-            
+
             //Person 8
-            
+            var steve = new Employee("Steve Hickman", "Steve", "Hickman", "steve@clear-measure.com");
+            session.Add(steve);
+
             //Person 9
 
             //Person 10
