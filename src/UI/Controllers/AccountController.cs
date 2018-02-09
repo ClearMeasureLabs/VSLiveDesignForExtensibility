@@ -71,9 +71,10 @@ namespace ClearMeasure.Bootcamp.UI.Controllers
             var returnTo = Url.Action("Login", "Account", null, protocol: Request.Url.Scheme);
             return this.Redirect(
                 string.Format(CultureInfo.InvariantCulture,
-                    "https://{0}/v2/logout?returnTo={1}",
+                    "https://{0}/v2/logout?returnTo={1}&client_id={2}",
                     ConfigurationManager.AppSettings["auth0:Domain"],
-                    this.Server.UrlEncode(returnTo)));
+                    this.Server.UrlEncode(returnTo),
+                    ConfigurationManager.AppSettings["auth0:ClientId"]));
         }
     }
 }
