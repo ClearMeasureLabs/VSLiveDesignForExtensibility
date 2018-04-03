@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using ClearMeasure.Bootcamp.Core.Services;
 
 namespace ClearMeasure.Bootcamp.Core
@@ -20,6 +21,7 @@ namespace ClearMeasure.Bootcamp.Core
 
         public virtual TResponse Send<TResponse>(IRequest<TResponse> request)
         {
+            Trace.WriteLine(string.Format("Message sent: {0}", request.GetType().FullName), this.GetType().Name);
             var defaultHandler = GetHandler(request);
 
             TResponse result = defaultHandler.Handle(request);

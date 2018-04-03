@@ -18,6 +18,7 @@ namespace ClearMeasure.Bootcamp.UI.Controllers
     {
         private readonly Bus _bus;
         private readonly IUserSession _session;
+        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public AccountController(Bus bus, IUserSession session)
         {
@@ -27,6 +28,7 @@ namespace ClearMeasure.Bootcamp.UI.Controllers
 
         public ActionResult Login()
         {
+            Log.Info("Visitor viewed login page");
             _session.LogOut();
             return View();
         }
