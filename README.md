@@ -13,8 +13,8 @@ and working through scenarios targetting 300- and 400-level developers.
 
 - Clone the repo
 - Configure your db (see pre-requisites below)
-- Run the click to build script
-- **Build** the application in Visual Studio 2015
+- Run the click_to_build.bat script
+- **Build** the application in Visual Studio 2017
 - **Run** the application from VS
 
 ## Application Overview
@@ -30,9 +30,10 @@ of iterations, writing tests and leveraging CI. Roll up the sleeves!
 
 You will need to have the following installed for this project to work:
 
- - [Visual Studio 2015 RTM] (https://www.visualstudio.com/downloads/download-visual-studio-vs)
+ - [Visual Studio 2017 15.4 RTM minimum] (https://www.visualstudio.com/downloads/download-visual-studio-vs)
  - [SQL Server Express 2014] (https://www.microsoft.com/en-ca/server-cloud/products/sql-server-editions/sql-server-express.aspx) with an instance named SQLEXPRESS2014 (for other options, see note below)
- - A GitHub account ([good thing you're already here](https://github.com/join))
 
+This Solution assumes you have .Net Standard 2.0 available.  It runs full framework but uses EF Core 2
+In order to log in, you must add your name in the ZDataLoader.cs file so that your name is in the Employee table, which is compared when the Auth0 login runs.
 
 

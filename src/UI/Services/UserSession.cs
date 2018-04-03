@@ -32,6 +32,7 @@ namespace ClearMeasure.Bootcamp.UI.Services
         {
             IOwinContext context = HttpContext.Current.GetOwinContext();
             ClaimsPrincipal user = context.Authentication.User;
+            
             if (!user.Identity.IsAuthenticated)
             {
                 return null;
