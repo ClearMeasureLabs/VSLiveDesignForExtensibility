@@ -145,6 +145,7 @@
     <Compile Include="Plugins\DataAccess\EmployeeSpecificationQuery.cs" />
     <Compile Include="Services\IApplicationInformation.cs" />
     <Compile Include="Services\ICalendar.cs" />
+    <Compile Include="Services\IExpenseReportRepository.cs" />
     <Compile Include="Services\IKeyTransaction.cs" />
     <Compile Include="Services\Impl\ApplicationInformation.cs" />
     <Compile Include="Services\Impl\Calendar.cs" />
@@ -157,6 +158,7 @@
     <Compile Include="Services\IWorkflowFacilitator.cs" />
     <Compile Include="Services\IExpenseReportBuilder.cs" />
     <Compile Include="Services\INumberGenerator.cs" />
+    <Compile Include="Services\SearchSpecification.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

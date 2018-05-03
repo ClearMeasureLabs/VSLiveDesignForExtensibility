@@ -3,6 +3,7 @@ using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.Core.Features.SearchExpenseReports;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Plugins.DataAccess;
+using ClearMeasure.Bootcamp.Core.Services;
 using ClearMeasure.Bootcamp.UI.Helpers.ActionFilters;
 using ClearMeasure.Bootcamp.UI.Models;
 
@@ -12,10 +13,12 @@ namespace ClearMeasure.Bootcamp.UI.Controllers
     [Authorize]
     public class ExpenseReportSearchController : Controller
     {
+        private readonly IExpenseReportRepository _repository;
         private readonly Bus _bus;
 
-        public ExpenseReportSearchController(Bus bus)
+        public ExpenseReportSearchController(IExpenseReportRepository repository, Bus bus)
         {
+            _repository = repository;
             _bus = bus;
         }
 
@@ -30,14 +33,12 @@ namespace ClearMeasure.Bootcamp.UI.Controllers
             var approver = _bus.Send(new EmployeeByUserNameQuery(model.Filters.Approver)).Result;
             var status = !string.IsNullOrWhiteSpace(model.Filters.Status) ? ExpenseReportStatus.FromKey(model.Filters.Status) : null;
 
-            var specification = new ExpenseReportSpecificationQuery
-            {
-                Approver = approver,
-                Submitter = submitter,
-                Status = status
-            };
+            var specification = new SearchSpecification();
+            specification.MatchApprover(approver);
+            specification.MatchSubmitter(submitter);
+            specification.MatchStatus(status);
 
-            ExpenseReport[] orders = _bus.Send(specification).Results;
+            ExpenseReport[] orders = _repository.GetMany(specification);
 
             model.Results = orders;
 

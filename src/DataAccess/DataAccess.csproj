@@ -135,6 +135,7 @@
     </Compile>
     <Compile Include="AddExpenseReportFactHandler.cs" />
     <Compile Include="ExpenseReportByNumberQueryHandler.cs" />
+    <Compile Include="ExpenseReportRepository.cs" />
     <Compile Include="Mappings\AuditEntryMap.cs" />
     <Compile Include="EmployeeByUserNameQueryHandler.cs" />
     <Compile Include="EmployeeSpecificationQueryHandler.cs" />
