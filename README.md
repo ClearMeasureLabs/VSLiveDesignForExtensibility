@@ -5,6 +5,8 @@ Inline-style:
 **This project is the starting point for folks taking part in the Clear Measure 
 Bootcamp.** 
 
+Browse the branches - these have illustrations of worsening coupling and diminished extensibility
+
 This course is a feature-driven walkthrough that guides participants through
 a series of improvements to an existing code base, demonstrating best pracitices and 
 and working through scenarios targetting 300- and 400-level developers.
