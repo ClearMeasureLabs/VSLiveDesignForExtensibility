@@ -9,7 +9,11 @@ namespace ClearMeasure.Bootcamp.AcceptanceTests
 	{
 		private static Process _iisProcess;
 
-		public static void Startup()
+        private LocalIisInstance()
+        {
+        }
+
+        public static void Startup()
 		{
 			// kill off existing IIS Express instance if present
 			var matchingProcess = Process.GetProcessesByName("iisexpress").FirstOrDefault();

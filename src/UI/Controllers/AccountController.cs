@@ -34,8 +34,15 @@ namespace ClearMeasure.Bootcamp.UI.Controllers
         }
 
         [HttpPost]
-        public RedirectResult Login(string returnUrl)
+        public RedirectResult Login(string returnUrl, string userToImpersonate)
         {
+            if (!string.IsNullOrEmpty(userToImpersonate))
+            {
+                Employee employee = _bus.Send(new EmployeeByUserNameQuery(userToImpersonate)).Result;
+                _session.LogIn(employee);
+                return new RedirectResult(returnUrl);
+            }
+
             var client = new AuthenticationApiClient(
                 new Uri(string.Format("https://{0}", ConfigurationManager.AppSettings["auth0:Domain"])));
 
@@ -59,8 +66,6 @@ namespace ClearMeasure.Bootcamp.UI.Controllers
             }
 
             return new RedirectResult(authorizeUrlBuilder.Build().ToString());
-//            Employee employee = _bus.Send(new EmployeeByUserNameQuery(model.UserName)).Result;
-//            _session.LogIn(employee);
         }
 
         public ActionResult Logout()
